@@ -1,8 +1,11 @@
+require "uri"
 require "rack"
 
 module Rack
   module Test
     class Session
+      include Rack::Utils
+
       attr_reader :last_response
       attr_reader :last_request
 
@@ -25,8 +28,34 @@ module Rack
         end
 
         def env_for(verb, path, data, headers)
+          uri = URI(path)
+          uri.query = param_string(data) if data.is_a?(Hash)
           options = { :method => verb }
-          Rack::MockRequest.env_for(path, options)
+
+          if data.is_a?(Hash)
+            headers = data.delete(:headers)
+            env     = data.delete(:env)
+          end
+
+          options.merge!(headers) if headers
+          options.merge!(env)     if env
+
+          Rack::MockRequest.env_for(uri.to_s, options)
+        end
+
+        def param_string(value, prefix = nil)
+          case value
+          when Array
+            value.map { |v|
+              param_string(v, "#{prefix}[]")
+            } * "&"
+          when Hash
+            value.map { |k, v|
+              param_string(v, prefix ? "#{prefix}[#{escape(k)}]" : escape(k))
+            } * "&"
+          else
+            "#{prefix}=#{escape(value)}"
+          end
         end
     end
   end
