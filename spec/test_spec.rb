@@ -15,8 +15,9 @@ describe Rack::Test::Session do
   end
 
   describe "#request" do
-    it "requests the URI" do
+    it "requests the URI using GET by default" do
       @session.request "/"
+      request.should be_get
       response.should be_ok
     end
     
