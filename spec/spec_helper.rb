@@ -1,8 +1,7 @@
-$: << File.dirname(__FILE__) + "/../lib"
-
+require "rubygems"
 require "spec"
-require "rack/test"
 require "rack/lobster"
+require File.dirname(__FILE__) + "/../lib/rack/test"
 
 App = Rack::Lobster.new
 
