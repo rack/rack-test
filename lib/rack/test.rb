@@ -27,6 +27,8 @@ module Rack
       end
 
       def request(uri, env = {})
+        env["REQUEST_METHOD"] ||= "GET"
+
         @last_request  = Rack::Request.new(env)
         @last_response = Rack::Response.new(@app.call(env))
 
