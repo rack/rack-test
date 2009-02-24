@@ -14,15 +14,25 @@ describe Rack::Test::Session do
   end
 
   describe "#request" do
-    xit "requests the URI" do
+    it "requests the URI" do
       @session.request "/"
       response.should be_ok
     end
     
-    it "uses the provided env"
+    it "uses the provided env" do
+      @session.request "/", "X-Foo" => "bar"
+      request.env["X-Foo"].should == "bar"
+    end
+    
     it "keeps a cookie jar"
     it "sends multipart requests"
-    it "yields the response to a given block"
+    
+    it "yields the response to a given block" do
+      @session.request "/" do |response|
+        response.should be_ok
+      end
+    end
+    
     it "calls callbacks before each request"
     it "calls callbacks after each request"
         
@@ -43,71 +53,50 @@ describe Rack::Test::Session do
   end
   
   describe "#get" do
-    it "requests the URL using GET"
-    it "accepts a params hash"
-    it "uses the provided env"
+    it "requests the URL using GET" do
+      @session.get "/"
+      request.env["REQUEST_METHOD"].should == "GET"
+      response.should be_ok
+    end
+    
+    it "accepts a params hash" do
+      @session.get "/", :foo => "bar"
+      request.GET.should == { "foo" => "bar" }
+    end
+    
+    it "uses the provided env" do
+      @session.get "/", {}, { "User-Agent" => "Rack::Test" }
+      request.env["User-Agent"].should == "Rack::Test"
+    end
   end
   
   describe "#post" do
-    it "requests the URL using GET"
-    it "accepts a params hash"
-    it "uses the provided env"
+    it "requests the URL using POST" do
+      @session.post "/"
+      request.env["REQUEST_METHOD"].should == "POST"
+      response.should be_ok
+    end
+    
+    it "accepts a params hash" do
+      @session.post "/", "Lobsterlicious!"
+      request.body.read.should == "Lobsterlicious!"
+    end
+    
+    it "uses the provided env" do
+      @session.post "/", {}, { "X-Foo" => "bar" }
+      request.env["X-Foo"].should == "bar"
+    end
   end
   
   describe "#put" do
-    it "requests the URL using GET"
+    it "requests the URL using PUT"
     it "accepts a params hash"
     it "uses the provided env"
   end
   
   describe "#delete" do
-    it "requests the URL using GET"
+    it "requests the URL using DELETE"
     it "accepts a params hash"
     it "uses the provided env"
-  end
-  
-  describe "#get" do
-    it "requests URL" do
-      @session.get "/"
-      response.should be_ok
-    end
-
-    it "allows to specify the query string" do
-      @session.get "/", :foo => "bar"
-      request.GET.should == { "foo" => "bar" }
-    end
-
-    it "allows to modify the rack env" do
-      @session.get "/", {}, :headers => { "User-Agent" => "Rack::Test" }
-      request.env["User-Agent"].should == "Rack::Test"
-    end
-  end
-
-  describe "#post" do
-    it "requests URL" do
-      @session.post "/"
-      response.should be_ok
-    end
-
-    it "allows to post a body" do
-      @session.post "/", "Lobsterlicious!"
-      request.body.read.should == "Lobsterlicious!"
-    end
-
-    it "allows to specify params" do
-      @session.post "/", :foo => "bar"
-      request.POST.should == { "foo" => "bar" }
-    end
-
-    it "allows to specify headers" do
-      @session.post "/", {}, :headers => { "X-Foo" => "bar" }
-      request.env["X-Foo"].should == "bar"
-    end
-
-    it "allows to specify both a body and headers" do
-      @session.post "/", "foobar", :headers => { "X-Answer", "42" }
-      request.body.read.should == "foobar"
-      request.env["X-Answer"].should == "42"
-    end
   end
 end

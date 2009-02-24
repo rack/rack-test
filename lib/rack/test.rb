@@ -16,45 +16,45 @@ module Rack
         @app = app
       end
 
-      def get(path, data=nil, headers={})
-        request(path, data, headers.merge(:verb => "GET"))
+      def get(path, params = {}, env = {})
+        env = env_for(path, env.merge(:method => "GET", :params => params))
+        request(path, env)
       end
 
-      def post(path, data=nil, headers={})
-        request(path, data, headers.merge(:verb => "POST"))
+      def post(path, params = {}, env = {})
+        env = env_for(path, env.merge(:method => "POST", :params => params))
+        request(path, env)
       end
 
-      def request(path, data=nil, headers={})
-        env = env_for(path, data, headers)
-        
+      def request(uri, env = {})
         @last_request  = Rack::Request.new(env)
         @last_response = Rack::Response.new(@app.call(env))
+        
+        yield @last_response if block_given?
       end
       
     private
 
-      def env_for(path, data, headers)
-        verb = headers.delete(:verb)
-        
+      def env_for(path, env)
         uri = URI(path)
-        uri.query = param_string(data) if data.is_a?(Hash)
-        options = { :method => verb }
-        options.merge!(headers) if headers
 
-        if data.is_a?(Hash)
-          env = data.delete(:headers)
-
-          if verb == "POST"
-            options["Content-Type"] = "application/x-www-form-urlencoded"
-            options[:input] = param_string(data)
+        if (env[:method] == "POST" || env["REQUEST_METHOD"] == "POST")
+          env["Content-Type"] = "application/x-www-form-urlencoded"
+          
+          params = env.delete(:params)
+          
+          if params.is_a?(Hash)
+            env[:input] = param_string(params)
+          else
+            env[:input] = params
           end
         end
+        
+        if env[:params]
+          uri.query = param_string(env.delete(:params))
+        end
 
-        env = headers.delete(:headers) if headers.is_a?(Hash)
-        options[:input] ||= data       if data.is_a?(String)
-        options.merge!(env)            if env
-
-        Rack::MockRequest.env_for(uri.to_s, options)
+        Rack::MockRequest.env_for(uri.to_s, env)
       end
 
       def param_string(value, prefix = nil)
