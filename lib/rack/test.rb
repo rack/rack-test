@@ -47,7 +47,7 @@ module Rack
           end
 
           env = headers.delete(:headers) if headers.is_a?(Hash)
-          options[:input] =|| data       if data.is_a?(String)
+          options[:input] ||= data       if data.is_a?(String)
           options.merge!(env)            if env
 
           Rack::MockRequest.env_for(uri.to_s, options)
