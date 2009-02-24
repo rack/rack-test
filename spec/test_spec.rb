@@ -219,8 +219,8 @@ describe Rack::Test::Session do
       request.env["REQUEST_METHOD"].should == "GET"
       response.should be_ok
     end
-    
-    it "accepts a params hash" do
+
+    it "uses the provided params hash" do
       @session.get "/", :foo => "bar"
       request.GET.should == { "foo" => "bar" }
     end
@@ -261,7 +261,7 @@ describe Rack::Test::Session do
       response.should be_ok
     end
     
-    it "accepts a params hash" do
+    it "uses the provided params hash" do
       @session.put "/", "param" => "param value"
       request.GET.should == { "param" => "param value" }
     end
@@ -279,7 +279,7 @@ describe Rack::Test::Session do
       response.should be_ok
     end
     
-    it "accepts a params hash" do
+    it "uses the provided params hash" do
       @session.delete "/", "param" => "param value"
       request.GET.should == { "param" => "param value" }
     end
