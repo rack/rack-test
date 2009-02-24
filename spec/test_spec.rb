@@ -21,16 +21,12 @@ describe Rack::Test do
 
     it "allows to specify the query string" do
       @session.get "/", :foo => "bar"
-
       request.GET.should == { "foo" => "bar" }
     end
 
     it "allows to modify the rack env" do
       @session.get "/", :headers => { "User-Agent" => "Rack::Test" }
       request.env["User-Agent"].should == "Rack::Test"
-
-      @session.get "/", :env => { "X-Foo" => "bar" }
-      request.env["X-Foo"].should == "bar"
     end
   end
 
@@ -47,7 +43,6 @@ describe Rack::Test do
 
     it "allows to specify params" do
       @session.post "/", :foo => "bar"
-
       request.POST.should == { "foo" => "bar" }
     end
 

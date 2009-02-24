@@ -38,8 +38,7 @@ module Rack
           options.merge!(headers) if headers
 
           if data.is_a?(Hash)
-            h   = data.delete(:headers)
-            env = data.delete(:env)
+            env = data.delete(:headers)
 
             if verb == "POST"
               options["Content-Type"] = "application/x-www-form-urlencoded"
@@ -47,15 +46,9 @@ module Rack
             end
           end
 
-          if headers.is_a?(Hash)
-            h   = headers.delete(:headers)
-            env = headers.delete(:env)
-          end
-
-          options[:input] ||= data if data.is_a?(String)
-
-          options.merge!(h) if h
-          options.merge!(env)     if env
+          env = headers.delete(:headers) if headers.is_a?(Hash)
+          options[:input] =|| data       if data.is_a?(String)
+          options.merge!(env)            if env
 
           Rack::MockRequest.env_for(uri.to_s, options)
         end
