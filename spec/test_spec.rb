@@ -184,7 +184,11 @@ describe Rack::Test::Session do
   end
 
   describe "#initialize" do
-    it "raises ArgumentError if the given app doesn't quack like an app"
+    it "raises ArgumentError if the given app doesn't quack like an app" do
+      lambda {
+        Rack::Test::Session.new(Object.new)
+      }.should raise_error(ArgumentError)
+    end
   end
 
   describe "#last_request" do

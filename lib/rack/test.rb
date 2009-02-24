@@ -10,6 +10,8 @@ module Rack
       include Rack::Utils
 
       def initialize(app)
+        raise ArgumentError unless app.respond_to?(:call)
+
         @app = app
         
         @before_request = []
