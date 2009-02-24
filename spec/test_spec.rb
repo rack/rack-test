@@ -42,6 +42,10 @@ describe Rack::Test::Session do
     end
   end
 
+  describe "#initialize" do
+    it "raises ArgumentError if the given app doesn't quack like an app"
+  end
+
   describe "#last_request" do
     it "returns the most recent request"
     it "raises an error if no requests have been issued"
@@ -98,5 +102,12 @@ describe Rack::Test::Session do
     it "requests the URL using DELETE"
     it "accepts a params hash"
     it "uses the provided env"
+  end
+
+  describe "#head" do
+    it "requests the URL using DELETE"
+    it "uses the provided params hash"
+    it "uses the provided env"
+    it "resets the body"
   end
 end
