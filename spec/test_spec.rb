@@ -24,6 +24,29 @@ describe Rack::Test::Session do
       request.env["X-Foo"].should == "bar"
     end
     
+    it "defaults to GET" do
+      pending do
+        @session.request "/"
+        request.env["REQUEST_METHOD"].should == "GET"
+      end
+    end
+    
+    it "defaults to HTTP" do
+      pending do
+        @session.request "/"
+        request.env["SERVER_PORT"].should == "80"
+        request.env["HTTPS"].should == "off"
+      end
+    end
+    
+    it "defaults to example.org" do
+      pending do
+        @session.request "/"
+        puts request.env.inspect
+        request.env["HTTP_HOST"].should == "example.org"
+      end
+    end
+    
     it "keeps a cookie jar"
     it "sends multipart requests"
     
