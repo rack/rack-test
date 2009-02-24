@@ -13,6 +13,8 @@ module Rack
       alias_method :response, :last_response
 
       def initialize(app)
+        raise ArgumentError unless app.respond_to?(:call)
+
         @app = app
       end
 
