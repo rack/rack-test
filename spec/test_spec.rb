@@ -181,7 +181,11 @@ describe Rack::Test::Session do
       end
     end
   end
-  
+
+  describe "#initialize" do
+    it "raises ArgumentError if the given app doesn't quack like an app"
+  end
+
   describe "#last_request" do
     it "returns the most recent request" do
       @session.request "/"
@@ -283,5 +287,12 @@ describe Rack::Test::Session do
       @session.delete "/", {}, { "X-Foo" => "bar" }
       request.env["X-Foo"].should == "bar"
     end
+  end
+
+  describe "#head" do
+    it "requests the URL using DELETE"
+    it "uses the provided params hash"
+    it "uses the provided env"
+    it "resets the body"
   end
 end
