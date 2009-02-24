@@ -29,10 +29,10 @@ module Rack
       def request(uri, env = {})
         @last_request  = Rack::Request.new(env)
         @last_response = Rack::Response.new(@app.call(env))
-        
+
         yield @last_response if block_given?
       end
-      
+
     private
 
       def env_for(path, env)
@@ -40,16 +40,16 @@ module Rack
 
         if (env[:method] == "POST" || env["REQUEST_METHOD"] == "POST")
           env["Content-Type"] = "application/x-www-form-urlencoded"
-          
+
           params = env.delete(:params)
-          
+
           if params.is_a?(Hash)
             env[:input] = param_string(params)
           else
             env[:input] = params
           end
         end
-        
+
         if env[:params]
           uri.query = param_string(env.delete(:params))
         end
@@ -71,7 +71,7 @@ module Rack
           "#{prefix}=#{escape(value)}"
         end
       end
-      
+
     end
   end
 end
