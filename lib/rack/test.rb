@@ -20,6 +20,10 @@ module Rack
         request!("GET", path, data, headers)
       end
 
+      def post(path, data=nil, headers=nil)
+        request!("POST", path, data, headers)
+      end
+
       private
         def request!(verb, path, data=nil, headers=nil)
           env = env_for(verb, path, data, headers)
@@ -31,13 +35,26 @@ module Rack
           uri = URI(path)
           uri.query = param_string(data) if data.is_a?(Hash)
           options = { :method => verb }
+          options.merge!(headers) if headers
 
           if data.is_a?(Hash)
-            headers = data.delete(:headers)
-            env     = data.delete(:env)
+            h   = data.delete(:headers)
+            env = data.delete(:env)
+
+            if verb == "POST"
+              options["Content-Type"] = "application/x-www-form-urlencoded"
+              options[:input] = param_string(data)
+            end
           end
 
-          options.merge!(headers) if headers
+          if headers.is_a?(Hash)
+            h   = headers.delete(:headers)
+            env = headers.delete(:env)
+          end
+
+          options[:input] ||= data if data.is_a?(String)
+
+          options.merge!(h) if h
           options.merge!(env)     if env
 
           Rack::MockRequest.env_for(uri.to_s, options)
