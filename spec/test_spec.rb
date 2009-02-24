@@ -64,7 +64,7 @@ describe Rack::Test::Session do
       response.should be_ok
     end
 
-    it "accepts a params hash" do
+    it "uses the provided params hash" do
       @session.get "/", :foo => "bar"
       request.GET.should == { "foo" => "bar" }
     end
@@ -95,13 +95,13 @@ describe Rack::Test::Session do
 
   describe "#put" do
     it "requests the URL using PUT"
-    it "accepts a params hash"
+    it "uses the provided params hash"
     it "uses the provided env"
   end
 
   describe "#delete" do
     it "requests the URL using DELETE"
-    it "accepts a params hash"
+    it "uses the provided params hash"
     it "uses the provided env"
   end
 
