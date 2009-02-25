@@ -65,6 +65,14 @@ module Rack
         
         env.update("rack.test" => true)
         
+        if URI::HTTPS === uri
+          env.update("HTTPS" => "on")
+        end
+        
+        if env["REQUEST_METHOD"] == "POST"
+          env["Content-Type"] = "application/x-www-form-urlencoded"
+        end
+          
         # Add the cookies explicitly set by the user
         # @__cookie_jar__.update(uri, env.delete(:cookie)) if env.has_key?(:cookie)
         env["HTTP_COOKIE"] = cookie_jar.for(uri)
@@ -91,14 +99,8 @@ module Rack
       
       def env_for(path, env)
         uri = URI.parse(path)
-
-        if URI::HTTPS === uri
-          env.update("HTTPS" => "on")
-        end
           
         if (env[:method] == "POST" || env["REQUEST_METHOD"] == "POST")
-          env["Content-Type"] = "application/x-www-form-urlencoded"
-          
           params = env.delete(:params)
           
           if params.is_a?(Hash)

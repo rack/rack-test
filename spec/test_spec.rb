@@ -60,6 +60,13 @@ describe Rack::Test::Session do
       end
     end
     
+    context "for a POST" do
+      it "uses application/x-www-form-urlencoded as the Content-Type" do
+        @session.request "/", :method => "POST"
+        request.env["Content-Type"].should == "application/x-www-form-urlencoded"
+      end
+    end
+    
     describe "#before_request" do
       it "is called before each request" do
         req = nil
@@ -198,6 +205,11 @@ describe Rack::Test::Session do
       @session.post "/"
       request.env["REQUEST_METHOD"].should == "POST"
       response.should be_ok
+    end
+    
+    it "uses application/x-www-form-urlencoded as the Content-Type" do
+      @session.post "/"
+      request.env["Content-Type"].should == "application/x-www-form-urlencoded"
     end
     
     it "accepts a params hash" do
