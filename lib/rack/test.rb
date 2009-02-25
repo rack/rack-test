@@ -55,38 +55,38 @@ module Rack
       
     private
 
+      def cookie_jar
+        @cookie_jar ||= Rack::Test::CookieJar.new
+      end
+      
       def process_request(uri, env)
         uri = URI.parse(uri)
         uri.host ||= "example.org"
         
         env.update("rack.test" => true)
         
-        # Setup a default cookie jar container
-        @__cookie_jar__ ||= Rack::Test::CookieJar.new
-        # Grab the cookie group name
-        jar = env.delete(:jar) || :default
         # Add the cookies explicitly set by the user
-        @__cookie_jar__.update(jar, uri, env.delete(:cookie)) if env.has_key?(:cookie)
-        # Set the cookie header with the cookies
-        env["HTTP_COOKIE"] = @__cookie_jar__.for(jar, uri)
-        
+        # @__cookie_jar__.update(uri, env.delete(:cookie)) if env.has_key?(:cookie)
+        env["HTTP_COOKIE"] = cookie_jar.for(uri)
         
         @last_request = Rack::Request.new(env)
         
-        @before_request.each do |before_request|
-          before_request.call(@last_request)
-        end
+        execute_callbacks(@before_request, @last_request)
         
         status, headers, body = @app.call(@last_request.env)
         @last_response = Rack::Response.new(body, status, headers)
         
-        @__cookie_jar__.update(jar, uri, last_response.headers["Set-Cookie"])
+        cookie_jar.update(uri, last_response.headers["Set-Cookie"])
         
-        @after_request.each do |after_request|
-          after_request.call(@last_response)
-        end
+        execute_callbacks(@after_request, @last_response)
         
         return @last_response
+      end
+      
+      def execute_callbacks(callbacks, param)
+        callbacks.each do |callback|
+          callback.call(param)
+        end
       end
       
       def env_for(path, env)
