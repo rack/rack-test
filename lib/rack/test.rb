@@ -27,7 +27,7 @@ module Rack
         end
         
         if (env[:method] == "POST" || env["REQUEST_METHOD"] == "POST") && !env.has_key?(:input)
-          env["Content-Type"] = "application/x-www-form-urlencoded"
+          env["CONTENT_TYPE"] = "application/x-www-form-urlencoded"
           env[:input] = params_to_string(env.delete(:params))
         end
         

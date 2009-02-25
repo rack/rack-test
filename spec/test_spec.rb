@@ -82,14 +82,14 @@ describe Rack::Test::Session do
       
       it "should not send a multipart request" do
         @session.request "/", :method => "POST", :input => "foo"
-        request.env["Content-Type"].should_not == "application/x-www-form-urlencoded"
+        request.env["CONTENT_TYPE"].should_not == "application/x-www-form-urlencoded"
       end
     end
     
     context "for a POST" do
-      it "uses application/x-www-form-urlencoded as the Content-Type" do
+      it "uses application/x-www-form-urlencoded as the CONTENT_TYPE" do
         @session.request "/", :method => "POST"
-        request.env["Content-Type"].should == "application/x-www-form-urlencoded"
+        request.env["CONTENT_TYPE"].should == "application/x-www-form-urlencoded"
       end
     end
     
@@ -233,9 +233,9 @@ describe Rack::Test::Session do
       response.should be_ok
     end
     
-    it "uses application/x-www-form-urlencoded as the Content-Type" do
+    it "uses application/x-www-form-urlencoded as the CONTENT_TYPE" do
       @session.post "/"
-      request.env["Content-Type"].should == "application/x-www-form-urlencoded"
+      request.env["CONTENT_TYPE"].should == "application/x-www-form-urlencoded"
     end
     
     it "accepts a params hash" do
