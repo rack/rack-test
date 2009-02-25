@@ -13,7 +13,7 @@ module Rack
         raise ArgumentError unless app.respond_to?(:call)
 
         @app = app
-        
+
         @before_request = []
         @after_request = []
       end
@@ -32,9 +32,9 @@ module Rack
       def env_for(path, env)
         uri = URI.parse(path)
         uri.host ||= "example.org"
-        
+
         env = default_env.merge(env)
-        
+
         if URI::HTTPS === uri
           env.update("HTTPS" => "on")
         end
@@ -43,7 +43,7 @@ module Rack
           env["CONTENT_TYPE"] = "application/x-www-form-urlencoded"
           env[:input] = params_to_string(env.delete(:params))
         end
-        
+
         params = env[:params] || {}
         params.update(parse_query(uri.query))
         uri.query = param_string(params)
@@ -65,48 +65,48 @@ module Rack
         yield @last_response if block_given?
         return @last_response
       end
-      
+
       def before_request(&block)
         @before_request << block
       end
-      
+
       def after_request(&block)
         @after_request << block
       end
-      
+
       def last_request
         raise unless @last_request
         return @last_request
       end
-      
+
       def last_response
         raise unless @last_response
         return @last_response
       end
-      
+
       alias_method :response, :last_response
-      
+
     private
 
       def cookie_jar
         @cookie_jar || Rack::Test::CookieJar.new
       end
-      
+
       def process_request(uri, env)
         uri = URI.parse(uri)
         uri.host ||= "example.org"
-        
+
         @last_request = Rack::Request.new(env)
         execute_callbacks(@before_request, @last_request)
-        
+
         status, headers, body = @app.call(@last_request.env)
         @last_response = Rack::Response.new(body, status, headers)
         @cookie_jar = cookie_jar.merge(uri, last_response.headers["Set-Cookie"])
-        
+
         execute_callbacks(@after_request, @last_response)
         return @last_response
       end
-      
+
       def execute_callbacks(callbacks, param)
         callbacks.each do |callback|
           callback.call(param)
@@ -119,7 +119,7 @@ module Rack
           "REMOTE_ADDR" => "127.0.0.1"
         }
       end
-      
+
       def params_to_string(params)
         case params
         when Hash
@@ -130,8 +130,8 @@ module Rack
           params
         end
       end
-        
-      
+
+
       def param_string(value, prefix = nil)
         case value
         when Array
