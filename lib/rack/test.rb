@@ -10,6 +10,8 @@ module Rack
       include Rack::Utils
 
       def initialize(app)
+        raise ArgumentError unless app.respond_to?(:call)
+
         @app = app
         
         @before_request = []
@@ -38,20 +40,13 @@ module Rack
         end
 
         if (env[:method] == "POST" || env["REQUEST_METHOD"] == "POST") && !env.has_key?(:input)
-          env["Content-Type"] = "application/x-www-form-urlencoded"
-          params = env[:params]
-          if params.is_a?(Hash)
-            env[:input] = build_query(params)
-          else
-            env[:input] = params
-          end
+          env["CONTENT_TYPE"] = "application/x-www-form-urlencoded"
+          env[:input] = params_to_string(env.delete(:params))
         end
         
         params = env[:params] || {}
-        params = parse_query(params) if params.is_a?(String)
         params.update(parse_query(uri.query))
-
-        uri.query = build_query(params)
+        uri.query = param_string(params)
 
         if env.has_key?(:cookie)
           # Add the cookies explicitly set by the user
@@ -68,6 +63,7 @@ module Rack
         env = env_for(uri, env)
         process_request(uri, env)
         yield @last_response if block_given?
+        return @last_response
       end
       
       def before_request(&block)

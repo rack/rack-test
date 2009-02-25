@@ -15,9 +15,14 @@ describe Rack::Test::Session do
   end
 
   describe "#request" do
-    it "requests the URI" do
+    it "requests the URI using GET by default" do
       @session.request "/"
+      request.should be_get
       response.should be_ok
+    end
+    
+    it "returns a response" do
+      @session.request("/").should be_ok
     end
     
     it "uses the provided env" do
@@ -78,14 +83,14 @@ describe Rack::Test::Session do
       
       it "should not send a multipart request" do
         @session.request "/", :method => "POST", :input => "foo"
-        request.env["Content-Type"].should_not == "application/x-www-form-urlencoded"
+        request.env["CONTENT_TYPE"].should_not == "application/x-www-form-urlencoded"
       end
     end
     
     context "for a POST" do
-      it "uses application/x-www-form-urlencoded as the Content-Type" do
+      it "uses application/x-www-form-urlencoded as the CONTENT_TYPE" do
         @session.request "/", :method => "POST"
-        request.env["Content-Type"].should == "application/x-www-form-urlencoded"
+        request.env["CONTENT_TYPE"].should == "application/x-www-form-urlencoded"
       end
     end
     
@@ -177,7 +182,15 @@ describe Rack::Test::Session do
       end
     end
   end
-  
+
+  describe "#initialize" do
+    it "raises ArgumentError if the given app doesn't quack like an app" do
+      lambda {
+        Rack::Test::Session.new(Object.new)
+      }.should raise_error(ArgumentError)
+    end
+  end
+
   describe "#last_request" do
     it "returns the most recent request" do
       @session.request "/"
@@ -210,8 +223,8 @@ describe Rack::Test::Session do
       request.env["REQUEST_METHOD"].should == "GET"
       response.should be_ok
     end
-    
-    it "accepts a params hash" do
+
+    it "uses the provided params hash" do
       @session.get "/", :foo => "bar"
       request.GET.should == { "foo" => "bar" }
     end
@@ -257,9 +270,9 @@ describe Rack::Test::Session do
       response.should be_ok
     end
     
-    it "uses application/x-www-form-urlencoded as the Content-Type" do
+    it "uses application/x-www-form-urlencoded as the CONTENT_TYPE" do
       @session.post "/"
-      request.env["Content-Type"].should == "application/x-www-form-urlencoded"
+      request.env["CONTENT_TYPE"].should == "application/x-www-form-urlencoded"
     end
     
     it "accepts a params hash" do
@@ -280,7 +293,7 @@ describe Rack::Test::Session do
       response.should be_ok
     end
     
-    it "accepts a params hash" do
+    it "uses the provided params hash" do
       @session.put "/", "param" => "param value"
       request.GET.should == { "param" => "param value" }
     end
@@ -298,7 +311,7 @@ describe Rack::Test::Session do
       response.should be_ok
     end
     
-    it "accepts a params hash" do
+    it "uses the provided params hash" do
       @session.delete "/", "param" => "param value"
       request.GET.should == { "param" => "param value" }
     end
@@ -307,5 +320,12 @@ describe Rack::Test::Session do
       @session.delete "/", {}, { "X-Foo" => "bar" }
       request.env["X-Foo"].should == "bar"
     end
+  end
+
+  describe "#head" do
+    it "requests the URL using DELETE"
+    it "uses the provided params hash"
+    it "uses the provided env"
+    it "resets the body"
   end
 end
