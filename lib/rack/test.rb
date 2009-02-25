@@ -97,7 +97,7 @@ module Rack
       def env_for(path, env)
         uri = URI.parse(path)
         
-        env.update("rack.test" => true)
+        env = default_env.merge(env)
         
         if URI::HTTPS === uri
           env.update("HTTPS" => "on")
@@ -117,6 +117,13 @@ module Rack
         return env
       end
 
+      def default_env
+        {
+          "rack.test"   => true,
+          "REMOTE_ADDR" => "127.0.0.1"
+        }
+      end
+      
       def param_string(value, prefix = nil)
         case value
         when Array

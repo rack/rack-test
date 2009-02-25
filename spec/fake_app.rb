@@ -9,7 +9,6 @@ module Rack
       end
       
       get "/set-cookie" do
-        puts request.inspect
         cookie = request.cookies["value"] || 0
         response.set_cookie("value", cookie.to_i + 1)
         

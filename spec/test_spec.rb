@@ -30,6 +30,11 @@ describe Rack::Test::Session do
       request.env["REQUEST_METHOD"].should == "GET"
     end
     
+    it "defaults the REMOTE_ADDR to 127.0.0.1" do
+      @session.request "/"
+      request.env["REMOTE_ADDR"].should == "127.0.0.1"
+    end
+    
     it "sets rack.test to true in the env" do
       @session.request "/"
       request.env["rack.test"].should == true
