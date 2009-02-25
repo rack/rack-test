@@ -45,7 +45,13 @@ describe Rack::Test::Session do
       request.env["SERVER_NAME"].should == "example.org"
     end
     
-    it "keeps a cookie jar"
+    it "keeps a cookie jar" do
+      @session.request "/set-cookie"
+      response.body.should == ["Value: 0"]
+      @session.request "/set-cookie"
+      response.body.should == ["Value: 1"]
+    end
+    
     it "sends multipart requests"
     
     it "yields the response to a given block" do

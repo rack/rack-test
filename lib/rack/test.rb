@@ -2,6 +2,8 @@ require "rubygems"
 require "uri"
 require "rack"
 
+require File.dirname(__FILE__) + "/test/cookie_jar"
+
 module Rack
   module Test
     class Session
@@ -16,18 +18,18 @@ module Rack
 
       [:get, :post, :put, :delete].each do |http_method|
         class_eval <<-SRC
-          def #{http_method}(path, params = {}, env = {})         # def get(path, params = {}, env = {})
-            env = env_for(path,                                   #   env = env_for(path,
+          def #{http_method}(uri, params = {}, env = {})          # def get(uri, params = {}, env = {})
+            env = env_for(uri,                                    #   env = env_for(uri,
               env.merge(:method => "#{http_method.to_s.upcase}",  #     env.merge(:method => "GET",
               :params => params))                                 #     :params => params))
-            process_request(env)                                  #   process_request(env)
+            process_request(uri, env)                             #   process_request(uri, env)
           end                                                     # end
         SRC
       end
 
       def request(uri, env = {})
         env = Rack::MockRequest.env_for(uri.to_s, env)
-        process_request(env)
+        process_request(uri, env)
         yield @last_response if block_given?
       end
       
@@ -53,8 +55,22 @@ module Rack
       
     private
 
-      def process_request(env)
+      def process_request(uri, env)
+        uri = URI.parse(uri)
+        uri.host ||= "example.org"
+        
         env.update("rack.test" => true)
+        
+        # Setup a default cookie jar container
+        @__cookie_jar__ ||= Rack::Test::CookieJar.new
+        # Grab the cookie group name
+        jar = env.delete(:jar) || :default
+        # Add the cookies explicitly set by the user
+        @__cookie_jar__.update(jar, uri, env.delete(:cookie)) if env.has_key?(:cookie)
+        # Set the cookie header with the cookies
+        env["HTTP_COOKIE"] = @__cookie_jar__.for(jar, uri)
+        
+        
         @last_request = Rack::Request.new(env)
         
         @before_request.each do |before_request|
@@ -63,6 +79,8 @@ module Rack
         
         status, headers, body = @app.call(@last_request.env)
         @last_response = Rack::Response.new(body, status, headers)
+        
+        @__cookie_jar__.update(jar, uri, last_response.headers["Set-Cookie"])
         
         @after_request.each do |after_request|
           after_request.call(@last_response)

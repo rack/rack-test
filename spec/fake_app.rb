@@ -8,6 +8,13 @@ module Rack
         "Hello, GET: #{params.inspect}"
       end
       
+      get "/set-cookie" do
+        cookie = request.cookies["value"] || 0
+        response.set_cookie("value", cookie.to_i + 1)
+        
+        "Value: #{cookie}"
+      end
+      
       post "/" do
         "Hello, POST: #{params.inspect}"
       end
