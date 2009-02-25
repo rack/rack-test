@@ -20,6 +20,10 @@ describe Rack::Test::Session do
       response.should be_ok
     end
     
+    it "returns a response" do
+      @session.request("/").should be_ok
+    end
+    
     it "uses the provided env" do
       @session.request "/", "X-Foo" => "bar"
       request.env["X-Foo"].should == "bar"

@@ -60,6 +60,7 @@ module Rack
         env = env_for(uri, env)
         process_request(uri, env)
         yield @last_response if block_given?
+        return @last_response
       end
       
       def before_request(&block)
