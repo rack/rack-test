@@ -30,6 +30,11 @@ describe Rack::Test::Session do
       request.env["REQUEST_METHOD"].should == "GET"
     end
     
+    it "defaults the REMOTE_ADDR to 127.0.0.1" do
+      @session.request "/"
+      request.env["REMOTE_ADDR"].should == "127.0.0.1"
+    end
+    
     it "sets rack.test to true in the env" do
       @session.request "/"
       request.env["rack.test"].should == true
@@ -52,11 +57,35 @@ describe Rack::Test::Session do
       response.body.should == ["Value: 1"]
     end
     
+    it "accepts explicitly provided cookies" do
+      @session.request "/set-cookie", :cookie => "value=1"
+      response.body.should == ["Value: 1"]
+    end
+    
     it "sends multipart requests"
     
     it "yields the response to a given block" do
       @session.request "/" do |response|
         response.should be_ok
+      end
+    end
+    
+    context "when input is given" do
+      it "should send the input" do
+        @session.request "/", :method => "POST", :input => "foo"
+        request.env["rack.input"].string.should == "foo"
+      end
+      
+      it "should not send a multipart request" do
+        @session.request "/", :method => "POST", :input => "foo"
+        request.env["Content-Type"].should_not == "application/x-www-form-urlencoded"
+      end
+    end
+    
+    context "for a POST" do
+      it "uses application/x-www-form-urlencoded as the Content-Type" do
+        @session.request "/", :method => "POST"
+        request.env["Content-Type"].should == "application/x-www-form-urlencoded"
       end
     end
     
@@ -226,6 +255,11 @@ describe Rack::Test::Session do
       @session.post "/"
       request.env["REQUEST_METHOD"].should == "POST"
       response.should be_ok
+    end
+    
+    it "uses application/x-www-form-urlencoded as the Content-Type" do
+      @session.post "/"
+      request.env["Content-Type"].should == "application/x-www-form-urlencoded"
     end
     
     it "accepts a params hash" do
