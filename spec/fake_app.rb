@@ -9,7 +9,12 @@ module Rack
       end
 
       get "/" do
+        redirect "/redirected" if params[:redirect]
         "Hello, GET: #{params.inspect}"
+      end
+
+      get "/redirected" do
+        "You've been redirected"
       end
 
       get "/set-cookie" do

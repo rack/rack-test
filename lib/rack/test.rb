@@ -60,6 +60,14 @@ module Rack
 
 
       def request(uri, env = {})
+        if env.delete(:follow_redirection)
+          after_request {
+            if last_response.redirect? && last_response["Location"]
+              request(last_response["Location"], :method => "GET")
+            end
+          }
+        end
+
         env = env_for(uri, env)
         process_request(uri, env)
         yield @last_response if block_given?
