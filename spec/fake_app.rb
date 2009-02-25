@@ -4,6 +4,10 @@ module Rack
   module Test
     
     class FakeApp < Sinatra::Default
+      head "/" do
+        "meh"
+      end
+      
       get "/" do
         "Hello, GET: #{params.inspect}"
       end

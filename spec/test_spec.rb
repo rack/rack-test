@@ -192,6 +192,29 @@ describe Rack::Test::Session do
       request.env["User-Agent"].should == "Rack::Test"
     end
   end
+
+  describe "#head" do
+    it "requests the URL using HEAD" do
+      @session.head "/"
+      request.env["REQUEST_METHOD"].should == "HEAD"
+      response.should be_ok
+    end
+    
+    it "accepts a params hash" do
+      @session.head "/", :foo => "bar"
+      request.GET.should == { "foo" => "bar" }
+    end
+    
+    it 'returns an empty body' do
+      @session.head "/"
+      response.body.should == []
+    end
+    
+    it "uses the provided env" do
+      @session.head "/", {}, { "X-Foo" => "bar" }
+      request.env["X-Foo"].should == "bar"
+    end
+  end
   
   describe "#post" do
     it "requests the URL using POST" do

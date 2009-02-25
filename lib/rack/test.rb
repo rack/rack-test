@@ -16,7 +16,7 @@ module Rack
         @after_request = []
       end
 
-      [:get, :post, :put, :delete].each do |http_method|
+      [:get, :post, :put, :delete, :head].each do |http_method|
         class_eval <<-SRC
           def #{http_method}(uri, params = {}, env = {})          # def get(uri, params = {}, env = {})
             env = env_for(uri,                                    #   env = env_for(uri,
