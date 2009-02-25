@@ -102,34 +102,18 @@ module Rack
           params = env.delete(:params)
           
           if params.is_a?(Hash)
-            env[:input] = param_string(params)
+            env[:input] = build_query(params)
           else
             env[:input] = params
           end
         end
         
         if env[:params]
-          uri.query = param_string(env.delete(:params))
+          uri.query = build_query(env.delete(:params))
         end
 
         Rack::MockRequest.env_for(uri.to_s, env)
       end
-
-      def param_string(value, prefix = nil)
-        case value
-        when Array
-          value.map { |v|
-            param_string(v, "#{prefix}[]")
-          } * "&"
-        when Hash
-          value.map { |k, v|
-            param_string(v, prefix ? "#{prefix}[#{escape(k)}]" : escape(k))
-          } * "&"
-        else
-          "#{prefix}=#{escape(value)}"
-        end
-      end
-      
     end
   end
 end
