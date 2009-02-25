@@ -1,9 +1,8 @@
-require "merb-core"
-
 module Rack
   module Test
     
     class Cookie
+      include Rack::Utils
       
       # :api: private
       attr_reader :name, :value
@@ -13,8 +12,8 @@ module Rack
         # separate the name / value pair from the cookie options
         @name_value_raw, options = raw.split(/[;,] */n, 2)
         
-        @name, @value = Merb::Parse.query(@name_value_raw, ';').to_a.first
-        @options = Merb::Parse.query(options, ';')
+        @name, @value = parse_query(@name_value_raw, ';').to_a.first
+        @options = parse_query(options, ';')
         
         @options.delete_if { |k, v| !v || v.empty? }
         
