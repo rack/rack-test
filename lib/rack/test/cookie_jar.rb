@@ -72,13 +72,13 @@ module Rack
     class CookieJar
       
       # :api: private
-      def initialize
-        @jar = []
+      def initialize(cookies = [])
+        @jar = cookies
+        @jar.sort!
       end
       
-      # :api: private
-      def update(uri, raw_cookies)
-        return unless raw_cookies
+      def merge(uri, raw_cookies)
+        return self unless raw_cookies
         
         # Initialize all the the received cookies
         cookies = []
@@ -88,14 +88,15 @@ module Rack
         end
         
         # Remove all the cookies that will be updated
-        @jar.delete_if do |existing|
+        new_jar = @jar.reject do |existing|
           cookies.find do |c|
             [c.name, c.domain, c.path] == [existing.name, existing.domain, existing.path]
           end
         end
         
-        @jar.concat cookies
-        @jar.sort!
+        new_jar.concat cookies
+        
+        return self.class.new(new_jar)
       end
       
       # :api: private
