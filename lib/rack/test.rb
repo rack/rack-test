@@ -95,11 +95,11 @@ module Rack
         if URI::HTTPS === uri
           env.update("HTTPS" => "on")
         end
+        
+        params = env[:params] || {}
           
         if (env[:method] == "POST" || env["REQUEST_METHOD"] == "POST")
           env["Content-Type"] = "application/x-www-form-urlencoded"
-          
-          params = env.delete(:params)
           
           if params.is_a?(Hash)
             env[:input] = build_query(params)
@@ -108,9 +108,10 @@ module Rack
           end
         end
         
-        if env[:params]
-          uri.query = build_query(env.delete(:params))
-        end
+        params = parse_query(params) if params.is_a?(String)
+        params.update(parse_query(uri.query))
+          
+        uri.query = build_query(params)
 
         Rack::MockRequest.env_for(uri.to_s, env)
       end

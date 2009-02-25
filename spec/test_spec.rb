@@ -187,6 +187,11 @@ describe Rack::Test::Session do
       request.GET.should == { "foo" => "bar" }
     end
     
+    it 'accepts params in the path' do
+      @session.get "/?foo=bar"
+      request.GET.should == { "foo" => "bar" }
+    end
+    
     it "uses the provided env" do
       @session.get "/", {}, { "User-Agent" => "Rack::Test" }
       request.env["User-Agent"].should == "Rack::Test"
