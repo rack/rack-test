@@ -52,6 +52,11 @@ describe Rack::Test::Session do
       response.body.should == ["Value: 1"]
     end
     
+    it "accepts explicitly provided cookies" do
+      @session.request "/set-cookie", :cookie => "value=1"
+      response.body.should == ["Value: 1"]
+    end
+    
     it "sends multipart requests"
     
     it "yields the response to a given block" do
@@ -199,7 +204,7 @@ describe Rack::Test::Session do
       request.env["User-Agent"].should == "Rack::Test"
     end
   end
-  
+
   describe "#post" do
     it "requests the URL using POST" do
       @session.post "/"

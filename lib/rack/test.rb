@@ -28,7 +28,7 @@ module Rack
       end
 
       def request(uri, env = {})
-        env = Rack::MockRequest.env_for(uri.to_s, env)
+        env = env_for(uri, env)
         process_request(uri, env)
         yield @last_response if block_given?
       end
@@ -63,27 +63,24 @@ module Rack
         uri = URI.parse(uri)
         uri.host ||= "example.org"
         
-        env.update("rack.test" => true)
-        
-        if URI::HTTPS === uri
-          env.update("HTTPS" => "on")
+        if env[:params]
+          uri.query = param_string(env.delete(:params))
         end
         
-        if env["REQUEST_METHOD"] == "POST"
-          env["Content-Type"] = "application/x-www-form-urlencoded"
+        if env.has_key?(:cookie)
+          # Add the cookies explicitly set by the user
+          cookie_jar.update(uri, env.delete(:cookie))
         end
-          
-        # Add the cookies explicitly set by the user
-        # @__cookie_jar__.update(uri, env.delete(:cookie)) if env.has_key?(:cookie)
+        
         env["HTTP_COOKIE"] = cookie_jar.for(uri)
         
+        env = Rack::MockRequest.env_for(uri.to_s, env)
         @last_request = Rack::Request.new(env)
         
         execute_callbacks(@before_request, @last_request)
         
         status, headers, body = @app.call(@last_request.env)
         @last_response = Rack::Response.new(body, status, headers)
-        
         cookie_jar.update(uri, last_response.headers["Set-Cookie"])
         
         execute_callbacks(@after_request, @last_response)
@@ -99,8 +96,15 @@ module Rack
       
       def env_for(path, env)
         uri = URI.parse(path)
-          
+        
+        env.update("rack.test" => true)
+        
+        if URI::HTTPS === uri
+          env.update("HTTPS" => "on")
+        end
+        
         if (env[:method] == "POST" || env["REQUEST_METHOD"] == "POST")
+          env["Content-Type"] = "application/x-www-form-urlencoded"
           params = env.delete(:params)
           
           if params.is_a?(Hash)
@@ -110,11 +114,7 @@ module Rack
           end
         end
         
-        if env[:params]
-          uri.query = param_string(env.delete(:params))
-        end
-
-        Rack::MockRequest.env_for(uri.to_s, env)
+        return env
       end
 
       def param_string(value, prefix = nil)
