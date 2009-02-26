@@ -24,6 +24,7 @@ module Rack
             env = env_for(uri,                                    #   env = env_for(uri,
               env.merge(:method => "#{http_method.to_s.upcase}",  #     env.merge(:method => "GET",
               :params => params))                                 #     :params => params))
+            env["rack.test.follow_redirect"] = true               #   env["rack.test.follow_redirect"] ||= true
             process_request(uri, env)                             #   process_request(uri, env)
           end                                                     # end
         SRC
@@ -60,18 +61,12 @@ module Rack
 
 
       def request(uri, env = {})
-        if env.delete(:follow_redirection)
-          after_request {
-            if last_response.redirect? && last_response["Location"]
-              request(last_response["Location"], :method => "GET")
-            end
-          }
-        end
-
         env = env_for(uri, env)
+
         process_request(uri, env)
+
         yield @last_response if block_given?
-        return @last_response
+        @last_response
       end
 
       def before_request(&block)
@@ -103,6 +98,14 @@ module Rack
       def process_request(uri, env)
         uri = URI.parse(uri)
         uri.host ||= "example.org"
+
+        if env.delete("rack.test.follow_redirect")
+         after_request {
+            if last_response.redirect? && last_response["Location"]
+              request(last_response["Location"], :method => "GET")
+            end
+          }
+        end
 
         @last_request = Rack::Request.new(env)
         execute_callbacks(@before_request, @last_request)

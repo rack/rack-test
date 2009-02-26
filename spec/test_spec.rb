@@ -82,8 +82,8 @@ describe Rack::Test::Session do
     end
 
     it "follows redirects when explicitely asked" do
-      @session.request "/?redirect=true", :follow_redirection => true
-      response.should be_redirect
+      @session.request "/?redirect=1", "rack.test.follow_redirect" => true
+      response.should_not be_redirect
       response.body.should == ["You've been redirected"]
     end
 
@@ -249,6 +249,12 @@ describe Rack::Test::Session do
     it "uses the provided env" do
       @session.get "/", {}, { "User-Agent" => "Rack::Test" }
       request.env["User-Agent"].should == "Rack::Test"
+    end
+
+    it "follows redirect" do
+      @session.get "/?redirect=1"
+      response.should_not be_redirect
+      response.body.should == ["You've been redirected"]
     end
   end
 
