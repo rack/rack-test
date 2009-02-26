@@ -75,11 +75,15 @@ describe Rack::Test::Session do
       end
     end
 
-    it "doesn't follow redirects unless explicitely asked to" do
+    it "doesn't follow redirects by default" do
       @session.request "/?redirect=true"
       response.should be_redirect
+      response.body.should be_empty
+    end
 
+    it "follows redirects when explicitely asked" do
       @session.request "/?redirect=true", :follow_redirection => true
+      response.should be_redirect
       response.body.should == ["You've been redirected"]
     end
 
