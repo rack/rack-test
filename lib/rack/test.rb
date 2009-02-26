@@ -12,10 +12,9 @@ module Rack
       def initialize(app)
         raise ArgumentError unless app.respond_to?(:call)
 
-        @app = app
-
+        @app            = app
         @before_request = []
-        @after_request = []
+        @after_request  = []
       end
 
       [:get, :post, :put, :delete, :head].each do |http_method|
@@ -62,10 +61,10 @@ module Rack
 
       def request(uri, env = {})
         env = env_for(uri, env)
-
         process_request(uri, env)
 
         yield @last_response if block_given?
+
         @last_response
       end
 
@@ -79,12 +78,14 @@ module Rack
 
       def last_request
         raise unless @last_request
-        return @last_request
+
+        @last_request
       end
 
       def last_response
         raise unless @last_response
-        return @last_response
+
+        @last_response
       end
 
       alias_method :response, :last_response
@@ -104,7 +105,7 @@ module Rack
             if last_response.redirect? && last_response["Location"]
               request(last_response["Location"], :method => "GET")
             end
-          }
+         }
         end
 
         @last_request = Rack::Request.new(env)
@@ -115,13 +116,13 @@ module Rack
         @cookie_jar = cookie_jar.merge(uri, last_response.headers["Set-Cookie"])
 
         execute_callbacks(@after_request, @last_response)
-        return @last_response
+        @last_response
       end
 
       def execute_callbacks(callbacks, param)
-        callbacks.each do |callback|
+        callbacks.each { |callback|
           callback.call(param)
-        end
+        }
       end
 
       def default_env
@@ -141,7 +142,6 @@ module Rack
           params
         end
       end
-
 
       def param_string(value, prefix = nil)
         case value
