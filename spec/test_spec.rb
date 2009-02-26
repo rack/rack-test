@@ -230,62 +230,37 @@ describe Rack::Test::Session do
   end
 
   describe "#get" do
-    it "requests the URL using GET" do
-      @session.get "/"
-      request.env["REQUEST_METHOD"].should == "GET"
-      response.should be_ok
+    it_should_behave_like "any #verb methods"
+
+    def verb
+      "get"
     end
 
-    it "uses the provided params hash" do
-      @session.get "/", :foo => "bar"
-      request.GET.should == { "foo" => "bar" }
-    end
-
-    it 'accepts params in the path' do
-      @session.get "/?foo=bar"
-      request.GET.should == { "foo" => "bar" }
-    end
-
-    it "uses the provided env" do
-      @session.get "/", {}, { "User-Agent" => "Rack::Test" }
-      request.env["User-Agent"].should == "Rack::Test"
-    end
-
-    it "follows redirect" do
-      @session.get "/?redirect=1"
-      response.should_not be_redirect
-      response.body.should == ["You've been redirected"]
+    it "accepts params in the path" do
+      @session.send(verb, "/?foo=bar")
+      request.send(verb.upcase).should == { "foo" => "bar" }
     end
   end
 
   describe "#head" do
-    it "requests the URL using HEAD" do
-      @session.head "/"
-      request.env["REQUEST_METHOD"].should == "HEAD"
-      response.should be_ok
+    it_should_behave_like "any #verb methods"
+
+    def verb
+      "head"
     end
 
-    it "accepts a params hash" do
-      @session.head "/", :foo => "bar"
-      request.GET.should == { "foo" => "bar" }
-    end
-
-    it 'returns an empty body' do
+    it "returns an empty body" do
+      pending "IMO this one should be removed. It tests Sinatra, not rack-test"
       @session.head "/"
       response.body.should == []
-    end
-
-    it "uses the provided env" do
-      @session.head "/", {}, { "X-Foo" => "bar" }
-      request.env["X-Foo"].should == "bar"
     end
   end
 
   describe "#post" do
-    it "requests the URL using POST" do
-      @session.post "/"
-      request.env["REQUEST_METHOD"].should == "POST"
-      response.should be_ok
+    it_should_behave_like "any #verb methods"
+
+    def verb
+      "post"
     end
 
     it "uses application/x-www-form-urlencoded as the CONTENT_TYPE" do
@@ -293,50 +268,25 @@ describe Rack::Test::Session do
       request.env["CONTENT_TYPE"].should == "application/x-www-form-urlencoded"
     end
 
-    it "accepts a params hash" do
+    it "accepts a body" do
       @session.post "/", "Lobsterlicious!"
       request.body.read.should == "Lobsterlicious!"
-    end
-
-    it "uses the provided env" do
-      @session.post "/", {}, { "X-Foo" => "bar" }
-      request.env["X-Foo"].should == "bar"
     end
   end
 
   describe "#put" do
-    it "requests the URL using PUT" do
-      @session.put "/"
-      request.env["REQUEST_METHOD"].should == "PUT"
-      response.should be_ok
-    end
+    it_should_behave_like "any #verb methods"
 
-    it "uses the provided params hash" do
-      @session.put "/", "param" => "param value"
-      request.GET.should == { "param" => "param value" }
-    end
-
-    it "uses the provided env" do
-      @session.put "/", {}, { "X-Foo" => "bar" }
-      request.env["X-Foo"].should == "bar"
+    def verb
+      "put"
     end
   end
 
   describe "#delete" do
-    it "requests the URL using DELETE" do
-      @session.delete "/"
-      request.env["REQUEST_METHOD"].should == "DELETE"
-      response.should be_ok
-    end
+    it_should_behave_like "any #verb methods"
 
-    it "uses the provided params hash" do
-      @session.delete "/", "param" => "param value"
-      request.GET.should == { "param" => "param value" }
-    end
-
-    it "uses the provided env" do
-      @session.delete "/", {}, { "X-Foo" => "bar" }
-      request.env["X-Foo"].should == "bar"
+    def verb
+      "delete"
     end
   end
 end
