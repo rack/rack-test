@@ -1,0 +1,5 @@
+follow_redirect!
+Ability to set headers which persist during the session
+Support for multipart requests
+HTTP Basic auth support
+Need more specs for the many things param_string can handle
