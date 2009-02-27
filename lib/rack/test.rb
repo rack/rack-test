@@ -111,12 +111,9 @@ module Rack
 
       def params_to_string(params)
         case params
-        when Hash
-          requestify(params)
-        when nil
-          ""
-        else
-          params
+        when Hash then requestify(params)
+        when nil  then ""
+        else params
         end
       end
 
