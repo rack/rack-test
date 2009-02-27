@@ -21,7 +21,6 @@ module Rack
             env = env_for(uri,                                    #   env = env_for(uri,
               env.merge(:method => "#{http_method.to_s.upcase}",  #     env.merge(:method => "GET",
               :params => params))                                 #     :params => params))
-            env["rack.test.follow_redirect"] = true               #   env["rack.test.follow_redirect"] ||= true
             process_request(uri, env)                             #   process_request(uri, env)
           end                                                     # end
         SRC
