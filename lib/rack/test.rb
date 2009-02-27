@@ -66,6 +66,10 @@ module Rack
         @last_response
       end
 
+      def follow_redirect!
+        get(last_response["Location"])
+      end
+
       def last_request
         raise unless @last_request
 
@@ -97,12 +101,6 @@ module Rack
         @cookie_jar = cookie_jar.merge(uri, last_response.headers["Set-Cookie"])
 
         @last_response
-      end
-
-      def execute_callbacks(callbacks, param)
-        callbacks.each { |callback|
-          callback.call(param)
-        }
       end
 
       def default_env

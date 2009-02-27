@@ -14,6 +14,14 @@ describe Rack::Test::Session do
     @session.last_response
   end
 
+  describe "#initialize" do
+    it "raises ArgumentError if the given app doesn't quack like an app" do
+      lambda {
+        Rack::Test::Session.new(Object.new)
+      }.should raise_error(ArgumentError)
+    end
+  end
+
   describe "#request" do
     it "requests the URI using GET by default" do
       @session.request "/"
@@ -74,7 +82,7 @@ describe Rack::Test::Session do
         response.should be_ok
       end
     end
-
+    
     it "doesn't follow redirects by default" do
       @session.request "/?redirect=true"
       response.should be_redirect
@@ -113,14 +121,20 @@ describe Rack::Test::Session do
     end
   end
 
-  describe "#initialize" do
-    it "raises ArgumentError if the given app doesn't quack like an app" do
-      lambda {
-        Rack::Test::Session.new(Object.new)
-      }.should raise_error(ArgumentError)
+  describe "follow_redirect!" do
+    it "follows redirects" do
+      @session.request "/?redirect=true"
+      @session.follow_redirect!
+      response.should_not be_redirect
+      response.body.should == ["You've been redirected"]
     end
+    
+    it "includes GET params when following the redirect"
+    it "does not include POST params when following the redirect"
+    it "raises an error if the last_response is not set"
+    it "raises an error if the last_response is not a redirect"
   end
-
+  
   describe "#last_request" do
     it "returns the most recent request" do
       @session.request "/"
