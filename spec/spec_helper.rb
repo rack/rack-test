@@ -12,7 +12,7 @@ describe "any #verb methods", :shared => true do
   end
 
   it "uses the provided params hash" do
-    unless %(head put).include?(verb)
+    unless %(head put delete).include?(verb)
       @session.send(verb, "/", :foo => "bar")
       request.send(verb.upcase).should == { "foo" => "bar" }
     end
