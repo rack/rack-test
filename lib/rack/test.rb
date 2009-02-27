@@ -44,7 +44,7 @@ module Rack
 
         params = env[:params] || {}
         params.update(parse_query(uri.query))
-        uri.query = param_string(params)
+        uri.query = requestify(params)
 
         if env.has_key?(:cookie)
           # Add the cookies explicitly set by the user
@@ -112,7 +112,7 @@ module Rack
       def params_to_string(params)
         case params
         when Hash
-          param_string(params)
+          requestify(params)
         when nil
           ""
         else
@@ -120,16 +120,16 @@ module Rack
         end
       end
 
-      def param_string(value, prefix = nil)
+      def requestify(value, prefix = nil)
         case value
         when Array
-          value.map { |v|
-            param_string(v, "#{prefix}[]")
-          } * "&"
+          value.map do |v|
+            requestify(v, "#{prefix}[]")
+          end.join("&")
         when Hash
-          value.map { |k, v|
-            param_string(v, prefix ? "#{prefix}[#{escape(k)}]" : escape(k))
-          } * "&"
+          value.map do |k, v|
+            requestify(v, prefix ? "#{prefix}[#{escape(k)}]" : escape(k))
+          end.join("&")
         else
           "#{prefix}=#{escape(value)}"
         end
