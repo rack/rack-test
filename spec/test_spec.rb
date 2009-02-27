@@ -123,16 +123,31 @@ describe Rack::Test::Session do
 
   describe "follow_redirect!" do
     it "follows redirects" do
-      @session.request "/redirect"
+      @session.get "/redirect"
       @session.follow_redirect!
       response.should_not be_redirect
       response.body.should == ["You've been redirected"]
     end
     
-    it "includes GET params when following the redirect"
-    it "does not include POST params when following the redirect"
-    it "raises an error if the last_response is not set"
-    it "raises an error if the last_response is not a redirect"
+    it "does not include params when following the redirect" do
+      @session.get "/redirect", { "foo" => "bar" }
+      @session.follow_redirect!
+      request.GET.should == {}
+    end
+    
+    it "raises an error if the last_response is not set" do
+      lambda {
+        @session.follow_redirect!
+      }.should raise_error
+    end
+    
+    it "raises an error if the last_response is not a redirect" do
+      @session.get "/"
+      
+      lambda {
+        @session.follow_redirect!
+      }.should raise_error
+    end
   end
   
   describe "#last_request" do
