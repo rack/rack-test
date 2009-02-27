@@ -12,8 +12,7 @@ module Rack
       def initialize(app)
         raise ArgumentError unless app.respond_to?(:call)
 
-        @app            = app
-        @after_request  = []
+        @app = app
       end
 
       [:get, :post, :put, :delete, :head].each do |http_method|
@@ -67,10 +66,6 @@ module Rack
         @last_response
       end
 
-      def after_request(&block)
-        @after_request << block
-      end
-
       def last_request
         raise unless @last_request
 
@@ -95,21 +90,12 @@ module Rack
         uri = URI.parse(uri)
         uri.host ||= "example.org"
 
-        if env.delete("rack.test.follow_redirect")
-         after_request {
-            if last_response.redirect? && last_response["Location"]
-              request(last_response["Location"], :method => "GET")
-            end
-         }
-        end
-
         @last_request = Rack::Request.new(env)
 
         status, headers, body = @app.call(@last_request.env)
         @last_response = Rack::Response.new(body, status, headers)
         @cookie_jar = cookie_jar.merge(uri, last_response.headers["Set-Cookie"])
 
-        execute_callbacks(@after_request, @last_response)
         @last_response
       end
 

@@ -106,44 +106,6 @@ describe Rack::Test::Session do
       end
     end
 
-    describe "#after_request" do
-      it "is called after each request" do
-        resp = nil
-
-        @session.after_request do |response|
-          resp = response
-        end
-
-        @session.request "/"
-        resp.should_not be_nil
-      end
-
-      it "is called in the order callbacks are added" do
-        callbacks_called = []
-
-        @session.after_request do
-          callbacks_called << :first
-        end
-
-        @session.after_request do
-          callbacks_called << :second
-        end
-
-        @session.request "/"
-        callbacks_called.should == [:first, :second]
-      end
-
-      it "accepts callbacks that don't accept paramters" do
-        value = false
-        @session.after_request do
-          value = true
-        end
-
-        @session.request "/"
-        value.should be_true
-      end
-    end
-
     context "when the URL is https://" do
       it "sets SERVER_PORT to 443" do
         @session.get "https://example.org/"
