@@ -3,12 +3,14 @@ require "uri"
 require "rack"
 
 require File.dirname(__FILE__) + "/test/cookie_jar"
+require File.dirname(__FILE__) + "/test/utils"
 
 module Rack
   module Test
     
     class Session
       include Rack::Utils
+      include Rack::Test::Utils
 
       def initialize(app)
         raise ArgumentError unless app.respond_to?(:call)
@@ -114,21 +116,6 @@ module Rack
         when Hash then requestify(params)
         when nil  then ""
         else params
-        end
-      end
-
-      def requestify(value, prefix = nil)
-        case value
-        when Array
-          value.map do |v|
-            requestify(v, "#{prefix}[]")
-          end.join("&")
-        when Hash
-          value.map do |k, v|
-            requestify(v, prefix ? "#{prefix}[#{escape(k)}]" : escape(k))
-          end.join("&")
-        else
-          "#{prefix}=#{escape(value)}"
         end
       end
       
