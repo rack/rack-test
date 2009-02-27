@@ -6,6 +6,7 @@ require File.dirname(__FILE__) + "/test/cookie_jar"
 
 module Rack
   module Test
+    
     class Session
       include Rack::Utils
 
@@ -54,7 +55,6 @@ module Rack
 
         Rack::MockRequest.env_for(uri.to_s, env)
       end
-
 
       def request(uri, env = {})
         env = env_for(uri, env)
@@ -134,6 +134,8 @@ module Rack
           "#{prefix}=#{escape(value)}"
         end
       end
+      
     end
+    
   end
 end
