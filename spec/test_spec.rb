@@ -106,44 +106,6 @@ describe Rack::Test::Session do
       end
     end
 
-    describe "#before_request" do
-      it "is called before each request" do
-        req = nil
-
-        @session.before_request do |request|
-          req = request
-        end
-
-        @session.request "/"
-        req.should_not be_nil
-      end
-
-      it "is called in the order callbacks are added" do
-        callbacks_called = []
-
-        @session.before_request do
-          callbacks_called << :first
-        end
-
-        @session.before_request do
-          callbacks_called << :second
-        end
-
-        @session.request "/"
-        callbacks_called.should == [:first, :second]
-      end
-
-      it "accepts callbacks that don't accept paramters" do
-        value = false
-        @session.before_request do
-          value = true
-        end
-
-        @session.request "/"
-        value.should be_true
-      end
-    end
-
     describe "#after_request" do
       it "is called after each request" do
         resp = nil
@@ -247,12 +209,6 @@ describe Rack::Test::Session do
 
     def verb
       "head"
-    end
-
-    it "returns an empty body" do
-      pending "IMO this one should be removed. It tests Sinatra, not rack-test"
-      @session.head "/"
-      response.body.should == []
     end
   end
 

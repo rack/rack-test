@@ -13,7 +13,6 @@ module Rack
         raise ArgumentError unless app.respond_to?(:call)
 
         @app            = app
-        @before_request = []
         @after_request  = []
       end
 
@@ -68,10 +67,6 @@ module Rack
         @last_response
       end
 
-      def before_request(&block)
-        @before_request << block
-      end
-
       def after_request(&block)
         @after_request << block
       end
@@ -109,7 +104,6 @@ module Rack
         end
 
         @last_request = Rack::Request.new(env)
-        execute_callbacks(@before_request, @last_request)
 
         status, headers, body = @app.call(@last_request.env)
         @last_response = Rack::Response.new(body, status, headers)
