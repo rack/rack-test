@@ -81,12 +81,6 @@ describe Rack::Test::Session do
       response.body.should be_empty
     end
 
-    it "follows redirects when explicitely asked" do
-      @session.request "/?redirect=1", "rack.test.follow_redirect" => true
-      response.should_not be_redirect
-      response.body.should == ["You've been redirected"]
-    end
-
     context "when input is given" do
       it "should send the input" do
         @session.request "/", :method => "POST", :input => "foo"

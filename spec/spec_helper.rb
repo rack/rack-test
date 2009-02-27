@@ -22,15 +22,4 @@ describe "any #verb methods", :shared => true do
     @session.send(verb, "/", {}, { "User-Agent" => "Rack::Test" })
     request.env["User-Agent"].should == "Rack::Test"
   end
-
-  it "follows redirect" do
-    if verb == "post"
-      @session.send(verb, "/", "redirect" => true)
-    else
-      @session.send(verb, "/?redirect=1")
-    end
-
-    response.should_not be_redirect
-    response.body.should == ["You've been redirected"]
-  end
 end
