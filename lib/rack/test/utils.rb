@@ -2,6 +2,7 @@ module Rack
   module Test
     
     module Utils
+      include Rack::Utils
       
       def requestify(value, prefix = nil)
         case value

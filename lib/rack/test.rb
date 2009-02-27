@@ -9,7 +9,6 @@ module Rack
   module Test
     
     class Session
-      include Rack::Utils
       include Rack::Test::Utils
 
       def initialize(app)
