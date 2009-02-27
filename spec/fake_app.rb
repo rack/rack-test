@@ -8,12 +8,12 @@ module Rack
         "meh"
       end
 
-      before do
-        redirect "/redirected" if params["redirect"]
-      end
-
       get "/" do
         "Hello, GET: #{params.inspect}"
+      end
+      
+      get "/redirect" do
+        redirect "/redirected"
       end
 
       get "/redirected" do
