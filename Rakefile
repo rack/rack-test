@@ -1,8 +1,9 @@
 require "rubygems"
+require "rake/rdoctask"
 require "rake/gempackagetask"
 require "rake/clean"
 require "spec/rake/spectask"
-require "./lib/rack/test"
+require File.expand_path("./lib/rack/test")
 
 Spec::Rake::SpecTask.new do |t|
   t.spec_opts == ["--color"]
@@ -19,11 +20,25 @@ spec = Gem::Specification.new do |s|
   s.homepage     = "http://github.com/brynary/rack-test"
   s.summary      = "Simple testing API built on Rack"
   s.description  = s.summary
-  s.files        = %w[Rakefile] + Dir["lib/**/*"]
+  s.files        = %w[Rakefile README.rdoc] + Dir["lib/**/*"]
+  
+  # rdoc
+  s.has_rdoc         = true
+  s.extra_rdoc_files = %w(README.rdoc MIT-LICENSE.txt)
 end
 
 Rake::GemPackageTask.new(spec) do |package|
   package.gem_spec = spec
+end
+
+desc "Delete generated RDoc"
+task :clobber_docs do
+  FileUtils.rm_rf("doc")
+end
+
+desc "Generate RDoc"
+task :docs => :clobber_docs do
+  system "hanna --title 'Rack::Test #{Rack::Test::VERSION} API Documentation'"
 end
 
 desc 'Install the package as a gem.'
@@ -31,3 +46,4 @@ task :install => [:clean, :package] do
   gem = Dir['pkg/*.gem'].first
   sh "sudo gem install --local #{gem}"
 end
+
