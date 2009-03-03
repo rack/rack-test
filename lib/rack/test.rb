@@ -1,12 +1,14 @@
-unless $LOAD_PATH.include?(File.expand_path(File.dirname(__FILE__)))
-  $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
+require "rubygems"
+
+unless $LOAD_PATH.include?(File.expand_path(File.dirname(__FILE__) + "/.."))
+  $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + "/.."))
 end
 
-require "rubygems"
 require "uri"
 require "rack"
 require "rack/test/cookie_jar"
 require "rack/test/utils"
+require "rack/test/methods"
 
 module Rack
   module Test
