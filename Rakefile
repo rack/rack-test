@@ -29,7 +29,7 @@ spec = Gem::Specification.new do |s|
   s.homepage     = "http://github.com/brynary/rack-test"
   s.summary      = "Simple testing API built on Rack"
   s.description  = s.summary
-  s.files        = %w[Rakefile README.rdoc] + Dir["lib/**/*"]
+  s.files        = %w[History.txt Rakefile README.rdoc] + Dir["lib/**/*"]
   
   # rdoc
   s.has_rdoc         = true
