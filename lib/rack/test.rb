@@ -22,33 +22,79 @@ module Rack
     class Session
       include Rack::Test::Utils
 
+      # Initialize a new session for the given Rack app
       def initialize(app)
         raise ArgumentError.new("app must respond_to?(:call)") unless app.respond_to?(:call)
 
         @headers = {}
         @app = app
       end
-
-      [:get, :post, :put, :delete, :head].each do |http_method|
-        class_eval <<-SRC
-          def #{http_method}(uri, params = {}, env = {})          # def get(uri, params = {}, env = {})
-            env = env_for(uri,                                    #   env = env_for(uri,
-              env.merge(:method => "#{http_method.to_s.upcase}",  #     env.merge(:method => "GET",
-              :params => params))                                 #     :params => params))
-            process_request(uri, env)                             #   process_request(uri, env)
-          end                                                     # end
-        SRC
+      
+      # Issue a GET request for the given URI with the given params and Rack
+      # environment. Stores the issues request object in #last_request and
+      # the app's response in #last_response. Yield #last_response to a block
+      # if given.
+      # 
+      # Example:
+      #   get "/"
+      def get(uri, params = {}, env = {}, &block)
+        env = env_for(uri, env.merge(:method => "GET", :params => params))
+        process_request(uri, env, &block)
+      end
+      
+      # Issue a POST request for the given URI. See #get
+      # 
+      # Example:
+      #   post "/signup", "name" => "Bryan"
+      def post(uri, params = {}, env = {}, &block)
+        env = env_for(uri, env.merge(:method => "POST", :params => params))
+        process_request(uri, env, &block)
+      end
+      
+      # Issue a PUT request for the given URI. See #get
+      # 
+      # Example:
+      #   put "/"
+      def put(uri, params = {}, env = {}, &block)
+        env = env_for(uri, env.merge(:method => "PUT", :params => params))
+        process_request(uri, env, &block)
+      end
+      
+      # Issue a DELETE request for the given URI. See #get
+      # 
+      # Example:
+      #   delete "/"
+      def delete(uri, params = {}, env = {}, &block)
+        env = env_for(uri, env.merge(:method => "DELETE", :params => params))
+        process_request(uri, env, &block)
+      end
+      
+      # Issue a HEAD request for the given URI. See #get
+      # 
+      # Example:
+      #   head "/"
+      def head(uri, params = {}, env = {}, &block)
+        env = env_for(uri, env.merge(:method => "HEAD", :params => params))
+        process_request(uri, env, &block)
       end
 
-      def request(uri, env = {})
+      # Issue a request to the Rack app for the given URI and optional Rack
+      # environment. Stores the issues request object in #last_request and
+      # the app's response in #last_response. Yield #last_response to a block
+      # if given.
+      # 
+      # Example:
+      #   request "/"
+      def request(uri, env = {}, &block)
         env = env_for(uri, env)
-        process_request(uri, env)
-
-        yield @last_response if block_given?
-
-        @last_response
+        process_request(uri, env, &block)
       end
 
+      # Set a header to be included on all subsequent requests through the
+      # session. Use a value of nil to remove a previously configured header.
+      # 
+      # Example:
+      #   header "User-Agent", "Firefox"
       def header(name, value)
         if value.nil?
           @headers.delete(name)
@@ -57,11 +103,18 @@ module Rack
         end
       end
       
+      # Set the username and password for HTTP Basic authorization, to be
+      # included in subsequent requests in the HTTP_AUTHORIZATION header.
+      # 
+      # Example:
+      #   authorize "bryan", "secret"
       def authorize(username, password)
         encoded_login = ["#{username}:#{password}"].pack("m*")
         header('HTTP_AUTHORIZATION', "Basic #{encoded_login}")
       end
       
+      # Follow the redirect returned in the last response. If the last
+      # response was not a redirect, an error will be raised.
       def follow_redirect!
         unless last_response.redirect?
           raise Error.new("Last response was not a redirect. Cannot follow_redirect!")
@@ -70,19 +123,21 @@ module Rack
         get(last_response["Location"])
       end
 
+      # Return the last request issued in the session. Raises an error if no
+      # requests have been sent yet.
       def last_request
         raise Error.new("No request yet. Request a page first.") unless @last_request
 
         @last_request
       end
 
+      # Return the last response received in the session. Raises an error if
+      # no requests have been sent yet.
       def last_response
         raise Error.new("No response yet. Request a page first.") unless @last_response
 
         @last_response
       end
-
-      alias_method :response, :last_response
 
     private
 
@@ -130,6 +185,8 @@ module Rack
         @last_response = Rack::Response.new(body, status, headers)
         @cookie_jar = cookie_jar.merge(uri, last_response.headers["Set-Cookie"])
 
+        yield @last_response if block_given?
+        
         @last_response
       end
 

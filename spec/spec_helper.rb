@@ -22,4 +22,15 @@ describe "any #verb methods", :shared => true do
     send(verb, "/", {}, { "User-Agent" => "Rack::Test" })
     last_request.env["User-Agent"].should == "Rack::Test"
   end
+  
+  it "yields the response to a given block" do
+    yielded = false
+    
+    send(verb, "/") do |response|
+      response.should be_ok
+      yielded = true
+    end
+    
+    yielded.should be_true
+  end
 end
