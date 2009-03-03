@@ -28,35 +28,6 @@ module Rack
         SRC
       end
 
-      def env_for(path, env)
-        uri = URI.parse(path)
-        uri.host ||= "example.org"
-
-        env = default_env.merge(env)
-
-        if URI::HTTPS === uri
-          env.update("HTTPS" => "on")
-        end
-
-        if (env[:method] == "POST" || env["REQUEST_METHOD"] == "POST") && !env.has_key?(:input)
-          env["CONTENT_TYPE"] = "application/x-www-form-urlencoded"
-          env[:input] = params_to_string(env.delete(:params))
-        end
-
-        params = env[:params] || {}
-        params.update(parse_query(uri.query))
-        uri.query = requestify(params)
-
-        if env.has_key?(:cookie)
-          # Add the cookies explicitly set by the user
-          env["HTTP_COOKIE"] = cookie_jar.merge(uri, env.delete(:cookie)).for(uri)
-        else
-          env["HTTP_COOKIE"] = cookie_jar.for(uri)
-        end
-
-        Rack::MockRequest.env_for(uri.to_s, env)
-      end
-
       def request(uri, env = {})
         env = env_for(uri, env)
         process_request(uri, env)
@@ -86,6 +57,36 @@ module Rack
 
     private
 
+      
+      def env_for(path, env)
+        uri = URI.parse(path)
+        uri.host ||= "example.org"
+
+        env = default_env.merge(env)
+
+        if URI::HTTPS === uri
+          env.update("HTTPS" => "on")
+        end
+
+        if (env[:method] == "POST" || env["REQUEST_METHOD"] == "POST") && !env.has_key?(:input)
+          env["CONTENT_TYPE"] = "application/x-www-form-urlencoded"
+          env[:input] = params_to_string(env.delete(:params))
+        end
+
+        params = env[:params] || {}
+        params.update(parse_query(uri.query))
+        uri.query = requestify(params)
+
+        if env.has_key?(:cookie)
+          # Add the cookies explicitly set by the user
+          env["HTTP_COOKIE"] = cookie_jar.merge(uri, env.delete(:cookie)).for(uri)
+        else
+          env["HTTP_COOKIE"] = cookie_jar.for(uri)
+        end
+
+        Rack::MockRequest.env_for(uri.to_s, env)
+      end
+      
       def cookie_jar
         @cookie_jar || Rack::Test::CookieJar.new
       end
