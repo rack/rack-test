@@ -8,11 +8,15 @@ require File.dirname(__FILE__) + "/test/utils"
 module Rack
   module Test
     
+    # The common base class for exceptions raised by Rack::Test
+    class Error < StandardError
+    end
+    
     class Session
       include Rack::Test::Utils
 
       def initialize(app)
-        raise ArgumentError unless app.respond_to?(:call)
+        raise ArgumentError.new("app must respond_to?(:call)") unless app.respond_to?(:call)
 
         @headers = {}
         @app = app
@@ -52,17 +56,21 @@ module Rack
       end
       
       def follow_redirect!
+        unless last_response.redirect?
+          raise Error.new("Last response was not a redirect. Cannot follow_redirect!")
+        end
+        
         get(last_response["Location"])
       end
 
       def last_request
-        raise unless @last_request
+        raise Error.new("No request yet. Request a page first.") unless @last_request
 
         @last_request
       end
 
       def last_response
-        raise unless @last_response
+        raise Error.new("No response yet. Request a page first.") unless @last_response
 
         @last_response
       end

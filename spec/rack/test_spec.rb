@@ -188,7 +188,7 @@ describe Rack::Test::Session do
     it "raises an error if the last_response is not set" do
       lambda {
         @session.follow_redirect!
-      }.should raise_error
+      }.should raise_error(Rack::Test::Error)
     end
     
     it "raises an error if the last_response is not a redirect" do
@@ -196,7 +196,7 @@ describe Rack::Test::Session do
       
       lambda {
         @session.follow_redirect!
-      }.should raise_error
+      }.should raise_error(Rack::Test::Error)
     end
   end
   
@@ -209,7 +209,7 @@ describe Rack::Test::Session do
     it "raises an error if no requests have been issued" do
       lambda {
         @session.last_request
-      }.should raise_error
+      }.should raise_error(Rack::Test::Error)
     end
   end
 
