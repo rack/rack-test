@@ -17,7 +17,8 @@ describe Rack::Test::Utils do
     end
     
     it "converts hashes with multiple keys" do
-      requestify(:a => 1, :b => 2).should == "a=1&b=2"
+      hash = { :a => 1, :b => 2 }
+      ["a=1&b=2", "b=2&a=1"].should include(requestify(hash))
     end
     
     it "converts arrays with one element" do
