@@ -1,12 +1,17 @@
+unless $LOAD_PATH.include?(File.expand_path(File.dirname(__FILE__)))
+  $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
+end
+
 require "rubygems"
 require "uri"
 require "rack"
-
-require File.dirname(__FILE__) + "/test/cookie_jar"
-require File.dirname(__FILE__) + "/test/utils"
+require "rack/test/cookie_jar"
+require "rack/test/utils"
 
 module Rack
   module Test
+    
+    VERSION = "0.1.0"
     
     # The common base class for exceptions raised by Rack::Test
     class Error < StandardError

@@ -1,8 +1,7 @@
 require "rubygems"
 require "spec"
-require File.dirname(__FILE__) + "/../lib/rack/test"
-
-require File.dirname(__FILE__) + "/fake_app"
+require File.expand_path(File.dirname(__FILE__) + "/../lib/rack/test")
+require File.dirname(__FILE__) + "/fixtures/fake_app"
 
 describe "any #verb methods", :shared => true do
   it "requests the URL using VERB" do

@@ -13,7 +13,7 @@ task :default => :spec
 
 spec = Gem::Specification.new do |s|
   s.name         = "rack-test"
-  s.version      = "0.1.0"
+  s.version      = Rack::Test::VERSION
   s.author       = "Bryan Helmkamp"
   s.email        = "bryan" + "@" + "brynary.com"
   s.homepage     = "http://github.com/brynary/rack-test"
@@ -22,11 +22,9 @@ spec = Gem::Specification.new do |s|
   s.files        = %w[Rakefile] + Dir["lib/**/*"]
 end
 
-
 Rake::GemPackageTask.new(spec) do |package|
   package.gem_spec = spec
 end
-
 
 desc 'Install the package as a gem.'
 task :install => [:clean, :package] do
