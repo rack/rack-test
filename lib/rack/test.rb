@@ -134,10 +134,7 @@ module Rack
       end
 
       def default_env
-        {
-          "rack.test"   => true,
-          "REMOTE_ADDR" => "127.0.0.1"
-        }.merge(@headers)
+        { "rack.test" => true, "REMOTE_ADDR" => "127.0.0.1" }.merge(@headers)
       end
 
       def params_to_string(params)
