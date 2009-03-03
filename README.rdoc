@@ -22,16 +22,19 @@ request helpers feature.
   require "rack/test"
   
   class HomepageTest < Test::Unit::TestCase
-  
+    include Rack::Test::Methods
+    
+    def app
+      MyApp.new
+    end
+    
     def test_redirect_logged_in_users_to_dashboard
-      session = Rack::Test::Session.new(MyApp.new)
+      authorize "bryan", "secret"
+      get "/"
+      follow_redirect!
       
-      session.authorize "bryan", "secret"
-      session.get "/"
-      session.follow_redirect!
-      
-      assert_equal "http://example.org/redirected", session.last_request.url
-      assert session.last_response.ok?
+      assert_equal "http://example.org/redirected", last_request.url
+      assert last_response.ok?
     end
     
   end
