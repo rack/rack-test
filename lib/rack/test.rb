@@ -14,6 +14,7 @@ module Rack
       def initialize(app)
         raise ArgumentError unless app.respond_to?(:call)
 
+        @headers = {}
         @app = app
       end
 
@@ -37,6 +38,14 @@ module Rack
         @last_response
       end
 
+      def header(name, value)
+        if value.nil?
+          @headers.delete(name)
+        else
+          @headers[name] = value
+        end
+      end
+      
       def follow_redirect!
         get(last_response["Location"])
       end
@@ -108,7 +117,7 @@ module Rack
         {
           "rack.test"   => true,
           "REMOTE_ADDR" => "127.0.0.1"
-        }
+        }.merge(@headers)
       end
 
       def params_to_string(params)

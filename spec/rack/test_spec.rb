@@ -120,6 +120,41 @@ describe Rack::Test::Session do
       end
     end
   end
+  
+  describe "#header" do
+    it "sets a header to be sent with requests" do
+      @session.header "User-Agent", "Firefox"
+      @session.request "/"
+      request.env["User-Agent"].should == "Firefox"
+    end
+    
+    it "persists across multiple requests" do
+      @session.header "User-Agent", "Firefox"
+      @session.request "/"
+      @session.request "/"
+      request.env["User-Agent"].should == "Firefox"
+    end
+    
+    it "overwrites previously set headers" do
+      @session.header "User-Agent", "Firefox"
+      @session.header "User-Agent", "Safari"
+      @session.request "/"
+      request.env["User-Agent"].should == "Safari"
+    end
+    
+    it "can be used to clear a header" do
+      @session.header "User-Agent", "Firefox"
+      @session.header "User-Agent", nil
+      @session.request "/"
+      request.env.should_not have_key("User-Agent")
+    end
+    
+    it "is overridden by headers sent during the request" do
+      @session.header "User-Agent", "Firefox"
+      @session.request "/", "User-Agent" => "Safari"
+      request.env["User-Agent"].should == "Safari"
+    end
+  end
 
   describe "follow_redirect!" do
     it "follows redirects" do
