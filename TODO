@@ -1,2 +1,1 @@
 Support for multipart requests
-Create an error class for all Rack::Test exceptions
