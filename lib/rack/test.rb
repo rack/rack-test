@@ -46,6 +46,11 @@ module Rack
         end
       end
       
+      def authorize(username, password)
+        encoded_login = ["#{username}:#{password}"].pack("m*")
+        header('HTTP_AUTHORIZATION', "Basic #{encoded_login}")
+      end
+      
       def follow_redirect!
         get(last_response["Location"])
       end

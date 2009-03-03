@@ -1,4 +1,2 @@
-Ability to set headers which persist during the session
 Support for multipart requests
-HTTP Basic auth support
 Create an error class for all Rack::Test exceptions

@@ -156,6 +156,21 @@ describe Rack::Test::Session do
     end
   end
 
+  describe "#authorize" do
+    it "sets the HTTP_AUTHORIZATION header" do
+      @session.authorize "bryan", "secret"
+      @session.request "/"
+      request.env["HTTP_AUTHORIZATION"].should == "Basic YnJ5YW46c2VjcmV0\n"
+    end
+    
+    it "includes the header for subsequent requests" do
+      @session.authorize "bryan", "secret"
+      @session.request "/"
+      @session.request "/"
+      request.env["HTTP_AUTHORIZATION"].should == "Basic YnJ5YW46c2VjcmV0\n"
+    end
+  end
+  
   describe "follow_redirect!" do
     it "follows redirects" do
       @session.get "/redirect"
