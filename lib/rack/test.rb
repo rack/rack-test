@@ -152,6 +152,10 @@ module Rack
           env.update("HTTPS" => "on")
         end
 
+        if env[:xhr]
+          env["X-Requested-With"] = "XMLHttpRequest"
+        end
+        
         if (env[:method] == "POST" || env["REQUEST_METHOD"] == "POST") && !env.has_key?(:input)
           env["CONTENT_TYPE"] = "application/x-www-form-urlencoded"
           env[:input] = params_to_string(env.delete(:params))

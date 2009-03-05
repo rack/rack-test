@@ -33,4 +33,11 @@ describe "any #verb methods", :shared => true do
     
     yielded.should be_true
   end
+  
+  context "for a XHR" do
+    it "sends XMLHttpRequest for the X-Requested-With header" do
+      send(verb, "/", {}, { :xhr => true })
+      last_request.env["X-Requested-With"].should == "XMLHttpRequest"
+    end
+  end
 end
