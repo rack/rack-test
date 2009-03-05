@@ -113,7 +113,8 @@ module Rack
         header('HTTP_AUTHORIZATION', "Basic #{encoded_login}")
       end
       
-      # Follow the redirect returned in the last response. If the last
+      # Rack::Test will not follow any redirects automatically. This method
+      # will follow the redirect returned in the last response. If the last
       # response was not a redirect, an error will be raised.
       def follow_redirect!
         unless last_response.redirect?
