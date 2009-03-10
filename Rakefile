@@ -53,6 +53,6 @@ end
 desc 'Install the package as a gem.'
 task :install => [:clean, :package] do
   gem = Dir['pkg/*.gem'].first
-  sh "sudo gem install --local #{gem}"
+  sh "sudo gem install --no-rdoc --no-ri --local #{gem}"
 end
 
