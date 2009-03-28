@@ -11,7 +11,7 @@ module Rack
       get "/" do
         "Hello, GET: #{params.inspect}"
       end
-      
+
       get "/redirect" do
         redirect "/redirected"
       end

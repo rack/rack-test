@@ -30,7 +30,7 @@ spec = Gem::Specification.new do |s|
   s.summary      = "Simple testing API built on Rack"
   s.description  = s.summary
   s.files        = %w[History.txt Rakefile README.rdoc] + Dir["lib/**/*"]
-  
+
   # rdoc
   s.has_rdoc         = true
   s.extra_rdoc_files = %w(README.rdoc MIT-LICENSE.txt)
@@ -55,4 +55,3 @@ task :install => [:clean, :package] do
   gem = Dir['pkg/*.gem'].first
   sh "sudo gem install --no-rdoc --no-ri --local #{gem}"
 end
-

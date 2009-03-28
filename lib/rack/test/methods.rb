@@ -4,7 +4,7 @@ module Rack
   module Test
     module Methods
       extend Forwardable
-      
+
       def rack_test_session
         @_rack_test_session ||= Rack::Test::Session.new(app)
       end

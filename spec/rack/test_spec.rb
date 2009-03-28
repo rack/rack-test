@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe Rack::Test::Session do
   include Rack::Test::Methods
-  
+
   def app
     Rack::Test::FakeApp.new
   end
@@ -25,95 +25,95 @@ describe Rack::Test::Session do
     it "returns a response" do
       request("/").should be_ok
     end
-    
+
     it "uses the provided env" do
       request "/", "X-Foo" => "bar"
       last_request.env["X-Foo"].should == "bar"
     end
-    
+
     it "defaults to GET" do
       request "/"
       last_request.env["REQUEST_METHOD"].should == "GET"
     end
-    
+
     it "defaults the REMOTE_ADDR to 127.0.0.1" do
       request "/"
       last_request.env["REMOTE_ADDR"].should == "127.0.0.1"
     end
-    
+
     it "sets rack.test to true in the env" do
       request "/"
       last_request.env["rack.test"].should == true
     end
-    
+
     it "defaults to port 80" do
       request "/"
       last_request.env["SERVER_PORT"].should == "80"
     end
-    
+
     it "defaults to example.org" do
       request "/"
       last_request.env["SERVER_NAME"].should == "example.org"
     end
-    
+
     it "keeps a cookie jar" do
       request "/set-cookie"
       last_response.body.should == ["Value: 0"]
-      
+
       request "/set-cookie"
       last_response.body.should == ["Value: 1"]
     end
-    
+
     it "accepts explicitly provided cookies" do
       request "/set-cookie", :cookie => "value=1"
       last_response.body.should == ["Value: 1"]
     end
-    
+
     it "sends multipart requests"
-    
+
     it "yields the response to a given block" do
       request "/" do |response|
         response.should be_ok
       end
     end
-    
+
     it "doesn't follow redirects by default" do
       request "/redirect"
       last_response.should be_redirect
       last_response.body.should be_empty
     end
-    
+
     context "when input is given" do
       it "should send the input" do
         request "/", :method => "POST", :input => "foo"
         last_request.env["rack.input"].string.should == "foo"
       end
-    
+
       it "should not send a multipart request" do
         request "/", :method => "POST", :input => "foo"
         last_request.env["CONTENT_TYPE"].should_not == "application/x-www-form-urlencoded"
       end
     end
-    
+
     context "for a POST" do
       it "uses application/x-www-form-urlencoded as the CONTENT_TYPE" do
         request "/", :method => "POST"
         last_request.env["CONTENT_TYPE"].should == "application/x-www-form-urlencoded"
       end
     end
-    
+
     context "when the URL is https://" do
       it "sets SERVER_PORT to 443" do
         get "https://example.org/"
         last_request.env["SERVER_PORT"].should == "443"
       end
-    
+
       it "sets HTTPS to on" do
         get "https://example.org/"
         last_request.env["HTTPS"].should == "on"
       end
     end
-    
+
     context "for a XHR" do
       it "sends XMLHttpRequest for the X-Requested-With header" do
         request "/", :xhr => true
@@ -121,171 +121,171 @@ describe Rack::Test::Session do
       end
     end
   end
-  
+
   describe "#header" do
     it "sets a header to be sent with requests" do
       header "User-Agent", "Firefox"
       request "/"
-      
+
       last_request.env["User-Agent"].should == "Firefox"
     end
-    
+
     it "persists across multiple requests" do
       header "User-Agent", "Firefox"
       request "/"
       request "/"
-      
+
       last_request.env["User-Agent"].should == "Firefox"
     end
-    
+
     it "overwrites previously set headers" do
       header "User-Agent", "Firefox"
       header "User-Agent", "Safari"
       request "/"
-      
+
       last_request.env["User-Agent"].should == "Safari"
     end
-    
+
     it "can be used to clear a header" do
       header "User-Agent", "Firefox"
       header "User-Agent", nil
       request "/"
-      
+
       last_request.env.should_not have_key("User-Agent")
     end
-    
+
     it "is overridden by headers sent during the request" do
       header "User-Agent", "Firefox"
       request "/", "User-Agent" => "Safari"
-      
+
       last_request.env["User-Agent"].should == "Safari"
     end
   end
-  
+
   describe "#authorize" do
     it "sets the HTTP_AUTHORIZATION header" do
       authorize "bryan", "secret"
       request "/"
-      
+
       last_request.env["HTTP_AUTHORIZATION"].should == "Basic YnJ5YW46c2VjcmV0\n"
     end
-    
+
     it "includes the header for subsequent requests" do
       authorize "bryan", "secret"
       request "/"
       request "/"
-      
+
       last_request.env["HTTP_AUTHORIZATION"].should == "Basic YnJ5YW46c2VjcmV0\n"
     end
   end
-  
+
   describe "follow_redirect!" do
     it "follows redirects" do
       get "/redirect"
       follow_redirect!
-      
+
       last_response.should_not be_redirect
       last_response.body.should == ["You've been redirected"]
     end
-    
+
     it "does not include params when following the redirect" do
       get "/redirect", { "foo" => "bar" }
       follow_redirect!
-      
+
       last_request.GET.should == {}
     end
-    
+
     it "raises an error if the last_response is not set" do
       lambda {
         follow_redirect!
       }.should raise_error(Rack::Test::Error)
     end
-    
+
     it "raises an error if the last_response is not a redirect" do
       get "/"
-      
+
       lambda {
         follow_redirect!
       }.should raise_error(Rack::Test::Error)
     end
   end
-  
+
   describe "#last_request" do
     it "returns the most recent request" do
       request "/"
       last_request.env["PATH_INFO"].should == "/"
     end
-  
+
     it "raises an error if no requests have been issued" do
       lambda {
         last_request
       }.should raise_error(Rack::Test::Error)
     end
   end
-  
+
   describe "#last_response" do
     it "returns the most recent response" do
       request "/"
       last_response["Content-Type"].should == "text/html"
     end
-  
+
     it "raises an error if no requests have been issued" do
       lambda {
         last_response
       }.should raise_error
     end
   end
-  
+
   describe "#get" do
     it_should_behave_like "any #verb methods"
-  
+
     def verb
       "get"
     end
-  
+
     it "accepts params in the path" do
       get "/?foo=bar"
       last_request.send(verb.upcase).should == { "foo" => "bar" }
     end
   end
-  
+
   describe "#head" do
     it_should_behave_like "any #verb methods"
-  
+
     def verb
       "head"
     end
   end
-  
+
   describe "#post" do
     it_should_behave_like "any #verb methods"
-  
+
     def verb
       "post"
     end
-  
+
     it "uses application/x-www-form-urlencoded as the CONTENT_TYPE" do
       post "/"
       last_request.env["CONTENT_TYPE"].should == "application/x-www-form-urlencoded"
     end
-  
+
     it "accepts a body" do
       post "/", "Lobsterlicious!"
       last_request.body.read.should == "Lobsterlicious!"
     end
   end
-  
+
   describe "#put" do
     it_should_behave_like "any #verb methods"
-  
+
     def verb
       "put"
     end
   end
-  
+
   describe "#delete" do
     it_should_behave_like "any #verb methods"
-  
+
     def verb
       "delete"
     end

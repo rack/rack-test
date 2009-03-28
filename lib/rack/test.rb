@@ -12,13 +12,13 @@ require "rack/test/methods"
 
 module Rack
   module Test
-    
+
     VERSION = "0.1.0"
-    
+
     # The common base class for exceptions raised by Rack::Test
     class Error < StandardError
     end
-    
+
     class Session
       include Rack::Test::Utils
 
@@ -29,48 +29,48 @@ module Rack
         @headers = {}
         @app = app
       end
-      
+
       # Issue a GET request for the given URI with the given params and Rack
       # environment. Stores the issues request object in #last_request and
       # the app's response in #last_response. Yield #last_response to a block
       # if given.
-      # 
+      #
       # Example:
       #   get "/"
       def get(uri, params = {}, env = {}, &block)
         env = env_for(uri, env.merge(:method => "GET", :params => params))
         process_request(uri, env, &block)
       end
-      
+
       # Issue a POST request for the given URI. See #get
-      # 
+      #
       # Example:
       #   post "/signup", "name" => "Bryan"
       def post(uri, params = {}, env = {}, &block)
         env = env_for(uri, env.merge(:method => "POST", :params => params))
         process_request(uri, env, &block)
       end
-      
+
       # Issue a PUT request for the given URI. See #get
-      # 
+      #
       # Example:
       #   put "/"
       def put(uri, params = {}, env = {}, &block)
         env = env_for(uri, env.merge(:method => "PUT", :params => params))
         process_request(uri, env, &block)
       end
-      
+
       # Issue a DELETE request for the given URI. See #get
-      # 
+      #
       # Example:
       #   delete "/"
       def delete(uri, params = {}, env = {}, &block)
         env = env_for(uri, env.merge(:method => "DELETE", :params => params))
         process_request(uri, env, &block)
       end
-      
+
       # Issue a HEAD request for the given URI. See #get
-      # 
+      #
       # Example:
       #   head "/"
       def head(uri, params = {}, env = {}, &block)
@@ -82,7 +82,7 @@ module Rack
       # environment. Stores the issues request object in #last_request and
       # the app's response in #last_response. Yield #last_response to a block
       # if given.
-      # 
+      #
       # Example:
       #   request "/"
       def request(uri, env = {}, &block)
@@ -92,7 +92,7 @@ module Rack
 
       # Set a header to be included on all subsequent requests through the
       # session. Use a value of nil to remove a previously configured header.
-      # 
+      #
       # Example:
       #   header "User-Agent", "Firefox"
       def header(name, value)
@@ -102,17 +102,17 @@ module Rack
           @headers[name] = value
         end
       end
-      
+
       # Set the username and password for HTTP Basic authorization, to be
       # included in subsequent requests in the HTTP_AUTHORIZATION header.
-      # 
+      #
       # Example:
       #   authorize "bryan", "secret"
       def authorize(username, password)
         encoded_login = ["#{username}:#{password}"].pack("m*")
         header('HTTP_AUTHORIZATION', "Basic #{encoded_login}")
       end
-      
+
       # Rack::Test will not follow any redirects automatically. This method
       # will follow the redirect returned in the last response. If the last
       # response was not a redirect, an error will be raised.
@@ -120,7 +120,7 @@ module Rack
         unless last_response.redirect?
           raise Error.new("Last response was not a redirect. Cannot follow_redirect!")
         end
-        
+
         get(last_response["Location"])
       end
 
@@ -142,7 +142,7 @@ module Rack
 
     private
 
-      
+
       def env_for(path, env)
         uri = URI.parse(path)
         uri.host ||= "example.org"
@@ -156,7 +156,7 @@ module Rack
         if env[:xhr]
           env["X-Requested-With"] = "XMLHttpRequest"
         end
-        
+
         if (env[:method] == "POST" || env["REQUEST_METHOD"] == "POST") && !env.has_key?(:input)
           env["CONTENT_TYPE"] = "application/x-www-form-urlencoded"
           env[:input] = params_to_string(env.delete(:params))
@@ -175,7 +175,7 @@ module Rack
 
         Rack::MockRequest.env_for(uri.to_s, env)
       end
-      
+
       def cookie_jar
         @cookie_jar || Rack::Test::CookieJar.new
       end
@@ -191,7 +191,7 @@ module Rack
         @cookie_jar = cookie_jar.merge(uri, last_response.headers["Set-Cookie"])
 
         yield @last_response if block_given?
-        
+
         @last_response
       end
 
@@ -206,8 +206,8 @@ module Rack
         else params
         end
       end
-      
+
     end
-    
+
   end
 end

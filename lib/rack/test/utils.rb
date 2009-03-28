@@ -1,9 +1,9 @@
 module Rack
   module Test
-    
+
     module Utils
       include Rack::Utils
-      
+
       def requestify(value, prefix = nil)
         case value
         when Array
@@ -18,10 +18,10 @@ module Rack
           "#{prefix}=#{escape(value)}"
         end
       end
-      
+
       module_function :requestify
-      
+
     end
-    
+
   end
 end
