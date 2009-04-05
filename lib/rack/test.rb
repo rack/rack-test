@@ -16,15 +16,19 @@ module Rack
       def initialize(params)
         @params = params
       end
+
       def method_missing(sym)
         if @params.has_key? k = sym.to_s
           return @params[k]
         end
+
         super
       end
+
       def method
         @params['method']
       end
+
       def response(password)
         Rack::Auth::Digest::MD5.new(nil).send :digest, self, password
       end
@@ -35,8 +39,7 @@ module Rack
     MULTIPART_BOUNDARY = "----------XnJLe9ZIbbGUYtzPQJ16u1"
 
     # The common base class for exceptions raised by Rack::Test
-    class Error < StandardError
-    end
+    class Error < StandardError; end
 
     class Session
       include Rack::Test::Utils
@@ -46,7 +49,7 @@ module Rack
         raise ArgumentError.new("app must respond_to?(:call)") unless app.respond_to?(:call)
 
         @headers = {}
-        @app = app
+        @app     = app
       end
 
       # Issue a GET request for the given URI with the given params and Rack
@@ -166,20 +169,14 @@ module Rack
 
     private
 
-
       def env_for(path, env)
         uri = URI.parse(path)
         uri.host ||= "example.org"
 
         env = default_env.merge(env)
 
-        if URI::HTTPS === uri
-          env.update("HTTPS" => "on")
-        end
-
-        if env[:xhr]
-          env["X-Requested-With"] = "XMLHttpRequest"
-        end
+        env.update("HTTPS" => "on")                if URI::HTTPS === uri
+        env["X-Requested-With"] = "XMLHttpRequest" if env[:xhr]
 
         if (env[:method] == "POST" || env["REQUEST_METHOD"] == "POST") && !env.has_key?(:input)
           env["CONTENT_TYPE"] = "application/x-www-form-urlencoded"
@@ -223,12 +220,14 @@ module Rack
         @last_request = Rack::Request.new(env)
 
         status, headers, body = @app.call(@last_request.env)
-        @last_response = MockResponse.new(status, headers, body, env['rack.errors'])
+        @last_response = MockResponse.new(status, headers, body, env["rack.errors"])
 
         @cookie_jar = cookie_jar.merge(uri, last_response.headers["Set-Cookie"])
 
         if retry_with_digest_auth?(env)
-          process_request(uri.path, env.merge("HTTP_AUTHORIZATION" => digest_auth_header, "rack-test.digest_auth_retry" => true))
+          process_request(uri.path,
+            env.merge("HTTP_AUTHORIZATION" => digest_auth_header,
+                      "rack-test.digest_auth_retry" => true))
         else
           yield @last_response if block_given?
 
@@ -237,18 +236,18 @@ module Rack
       end
 
       def digest_auth_header
-        challenge = @last_response['WWW-Authenticate'].split(' ', 2).last
+        challenge = @last_response["WWW-Authenticate"].split(" ", 2).last
         params = Rack::Auth::Digest::Params.parse(challenge)
 
         params.merge!({
-          'username'  => @digest_username,
-          'nc'        => '00000001',
-          'cnonce'    => 'nonsensenonce',
-          'uri'       => @last_request.path_info,
-          'method'    => @last_request.env["REQUEST_METHOD"],
+          "username"  => @digest_username,
+          "nc"        => "00000001",
+          "cnonce"    => "nonsensenonce",
+          "uri"       => @last_request.path_info,
+          "method"    => @last_request.env["REQUEST_METHOD"],
         })
 
-        params['response'] = MockDigestRequest.new(params).response(@digest_password)
+        params["response"] = MockDigestRequest.new(params).response(@digest_password)
 
         return "Digest #{params}"
       end
