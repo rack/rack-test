@@ -168,7 +168,7 @@ module Rack
           end
           
           if multipart
-            env[:input] = multipart_params_to_string(env.delete(:params))
+            env[:input] = multipart_body(env.delete(:params))
             env["CONTENT_LENGTH"] ||= env[:input].length.to_s
             env["CONTENT_TYPE"] = "multipart/form-data; boundary=#{MULTIPART_BOUNDARY}"
           else
@@ -213,10 +213,6 @@ module Rack
 
       def default_env
         { "rack.test" => true, "REMOTE_ADDR" => "127.0.0.1" }.merge(@headers)
-      end
-
-      def multipart_params_to_string(params)
-        multipart_body(params, MULTIPART_BOUNDARY)
       end
       
       def params_to_string(params)

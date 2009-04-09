@@ -253,9 +253,26 @@ describe Rack::Test::Session do
       "get"
     end
 
+    it "uses the provided params hash" do
+      get "/", :foo => "bar"
+      last_request.GET.should == { "foo" => "bar" }
+    end
+
+    it "supports params with encoding sensitive names" do
+      get "/", "foo bar" => "baz"
+      last_request.GET["foo bar"].should == "baz"
+    end
+
+    it "supports params with nested encoding sensitive names" do
+      unless %(head put delete).include?(verb)
+        send(verb, "/", "boo" => {"foo bar" => "baz"})
+        last_request.send(verb.upcase)["boo[foo bar]"].should == "baz"
+      end
+    end
+    
     it "accepts params in the path" do
       get "/?foo=bar"
-      last_request.send(verb.upcase).should == { "foo" => "bar" }
+      last_request.GET.should == { "foo" => "bar" }
     end
   end
 
@@ -272,6 +289,16 @@ describe Rack::Test::Session do
 
     def verb
       "post"
+    end
+    
+    it "uses the provided params hash" do
+      post "/", :foo => "bar"
+      last_request.POST.should == { "foo" => "bar" }
+    end
+
+    it "supports params with encoding sensitive names" do
+      post "/", "foo bar" => "baz"
+      last_request.POST["foo bar"].should == "baz"
     end
 
     it "uses application/x-www-form-urlencoded as the CONTENT_TYPE" do

@@ -12,7 +12,7 @@ module Rack
           end.join("&")
         when Hash
           value.map do |k, v|
-            requestify(v, prefix ? "#{prefix}[#{k}]" : k)
+            requestify(v, prefix ? "#{prefix}[#{escape(k)}]" : escape(k))
           end.join("&")
         else
           "#{prefix}=#{escape(value)}"
@@ -41,14 +41,14 @@ module Rack
       
       module_function :multipart_requestify
 
-      def multipart_body(params, boundary)
+      def multipart_body(params)
         multipart_requestify(params).map do |key, value|
           if value.respond_to?(:original_filename)
             ::File.open(value.path, "rb") do |f|
               f.set_encoding(Encoding::BINARY) if f.respond_to?(:set_encoding)
 
               <<-EOF
---#{boundary}\r
+--#{MULTIPART_BOUNDARY}\r
 Content-Disposition: form-data; name="#{key}"; filename="#{escape(value.original_filename)}"\r
 Content-Type: #{value.content_type}\r
 Content-Length: #{::File.stat(value.path).size}\r
@@ -58,13 +58,13 @@ EOF
             end
           else
 <<-EOF
---#{boundary}\r
+--#{MULTIPART_BOUNDARY}\r
 Content-Disposition: form-data; name="#{key}"\r
 \r
 #{value}\r
 EOF
           end
-        end.join("")+"--#{boundary}--\r"
+        end.join("")+"--#{MULTIPART_BOUNDARY}--\r"
       end
       
       module_function :multipart_body

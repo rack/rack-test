@@ -11,13 +11,6 @@ describe "any #verb methods", :shared => true do
     last_response.should be_ok
   end
 
-  it "uses the provided params hash" do
-    unless %(head put delete).include?(verb)
-      send(verb, "/", :foo => "bar")
-      last_request.send(verb.upcase).should == { "foo" => "bar" }
-    end
-  end
-
   it "uses the provided env" do
     send(verb, "/", {}, { "User-Agent" => "Rack::Test" })
     last_request.env["User-Agent"].should == "Rack::Test"
