@@ -75,6 +75,11 @@ describe Rack::Test::Session do
       end
     end
 
+    it "supports sending :params" do
+      request "/", :params => { "foo" => "bar" }
+      last_request.GET["foo"].should == "bar"
+    end
+    
     it "doesn't follow redirects by default" do
       request "/redirect"
       last_response.should be_redirect
