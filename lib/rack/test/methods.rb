@@ -22,6 +22,7 @@ module Rack
         # Header-related features
         :header,
         :authorize,
+        :digest_authorize,
         # Expose the last request and response
         :last_response,
         :last_request

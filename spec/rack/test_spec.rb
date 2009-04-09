@@ -1,12 +1,6 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
 describe Rack::Test::Session do
-  include Rack::Test::Methods
-
-  def app
-    Rack::Test::FakeApp.new
-  end
-
   describe "#initialize" do
     it "raises ArgumentError if the given app doesn't quack like an app" do
       lambda {

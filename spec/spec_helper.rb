@@ -3,6 +3,15 @@ require "spec"
 require File.expand_path(File.dirname(__FILE__) + "/../lib/rack/test")
 require File.dirname(__FILE__) + "/fixtures/fake_app"
 
+Spec::Runner.configure do |config|
+  config.include Rack::Test::Methods
+  
+  def app
+    Rack::Test::FakeApp.new
+  end
+  
+end
+
 describe "any #verb methods", :shared => true do
   it "requests the URL using VERB" do
     send(verb, "/")

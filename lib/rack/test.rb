@@ -14,6 +14,24 @@ require "rack/test/uploaded_file"
 module Rack
   module Test
 
+    class MockDigestRequest
+      def initialize(params)
+        @params = params
+      end
+      def method_missing(sym)
+        if @params.has_key? k = sym.to_s
+          return @params[k]
+        end
+        super
+      end
+      def method
+        @params['method']
+      end
+      def response(password)
+        Rack::Auth::Digest::MD5.new(nil).send :digest, self, password
+      end
+    end
+    
     VERSION = "0.1.0"
 
     MULTIPART_BOUNDARY = "----------XnJLe9ZIbbGUYtzPQJ16u1"
@@ -116,6 +134,11 @@ module Rack
         header('HTTP_AUTHORIZATION', "Basic #{encoded_login}")
       end
 
+      def digest_authorize(username, password)
+        @digest_username = username
+        @digest_password = password
+      end
+      
       # Rack::Test will not follow any redirects automatically. This method
       # will follow the redirect returned in the last response. If the last
       # response was not a redirect, an error will be raised.
@@ -206,11 +229,42 @@ module Rack
 
         @cookie_jar = cookie_jar.merge(uri, last_response.headers["Set-Cookie"])
 
-        yield @last_response if block_given?
+        if retry_with_digest_auth?(env)
+          process_request(uri.path, env.merge("HTTP_AUTHORIZATION" => digest_auth_header, "rack-test.digest_auth_retry" => true))
+        else
+          yield @last_response if block_given?
 
-        @last_response
+          @last_response
+        end
       end
-
+      
+      def digest_auth_header
+        challenge = @last_response['WWW-Authenticate'].split(' ', 2).last
+        params = Rack::Auth::Digest::Params.parse(challenge)
+        
+        params.merge!({
+          'username'  => @digest_username,
+          'nc'        => '00000001',
+          'cnonce'    => 'nonsensenonce',
+          'uri'       => @last_request.path_info,
+          'method'    => @last_request.env["REQUEST_METHOD"],
+        })
+        
+        params['response'] = MockDigestRequest.new(params).response(@digest_password)
+        
+        return "Digest #{params}"
+      end
+      
+      def retry_with_digest_auth?(env)
+        @last_response.status == 401 &&
+        digest_auth_configured? &&
+        !env["rack-test.digest_auth_retry"]
+      end
+      
+      def digest_auth_configured?
+        @digest_username
+      end
+      
       def default_env
         { "rack.test" => true, "REMOTE_ADDR" => "127.0.0.1" }.merge(@headers)
       end

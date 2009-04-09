@@ -1,11 +1,6 @@
 require File.dirname(__FILE__) + "/../../spec_helper"
 
 describe Rack::Test::Session do
-  include Rack::Test::Methods
-
-  def app
-    Rack::Test::FakeApp.new
-  end
   
   def test_file_path
     File.dirname(__FILE__) + "/../../fixtures/foo.txt"
