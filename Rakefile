@@ -55,3 +55,8 @@ task :install => [:clean, :package] do
   gem = Dir['pkg/*.gem'].first
   sh "sudo gem install --no-rdoc --no-ri --local #{gem}"
 end
+
+desc 'Removes trailing whitespace'
+task :whitespace do
+  sh %{find . -name '*.rb' -exec sed -i '' 's/ *$//g' {} \\;}
+end
