@@ -3,6 +3,10 @@
 Because #last_response is now a MockResponse instead of a Rack::Response,
 #last_response.body now returns a string instead of an array.
 
+* Major enhancements
+
+  * Support multipart requests via the UploadedFile class (thanks, Rails)
+
 * Minor enhancements
 
   * #last_response returns a MockResponse instead of a Response
