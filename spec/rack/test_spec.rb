@@ -105,7 +105,7 @@ describe Rack::Test::Session do
       end
     end
     
-    context "for a POST specified with " do
+    context "for a POST specified with REQUEST_METHOD" do
       it "uses application/x-www-form-urlencoded as the CONTENT_TYPE" do
         request "/", "REQUEST_METHOD" => "POST"
         last_request.env["CONTENT_TYPE"].should == "application/x-www-form-urlencoded"
