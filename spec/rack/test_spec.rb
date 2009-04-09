@@ -58,15 +58,15 @@ describe Rack::Test::Session do
 
     it "keeps a cookie jar" do
       request "/set-cookie"
-      last_response.body.should == ["Value: 0"]
+      last_response.body.should == "Value: 0"
 
       request "/set-cookie"
-      last_response.body.should == ["Value: 1"]
+      last_response.body.should == "Value: 1"
     end
 
     it "accepts explicitly provided cookies" do
       request "/set-cookie", :cookie => "value=1"
-      last_response.body.should == ["Value: 1"]
+      last_response.body.should == "Value: 1"
     end
 
     it "sends multipart requests"
@@ -192,7 +192,7 @@ describe Rack::Test::Session do
       follow_redirect!
 
       last_response.should_not be_redirect
-      last_response.body.should == ["You've been redirected"]
+      last_response.body.should == "You've been redirected"
     end
 
     it "does not include params when following the redirect" do

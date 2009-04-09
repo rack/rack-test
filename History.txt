@@ -1,3 +1,13 @@
+== 0.2.0 (Git)
+
+Because #last_response is now a MockResponse instead of a Rack::Response,
+#last_response.body now returns a string instead of an array.
+
+* Minor enhancements
+
+  * #last_response returns a MockResponse instead of a Response
+    (Michael Fellinger)
+
 == 0.1.0 / 2009-03-02
 
 * 1 major enhancement

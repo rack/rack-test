@@ -187,7 +187,8 @@ module Rack
         @last_request = Rack::Request.new(env)
 
         status, headers, body = @app.call(@last_request.env)
-        @last_response = Rack::Response.new(body, status, headers)
+        @last_response = MockResponse.new(status, headers, body, env['rack.errors'])
+
         @cookie_jar = cookie_jar.merge(uri, last_response.headers["Set-Cookie"])
 
         yield @last_response if block_given?
