@@ -9,12 +9,15 @@ require "rack"
 require "rack/test/cookie_jar"
 require "rack/test/utils"
 require "rack/test/methods"
+require "rack/test/uploaded_file"
 
 module Rack
   module Test
 
     VERSION = "0.1.0"
 
+    MULTIPART_BOUNDARY = "----------XnJLe9ZIbbGUYtzPQJ16u1"
+    
     # The common base class for exceptions raised by Rack::Test
     class Error < StandardError
     end
@@ -159,11 +162,23 @@ module Rack
 
         if (env[:method] == "POST" || env["REQUEST_METHOD"] == "POST") && !env.has_key?(:input)
           env["CONTENT_TYPE"] = "application/x-www-form-urlencoded"
-          env[:input] = params_to_string(env.delete(:params))
+          
+          multipart = (env[:params] || {}).any? do |k, v|
+            UploadedFile === v
+          end
+          
+          if multipart
+            env[:input] = multipart_params_to_string(env.delete(:params))
+            env["CONTENT_LENGTH"] ||= env[:input].length.to_s
+            env["CONTENT_TYPE"] = "multipart/form-data; boundary=#{MULTIPART_BOUNDARY}"
+          else
+            env[:input] = params_to_string(env.delete(:params))
+          end
         end
 
         params = env[:params] || {}
         params.update(parse_query(uri.query))
+        
         uri.query = requestify(params)
 
         if env.has_key?(:cookie)
@@ -200,6 +215,10 @@ module Rack
         { "rack.test" => true, "REMOTE_ADDR" => "127.0.0.1" }.merge(@headers)
       end
 
+      def multipart_params_to_string(params)
+        multipart_body(params, MULTIPART_BOUNDARY)
+      end
+      
       def params_to_string(params)
         case params
         when Hash then requestify(params)

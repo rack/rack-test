@@ -69,8 +69,6 @@ describe Rack::Test::Session do
       last_response.body.should == "Value: 1"
     end
 
-    it "sends multipart requests"
-
     it "yields the response to a given block" do
       request "/" do |response|
         response.should be_ok
