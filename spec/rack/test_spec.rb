@@ -73,7 +73,7 @@ describe Rack::Test::Session do
       request "/", :params => { "foo" => "bar" }
       last_request.GET["foo"].should == "bar"
     end
-    
+
     it "doesn't follow redirects by default" do
       request "/redirect"
       last_response.should be_redirect
@@ -98,7 +98,7 @@ describe Rack::Test::Session do
         last_request.env["CONTENT_TYPE"].should == "application/x-www-form-urlencoded"
       end
     end
-    
+
     context "for a POST specified with REQUEST_METHOD" do
       it "uses application/x-www-form-urlencoded as the CONTENT_TYPE" do
         request "/", "REQUEST_METHOD" => "POST"
@@ -263,7 +263,7 @@ describe Rack::Test::Session do
         last_request.send(verb.upcase)["boo[foo bar]"].should == "baz"
       end
     end
-    
+
     it "accepts params in the path" do
       get "/?foo=bar"
       last_request.GET.should == { "foo" => "bar" }
@@ -284,7 +284,7 @@ describe Rack::Test::Session do
     def verb
       "post"
     end
-    
+
     it "uses the provided params hash" do
       post "/", :foo => "bar"
       last_request.POST.should == { "foo" => "bar" }

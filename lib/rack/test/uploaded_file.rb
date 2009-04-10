@@ -29,7 +29,7 @@ module Rack
       def method_missing(method_name, *args, &block) #:nodoc:
         @tempfile.__send__(method_name, *args, &block)
       end
-      
+
     end
 
   end

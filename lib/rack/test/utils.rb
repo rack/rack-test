@@ -20,13 +20,13 @@ module Rack
       end
 
       module_function :requestify
-      
+
       def multipart_requestify(params, first=true)
         p = Hash.new
-        
+
         params.each do |key, value|
           k = first ? key.to_s : "[#{key}]"
-          
+
           if Hash === value
             multipart_requestify(value, false).each do |subkey, subvalue|
               p[k + subkey] = subvalue
@@ -35,10 +35,10 @@ module Rack
             p[k] = value
           end
         end
-          
+
         return p
       end
-      
+
       module_function :multipart_requestify
 
       def multipart_body(params)
@@ -66,7 +66,7 @@ EOF
           end
         end.join("")+"--#{MULTIPART_BOUNDARY}--\r"
       end
-      
+
       module_function :multipart_body
 
     end

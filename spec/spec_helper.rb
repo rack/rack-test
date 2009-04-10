@@ -5,11 +5,11 @@ require File.dirname(__FILE__) + "/fixtures/fake_app"
 
 Spec::Runner.configure do |config|
   config.include Rack::Test::Methods
-  
+
   def app
     Rack::Test::FakeApp.new
   end
-  
+
 end
 
 describe "any #verb methods", :shared => true do
