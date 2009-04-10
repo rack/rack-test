@@ -19,7 +19,13 @@ describe Rack::Test::Session do
         response.body.empty?
       end
     end
-    
+
+    it 'incorrectly authenticates GETs' do
+      digest_authorize 'foo', 'bar'
+      get '/'
+      last_response.should be_challenge
+    end
+
     it "correctly authenticates GETs" do
       digest_authorize "alice", "correct-password"
       response = get "/"
