@@ -23,12 +23,12 @@ describe Rack::Test::Session do
     
     it "sends nested params" do
       post "/", "photo" => uploaded_file, "foo" => {"bar" => "baz"}
-      last_request.POST["foo[bar]"].should == "baz"
+      last_request.POST["foo"]["bar"].should == "baz"
     end
     
     it "sends multiple nested params" do
       post "/", "photo" => uploaded_file, "foo" => {"bar" => {"baz" => "bop"}}
-      last_request.POST["foo[bar][baz]"].should == "bop"
+      last_request.POST["foo"]["bar"]["baz"].should == "bop"
     end
     
     xit "sends params with arrays" do
