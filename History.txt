@@ -1,4 +1,4 @@
-== 0.2.0 (Git)
+== 0.2.0 / 2009-04-26
 
 Because #last_response is now a MockResponse instead of a Rack::Response,
 #last_response.body now returns a string instead of an array.
