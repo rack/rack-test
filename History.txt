@@ -9,6 +9,8 @@ Because #last_response is now a MockResponse instead of a Rack::Response,
 
 * Minor enhancements
 
+  * Updated for Rack 1.0
+  * Don't require rubygems (See http://gist.github.com/54177)
   * Support HTTP Digest authentication with the #digest_authorize method
   * #last_response returns a MockResponse instead of a Response
     (Michael Fellinger)
