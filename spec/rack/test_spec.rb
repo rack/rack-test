@@ -258,10 +258,8 @@ describe Rack::Test::Session do
     end
 
     it "supports params with nested encoding sensitive names" do
-      unless %(head put delete).include?(verb)
-        send(verb, "/", "boo" => {"foo bar" => "baz"})
-        last_request.send(verb.upcase)["boo[foo bar]"].should == "baz"
-      end
+      get "/", "boo" => {"foo bar" => "baz"}
+      last_request.GET.should == {"boo" => {"foo bar" => "baz"}}
     end
 
     it "accepts params in the path" do

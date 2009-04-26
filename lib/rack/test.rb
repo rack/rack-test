@@ -225,9 +225,10 @@ module Rack
         @cookie_jar = cookie_jar.merge(uri, last_response.headers["Set-Cookie"])
 
         if retry_with_digest_auth?(env)
-          process_request(uri.path,
-            env.merge("HTTP_AUTHORIZATION" => digest_auth_header,
-                      "rack-test.digest_auth_retry" => true))
+          auth_env = env.merge("HTTP_AUTHORIZATION" => digest_auth_header,
+                    "rack-test.digest_auth_retry" => true)
+          auth_env.delete('rack.request')
+          process_request(uri.path, auth_env)
         else
           yield @last_response if block_given?
 
