@@ -1,5 +1,8 @@
 require "rubygems"
 require "spec"
+
+gem "rack", "~> 1.0.0"
+
 require File.expand_path(File.dirname(__FILE__) + "/../lib/rack/test")
 require File.dirname(__FILE__) + "/fixtures/fake_app"
 
