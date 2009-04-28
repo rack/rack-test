@@ -85,6 +85,19 @@ describe Rack::Test::Session do
       last_request.cookies.should == { "value" => "1" }
     end
     
+    it "keeps separate cookie jars for different domains" do
+      get "http://example.com/cookies/set", "value" => "example"
+      get "http://example.com/cookies/show"
+      last_request.cookies.should == { "value" => "example" }
+      
+      get "http://other.example/cookies/set", "value" => "other"
+      get "http://other.example/cookies/show"
+      last_request.cookies.should == { "value" => "other" }
+      
+      get "http://example.com/cookies/show"
+      last_request.cookies.should == { "value" => "example" }
+    end
+    
     it "allows cookies to be cleared" do
       get "/cookies/set", "value" => "1"
       clear_cookies
