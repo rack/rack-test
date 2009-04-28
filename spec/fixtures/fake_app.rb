@@ -20,6 +20,10 @@ module Rack
         "You've been redirected"
       end
 
+      get "/void" do
+        [200, {}, ""]
+      end
+      
       get "/cookies/show" do
         request.cookies.inspect
       end
@@ -44,6 +48,18 @@ module Rack
         
         response.set_cookie "simple", params["value"]
         "Set"
+      end
+      
+      get "/cookies/delete" do
+        response.delete_cookie "value"
+      end
+      
+      get "/cookies/count" do
+        old_value = request.cookies["count"].to_i || 0
+        new_value = (old_value + 1).to_s
+        
+        response.set_cookie("count", :value => new_value)
+        new_value
       end
       
       get "/cookies/set" do

@@ -1,6 +1,12 @@
 require File.dirname(__FILE__) + "/../../spec_helper"
 
 describe Rack::Test::Session do
+  def have_body(string)
+    simple_matcher "have body #{string.inspect}" do |response|
+      response.body.should == string
+    end
+  end
+  
   context "cookies" do
     it "doesn't send expired cookies" do
       get "/cookies/set", "value" => "1"
@@ -22,6 +28,27 @@ describe Rack::Test::Session do
       last_request.cookies.should == {}
     end
     
+    it "persists cookies across requests that don't return any cookie headers" do
+      get "/cookies/set", "value" => "1"
+      get "/void"
+      get "/cookies/show"
+      last_request.cookies.should == { "value" => "1" }
+    end
+    
+    it "deletes cookies" do
+      get "/cookies/set", "value" => "1"
+      get "/cookies/delete"
+      get "/cookies/show"
+      last_request.cookies.should == { }
+    end
+    
+    xit "respects cookie domains when no domain is explicitly set" do
+      request("http://example.org/cookies/count").should     have_body("1")
+      request("http://www.example.org/cookies/count").should have_body("1")
+      request("http://example.org/cookies/count").should     have_body("2")
+      request("http://www.example.org/cookies/count").should have_body("2")
+    end
+      
     it "treats domains case insensitively" do
       get "http://example.com/cookies/set", "value" => "1"
       get "http://EXAMPLE.COM/cookies/show"
