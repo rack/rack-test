@@ -130,7 +130,7 @@ module Rack
       end
       
       def set_cookie(name, value)
-        @cookie_jar = cookie_jar.merge(URI.parse("http://example.org/"), "#{name}=#{value}")
+        @cookie_jar = cookie_jar.merge("#{name}=#{value}", URI.parse("http://example.org/"))
       end
       
       # Set the username and password for HTTP Basic authorization, to be
@@ -209,7 +209,7 @@ module Rack
 
         if env.has_key?(:cookie)
           # Add the cookies explicitly set by the user
-          env["HTTP_COOKIE"] = cookie_jar.merge(uri, env.delete(:cookie)).for(uri)
+          env["HTTP_COOKIE"] = cookie_jar.merge(env.delete(:cookie), uri).for(uri)
         else
           env["HTTP_COOKIE"] = cookie_jar.for(uri)
         end
@@ -230,7 +230,7 @@ module Rack
         status, headers, body = @app.call(@last_request.env)
         @last_response = MockResponse.new(status, headers, body, env["rack.errors"])
 
-        @cookie_jar = cookie_jar.merge(uri, last_response.headers["Set-Cookie"])
+        @cookie_jar = cookie_jar.merge(last_response.headers["Set-Cookie"], uri)
 
         if retry_with_digest_auth?(env)
           auth_env = env.merge("HTTP_AUTHORIZATION" => digest_auth_header,

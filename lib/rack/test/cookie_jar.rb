@@ -82,7 +82,7 @@ module Rack
         @jar.sort!
       end
 
-      def merge(uri, raw_cookies)
+      def merge(raw_cookies, uri)
         return self unless raw_cookies
 
         # Initialize all the the received cookies
