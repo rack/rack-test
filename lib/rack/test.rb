@@ -125,6 +125,10 @@ module Rack
         end
       end
 
+      def clear_cookies
+        @cookie_jar = Rack::Test::CookieJar.new
+      end
+      
       def set_cookie(name, value)
         # @cookie_jar = cookie_jar.merge(uri, last_response.headers["Set-Cookie"])
       end

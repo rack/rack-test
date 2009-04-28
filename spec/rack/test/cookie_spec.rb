@@ -85,6 +85,13 @@ describe Rack::Test::Session do
       last_request.cookies.should == { "value" => "1" }
     end
     
+    it "allows cookies to be cleared" do
+      get "/cookies/set", "value" => "1"
+      clear_cookies
+      get "/cookies/show"
+      last_request.cookies.should == {}
+    end
+    
     xit "allow cookies to be set" do
       set_cookie "value", "10"
       get "/cookies/set"

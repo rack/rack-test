@@ -22,6 +22,7 @@ module Rack
         # Header-related features
         :header,
         :set_cookie,
+        :clear_cookies,
         :authorize,
         :digest_authorize,
         # Expose the last request and response
