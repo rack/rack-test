@@ -12,6 +12,8 @@ require "rack/test/uploaded_file"
 module Rack
   module Test
 
+    DEFAULT_HOST = "example.org"
+    
     class MockDigestRequest
       def initialize(params)
         @params = params
@@ -130,7 +132,7 @@ module Rack
       end
       
       def set_cookie(name, value)
-        @cookie_jar = cookie_jar.merge("#{name}=#{value}", URI.parse("http://example.org/"))
+        @cookie_jar = cookie_jar.merge("#{name}=#{value}")
       end
       
       # Set the username and password for HTTP Basic authorization, to be
@@ -179,7 +181,7 @@ module Rack
 
       def env_for(path, env)
         uri = URI.parse(path)
-        uri.host ||= "example.org"
+        uri.host ||= DEFAULT_HOST
 
         env = default_env.merge(env)
 
@@ -223,7 +225,7 @@ module Rack
 
       def process_request(uri, env)
         uri = URI.parse(uri)
-        uri.host ||= "example.org"
+        uri.host ||= DEFAULT_HOST
 
         @last_request = Rack::Request.new(env)
 
