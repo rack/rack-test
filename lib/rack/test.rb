@@ -125,6 +125,10 @@ module Rack
         end
       end
 
+      def set_cookie(name, value)
+        # @cookie_jar = cookie_jar.merge(uri, last_response.headers["Set-Cookie"])
+      end
+      
       # Set the username and password for HTTP Basic authorization, to be
       # included in subsequent requests in the HTTP_AUTHORIZATION header.
       #

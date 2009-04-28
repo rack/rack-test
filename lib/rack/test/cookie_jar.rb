@@ -1,3 +1,4 @@
+require "uri"
 module Rack
   module Test
 
@@ -8,16 +9,15 @@ module Rack
       attr_reader :name, :value
 
       # :api: private
-      def initialize(raw, default_host)
+      def initialize(raw, default_host, default_path = nil)
         # separate the name / value pair from the cookie options
         @name_value_raw, options = raw.split(/[;,] */n, 2)
 
         @name, @value = parse_query(@name_value_raw, ';').to_a.first
         @options = parse_query(options, ';')
 
-        @options.delete_if { |k, v| !v || v.empty? }
-
-        @options["domain"] ||= default_host
+        @options["domain"]  ||= default_host
+        @options["path"]    ||= default_path
       end
 
       # :api: private
@@ -35,6 +35,10 @@ module Rack
         @options["domain"]
       end
 
+      def secure?
+        @options.has_key?("secure")
+      end
+      
       # :api: private
       def path
         @options["path"] || "/"
@@ -52,7 +56,8 @@ module Rack
 
       # :api: private
       def valid?(uri)
-        uri.host =~ Regexp.new("#{Regexp.escape(domain)}$") &&
+        (!secure? || (secure? && uri.scheme == "https")) &&
+        uri.host =~ Regexp.new("#{Regexp.escape(domain)}$", Regexp::IGNORECASE) &&
         uri.path =~ Regexp.new("^#{Regexp.escape(path)}")
       end
 
@@ -83,14 +88,14 @@ module Rack
         # Initialize all the the received cookies
         cookies = []
         raw_cookies.each do |raw|
-          c = Cookie.new(raw, uri.host)
+          c = Cookie.new(raw, uri.host, uri.path.sub(/\/[^\/]*\Z/, ""))
           cookies << c if c.valid?(uri)
         end
 
         # Remove all the cookies that will be updated
         new_jar = @jar.reject do |existing|
           cookies.find do |c|
-            [c.name, c.domain, c.path] == [existing.name, existing.domain, existing.path]
+            [c.name.downcase, c.domain, c.path] == [existing.name.downcase, existing.domain, existing.path]
           end
         end
 

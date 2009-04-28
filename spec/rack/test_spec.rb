@@ -50,19 +50,6 @@ describe Rack::Test::Session do
       last_request.env["SERVER_NAME"].should == "example.org"
     end
 
-    it "keeps a cookie jar" do
-      request "/set-cookie"
-      last_response.body.should == "Value: 0"
-
-      request "/set-cookie"
-      last_response.body.should == "Value: 1"
-    end
-
-    it "accepts explicitly provided cookies" do
-      request "/set-cookie", :cookie => "value=1"
-      last_response.body.should == "Value: 1"
-    end
-
     it "yields the response to a given block" do
       request "/" do |response|
         response.should be_ok

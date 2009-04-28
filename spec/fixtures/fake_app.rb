@@ -20,11 +20,52 @@ module Rack
         "You've been redirected"
       end
 
-      get "/set-cookie" do
-        cookie = request.cookies["value"] || 0
-        response.set_cookie("value", cookie.to_i + 1)
-
-        "Value: #{cookie}"
+      get "/cookies/show" do
+        request.cookies.inspect
+      end
+      
+      get "/COOKIES/show" do
+        request.cookies.inspect
+      end
+      
+      get "/not-cookies/show" do
+        request.cookies.inspect
+      end
+      
+      get "/cookies/set-secure" do
+        raise if params["value"].nil?
+        
+        response.set_cookie("secure-cookie", :value => params["value"], :secure => true)
+        "Set"
+      end
+      
+      get "/cookies/set-simple" do
+        raise if params["value"].nil?
+        
+        response.set_cookie "simple", params["value"]
+        "Set"
+      end
+      
+      get "/cookies/set" do
+        raise if params["value"].nil?
+        
+        response.set_cookie("value", {
+          :value => params["value"],
+          :path => "/cookies",
+          :expires => Time.now + 10
+        })
+        "Set"
+      end
+      
+      get "/cookies/set-uppercase" do
+        raise if params["value"].nil?
+        
+        response.set_cookie("VALUE", {
+          :value => params["value"],
+          :path => "/cookies",
+          :expires => Time.now + 10
+        })
+        "Set"
       end
 
       post "/" do

@@ -21,6 +21,7 @@ module Rack
         :follow_redirect!,
         # Header-related features
         :header,
+        :set_cookie,
         :authorize,
         :digest_authorize,
         # Expose the last request and response
