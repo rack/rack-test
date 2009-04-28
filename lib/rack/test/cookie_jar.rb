@@ -9,15 +9,15 @@ module Rack
       attr_reader :name, :value
 
       # :api: private
-      def initialize(raw, default_host, default_path = nil)
+      def initialize(raw, uri)
         # separate the name / value pair from the cookie options
         @name_value_raw, options = raw.split(/[;,] */n, 2)
 
         @name, @value = parse_query(@name_value_raw, ';').to_a.first
         @options = parse_query(options, ';')
 
-        @options["domain"]  ||= default_host
-        @options["path"]    ||= default_path
+        @options["domain"]  ||= uri.host
+        @options["path"]    ||= uri.path.sub(/\/[^\/]*\Z/, "")
       end
 
       # :api: private
@@ -88,7 +88,7 @@ module Rack
         # Initialize all the the received cookies
         cookies = []
         raw_cookies.each do |raw|
-          c = Cookie.new(raw, uri.host, uri.path.sub(/\/[^\/]*\Z/, ""))
+          c = Cookie.new(raw, uri)
           cookies << c if c.valid?(uri)
         end
 
