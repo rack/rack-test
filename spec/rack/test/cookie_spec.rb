@@ -92,11 +92,10 @@ describe Rack::Test::Session do
       last_request.cookies.should == {}
     end
     
-    xit "allow cookies to be set" do
+    it "allow cookies to be set" do
       set_cookie "value", "10"
-      get "/cookies/set"
       get "/cookies/show"
-      last_response.body.should == "Value: 10"
+      last_request.cookies.should == { "value" => "10" }
     end
 
     it "accepts explicitly provided cookies" do

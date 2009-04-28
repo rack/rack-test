@@ -130,7 +130,7 @@ module Rack
       end
       
       def set_cookie(name, value)
-        # @cookie_jar = cookie_jar.merge(uri, last_response.headers["Set-Cookie"])
+        @cookie_jar = cookie_jar.merge(URI.parse("http://example.org/"), "#{name}=#{value}")
       end
       
       # Set the username and password for HTTP Basic authorization, to be

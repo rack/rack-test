@@ -11,20 +11,24 @@ module Rack
 
       METHODS = [
         :request,
+        
         # HTTP verbs
         :get,
         :post,
         :put,
         :delete,
         :head,
+        
         # Redirects
         :follow_redirect!,
+        
         # Header-related features
         :header,
         :set_cookie,
         :clear_cookies,
         :authorize,
         :digest_authorize,
+        
         # Expose the last request and response
         :last_response,
         :last_request
