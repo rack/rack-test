@@ -4,7 +4,9 @@ end
 
 require "uri"
 require "rack"
+require "rack/mock_session"
 require "rack/test/cookie_jar"
+require "rack/test/mock_digest_request"
 require "rack/test/utils"
 require "rack/test/methods"
 require "rack/test/uploaded_file"
@@ -12,46 +14,26 @@ require "rack/test/uploaded_file"
 module Rack
   module Test
 
-    DEFAULT_HOST = "example.org"
-    
-    class MockDigestRequest
-      def initialize(params)
-        @params = params
-      end
-
-      def method_missing(sym)
-        if @params.has_key? k = sym.to_s
-          return @params[k]
-        end
-
-        super
-      end
-
-      def method
-        @params['method']
-      end
-
-      def response(password)
-        Rack::Auth::Digest::MD5.new(nil).send :digest, self, password
-      end
-    end
-
     VERSION = "0.2.0"
-
+    
+    DEFAULT_HOST = "example.org"
     MULTIPART_BOUNDARY = "----------XnJLe9ZIbbGUYtzPQJ16u1"
 
     # The common base class for exceptions raised by Rack::Test
     class Error < StandardError; end
 
     class Session
+      extend Forwardable
       include Rack::Test::Utils
 
+      def_delegators :@rack_mock_session, :clear_cookies, :set_cookie, :last_response, :last_request
+      
       # Initialize a new session for the given Rack app
       def initialize(app)
         raise ArgumentError.new("app must respond_to?(:call)") unless app.respond_to?(:call)
 
         @headers = {}
-        @app     = app
+        @rack_mock_session = Rack::MockSession.new(app)
       end
 
       # Issue a GET request for the given URI with the given params and Rack
@@ -126,14 +108,6 @@ module Rack
           @headers[name] = value
         end
       end
-
-      def clear_cookies
-        @cookie_jar = Rack::Test::CookieJar.new
-      end
-      
-      def set_cookie(name, value)
-        @cookie_jar = cookie_jar.merge("#{name}=#{value}")
-      end
       
       # Set the username and password for HTTP Basic authorization, to be
       # included in subsequent requests in the HTTP_AUTHORIZATION header.
@@ -159,22 +133,6 @@ module Rack
         end
 
         get(last_response["Location"])
-      end
-
-      # Return the last request issued in the session. Raises an error if no
-      # requests have been sent yet.
-      def last_request
-        raise Error.new("No request yet. Request a page first.") unless @last_request
-
-        @last_request
-      end
-
-      # Return the last response received in the session. Raises an error if
-      # no requests have been sent yet.
-      def last_response
-        raise Error.new("No response yet. Request a page first.") unless @last_response
-
-        @last_response
       end
 
     private
@@ -210,52 +168,42 @@ module Rack
         uri.query = requestify(params)
 
         if env.has_key?(:cookie)
-          # Add the cookies explicitly set by the user
-          env["HTTP_COOKIE"] = cookie_jar.merge(env.delete(:cookie), uri).for(uri)
-        else
-          env["HTTP_COOKIE"] = cookie_jar.for(uri)
+          set_cookie(env.delete(:cookie), uri)
         end
 
         Rack::MockRequest.env_for(uri.to_s, env)
-      end
-
-      def cookie_jar
-        @cookie_jar || Rack::Test::CookieJar.new
       end
 
       def process_request(uri, env)
         uri = URI.parse(uri)
         uri.host ||= DEFAULT_HOST
 
-        @last_request = Rack::Request.new(env)
-
-        status, headers, body = @app.call(@last_request.env)
-        @last_response = MockResponse.new(status, headers, body, env["rack.errors"])
-
-        @cookie_jar = cookie_jar.merge(last_response.headers["Set-Cookie"], uri)
+        @rack_mock_session.request(uri, env)
 
         if retry_with_digest_auth?(env)
-          auth_env = env.merge("HTTP_AUTHORIZATION" => digest_auth_header,
-                    "rack-test.digest_auth_retry" => true)
+          auth_env = env.merge({
+            "HTTP_AUTHORIZATION"          => digest_auth_header,
+            "rack-test.digest_auth_retry" => true
+          })
           auth_env.delete('rack.request')
           process_request(uri.path, auth_env)
         else
-          yield @last_response if block_given?
+          yield last_response if block_given?
 
-          @last_response
+          return last_response
         end
       end
 
       def digest_auth_header
-        challenge = @last_response["WWW-Authenticate"].split(" ", 2).last
+        challenge = last_response["WWW-Authenticate"].split(" ", 2).last
         params = Rack::Auth::Digest::Params.parse(challenge)
 
         params.merge!({
           "username"  => @digest_username,
           "nc"        => "00000001",
           "cnonce"    => "nonsensenonce",
-          "uri"       => @last_request.path_info,
-          "method"    => @last_request.env["REQUEST_METHOD"],
+          "uri"       => last_request.path_info,
+          "method"    => last_request.env["REQUEST_METHOD"],
         })
 
         params["response"] = MockDigestRequest.new(params).response(@digest_password)
@@ -264,7 +212,7 @@ module Rack
       end
 
       def retry_with_digest_auth?(env)
-        @last_response.status == 401 &&
+        last_response.status == 401 &&
         digest_auth_configured? &&
         !env["rack-test.digest_auth_retry"]
       end

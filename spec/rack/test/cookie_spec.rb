@@ -133,7 +133,7 @@ describe Rack::Test::Session do
     end
     
     it "allow cookies to be set" do
-      set_cookie "value", "10"
+      set_cookie "value=10"
       get "/cookies/show"
       last_request.cookies.should == { "value" => "10" }
     end

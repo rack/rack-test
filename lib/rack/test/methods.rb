@@ -9,6 +9,10 @@ module Rack
         @_rack_test_session ||= Rack::Test::Session.new(app)
       end
 
+      def rack_mock_session
+        @_rack_mock_session ||= Rack::MockSession.new(app)
+      end
+      
       METHODS = [
         :request,
         
