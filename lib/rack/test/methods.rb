@@ -12,27 +12,27 @@ module Rack
       def rack_mock_session
         @_rack_mock_session ||= Rack::MockSession.new(app)
       end
-      
+
       METHODS = [
         :request,
-        
+
         # HTTP verbs
         :get,
         :post,
         :put,
         :delete,
         :head,
-        
+
         # Redirects
         :follow_redirect!,
-        
+
         # Header-related features
         :header,
         :set_cookie,
         :clear_cookies,
         :authorize,
         :digest_authorize,
-        
+
         # Expose the last request and response
         :last_response,
         :last_request

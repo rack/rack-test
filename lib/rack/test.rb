@@ -15,7 +15,7 @@ module Rack
   module Test
 
     VERSION = "0.2.0"
-    
+
     DEFAULT_HOST = "example.org"
     MULTIPART_BOUNDARY = "----------XnJLe9ZIbbGUYtzPQJ16u1"
 
@@ -27,7 +27,7 @@ module Rack
       include Rack::Test::Utils
 
       def_delegators :@rack_mock_session, :clear_cookies, :set_cookie, :last_response, :last_request
-      
+
       # Initialize a new session for the given Rack app
       def initialize(app)
         raise ArgumentError.new("app must respond_to?(:call)") unless app.respond_to?(:call)
@@ -108,7 +108,7 @@ module Rack
           @headers[name] = value
         end
       end
-      
+
       # Set the username and password for HTTP Basic authorization, to be
       # included in subsequent requests in the HTTP_AUTHORIZATION header.
       #

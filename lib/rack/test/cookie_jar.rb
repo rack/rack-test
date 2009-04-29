@@ -11,7 +11,7 @@ module Rack
       # :api: private
       def initialize(raw, uri = nil)
         uri ||= URI.parse("//" + DEFAULT_HOST + "/")
-        
+
         # separate the name / value pair from the cookie options
         @name_value_raw, options = raw.split(/[;,] */n, 2)
 
@@ -40,7 +40,7 @@ module Rack
       def secure?
         @options.has_key?("secure")
       end
-      
+
       # :api: private
       def path
         @options["path"] || "/"
@@ -88,7 +88,7 @@ module Rack
         return self unless raw_cookies
 
         uri ||= URI.parse("//" + DEFAULT_HOST + "/")
-        
+
         # Initialize all the the received cookies
         cookies = []
         raw_cookies.each do |raw|

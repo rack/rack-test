@@ -1,6 +1,6 @@
 module Rack
   module Test
-    
+
     class MockDigestRequest
       def initialize(params)
         @params = params
@@ -22,6 +22,6 @@ module Rack
         Rack::Auth::Digest::MD5.new(nil).send :digest, self, password
       end
     end
-    
+
   end
 end
