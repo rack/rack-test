@@ -10,7 +10,7 @@ Spec::Runner.configure do |config|
   config.include Rack::Test::Methods
 
   def app
-    Rack::Test::FakeApp.new
+    Rack::Lint.new(Rack::Test::FakeApp.new)
   end
 
 end

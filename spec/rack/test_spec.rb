@@ -70,7 +70,7 @@ describe Rack::Test::Session do
     context "when input is given" do
       it "should send the input" do
         request "/", :method => "POST", :input => "foo"
-        last_request.env["rack.input"].string.should == "foo"
+        last_request.env["rack.input"].read.should == "foo"
       end
 
       it "should not send a multipart request" do
