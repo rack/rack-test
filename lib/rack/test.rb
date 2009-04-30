@@ -29,11 +29,12 @@ module Rack
       def_delegators :@rack_mock_session, :clear_cookies, :set_cookie, :last_response, :last_request
       
       # Initialize a new session for the given Rack app
-      def initialize(app)
+      def initialize(app, default_host = DEFAULT_HOST)
         raise ArgumentError.new("app must respond_to?(:call)") unless app.respond_to?(:call)
 
         @headers = {}
-        @rack_mock_session = Rack::MockSession.new(app)
+        @default_host = default_host
+        @rack_mock_session = Rack::MockSession.new(app, default_host)
       end
 
       # Issue a GET request for the given URI with the given params and Rack
@@ -139,7 +140,7 @@ module Rack
 
       def env_for(path, env)
         uri = URI.parse(path)
-        uri.host ||= DEFAULT_HOST
+        uri.host ||= @default_host
 
         env = default_env.merge(env)
 
@@ -176,7 +177,7 @@ module Rack
 
       def process_request(uri, env)
         uri = URI.parse(uri)
-        uri.host ||= DEFAULT_HOST
+        uri.host ||= @default_host
 
         @rack_mock_session.request(uri, env)
 

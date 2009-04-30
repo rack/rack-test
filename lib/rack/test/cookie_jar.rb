@@ -9,8 +9,8 @@ module Rack
       attr_reader :name, :value
 
       # :api: private
-      def initialize(raw, uri = nil)
-        uri ||= URI.parse("//" + DEFAULT_HOST + "/")
+      def initialize(raw, uri = nil, default_host = DEFAULT_HOST)
+        uri ||= URI.parse("//" + default_host + "/")
         
         # separate the name / value pair from the cookie options
         @name_value_raw, options = raw.split(/[;,] */n, 2)
@@ -18,7 +18,7 @@ module Rack
         @name, @value = parse_query(@name_value_raw, ';').to_a.first
         @options = parse_query(options, ';')
 
-        @options["domain"]  ||= uri.host
+        @options["domain"]  ||= (uri.host || default_host)
         @options["path"]    ||= uri.path.sub(/\/[^\/]*\Z/, "")
       end
 
@@ -79,7 +79,8 @@ module Rack
     class CookieJar
 
       # :api: private
-      def initialize(cookies = [])
+      def initialize(cookies = [], default_host = DEFAULT_HOST)
+        @default_host = default_host
         @jar = cookies
         @jar.sort!
       end
@@ -87,12 +88,12 @@ module Rack
       def merge(raw_cookies, uri = nil)
         return self unless raw_cookies
 
-        uri ||= URI.parse("//" + DEFAULT_HOST + "/")
+        uri ||= URI.parse("//" + @default_host + "/")
         
         # Initialize all the the received cookies
         cookies = []
         raw_cookies.each do |raw|
-          c = Cookie.new(raw, uri)
+          c = Cookie.new(raw, uri, @default_host)
           cookies << c if c.valid?(uri)
         end
 

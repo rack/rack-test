@@ -4,12 +4,13 @@ module Rack
     attr_writer :cookie_jar
     attr_reader :last_response
     
-    def initialize(app)
+    def initialize(app, default_host = Rack::Test::DEFAULT_HOST)
       @app = app
+      @default_host = default_host
     end
     
     def clear_cookies
-      @cookie_jar = Rack::Test::CookieJar.new
+      @cookie_jar = Rack::Test::CookieJar.new([], @default_host)
     end
     
     def set_cookie(cookie, uri = nil)
@@ -43,7 +44,7 @@ module Rack
   protected
   
     def cookie_jar
-      @cookie_jar ||= Rack::Test::CookieJar.new
+      @cookie_jar ||= Rack::Test::CookieJar.new([], @default_host)
     end
     
   end
