@@ -111,11 +111,13 @@ module Rack
       # included in subsequent requests in the HTTP_AUTHORIZATION header.
       #
       # Example:
-      #   authorize "bryan", "secret"
-      def authorize(username, password)
+      #   basic_authorize "bryan", "secret"
+      def basic_authorize(username, password)
         encoded_login = ["#{username}:#{password}"].pack("m*")
         header('HTTP_AUTHORIZATION', "Basic #{encoded_login}")
       end
+
+      alias_method :authorize, :basic_authorize
 
       def digest_authorize(username, password)
         @digest_username = username

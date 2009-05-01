@@ -31,6 +31,7 @@ module Rack
         :set_cookie,
         :clear_cookies,
         :authorize,
+        :basic_authorize,
         :digest_authorize,
 
         # Expose the last request and response

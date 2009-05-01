@@ -154,7 +154,7 @@ describe Rack::Test::Session do
     end
 
     it "includes the header for subsequent requests" do
-      authorize "bryan", "secret"
+      basic_authorize "bryan", "secret"
       request "/"
       request "/"
 
