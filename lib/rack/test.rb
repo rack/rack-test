@@ -30,8 +30,6 @@ module Rack
 
       # Initialize a new session for the given Rack app
       def initialize(app)
-        raise ArgumentError.new("app must respond_to?(:call)") unless app.respond_to?(:call)
-
         @headers = {}
         @rack_mock_session = Rack::MockSession.new(app)
       end

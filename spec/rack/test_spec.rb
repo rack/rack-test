@@ -1,14 +1,6 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
 describe Rack::Test::Session do
-  describe "#initialize" do
-    it "raises ArgumentError if the given app doesn't quack like an app" do
-      lambda {
-        Rack::Test::Session.new(Object.new)
-      }.should raise_error(ArgumentError)
-    end
-  end
-
   describe "#request" do
     it "requests the URI using GET by default" do
       request "/"
