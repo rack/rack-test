@@ -188,7 +188,7 @@ module Rack
         else
           yield last_response if block_given?
 
-          return last_response
+          last_response
         end
       end
 
@@ -206,7 +206,7 @@ module Rack
 
         params["response"] = MockDigestRequest.new(params).response(@digest_password)
 
-        return "Digest #{params}"
+        "Digest #{params}"
       end
 
       def retry_with_digest_auth?(env)

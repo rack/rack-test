@@ -23,7 +23,7 @@ module Rack
       @last_response = MockResponse.new(status, headers, body, env["rack.errors"].flush)
       @cookie_jar = cookie_jar.merge(last_response.headers["Set-Cookie"], uri)
 
-      return @last_response
+      @last_response
     end
 
     # Return the last request issued in the session. Raises an error if no

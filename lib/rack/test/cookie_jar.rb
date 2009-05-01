@@ -105,7 +105,7 @@ module Rack
 
         new_jar.concat cookies
 
-        return self.class.new(new_jar)
+        self.class.new(new_jar)
       end
 
       # :api: private
