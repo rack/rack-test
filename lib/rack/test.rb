@@ -149,9 +149,8 @@ module Rack
         if (env[:method] == "POST" || env["REQUEST_METHOD"] == "POST") && !env.has_key?(:input)
           env["CONTENT_TYPE"] = "application/x-www-form-urlencoded"
 
-          multipart = (env[:params] || {}).any? do |k, v|
-            UploadedFile === v
-          end
+          multipart = Hash === env[:params] &&
+            env[:params].any? { |_, v| UploadedFile === v }
 
           if multipart
             env[:input] = multipart_body(env.delete(:params))

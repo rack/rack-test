@@ -71,9 +71,10 @@ describe Rack::Test::Session do
       last_request.POST["photo"][:head].should include("Content-Length: 4")
     end
 
-    it "sends files as Files" do
+    it "sends files as Tempfile" do
       post "/", "photo" => uploaded_file
-      last_request.POST["photo"][:tempfile].should be_a(::File)
+
+      last_request.POST["photo"][:tempfile].class.should == Tempfile
     end
   end
 
