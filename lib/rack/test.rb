@@ -15,7 +15,7 @@ module Rack
   module Test
 
     VERSION = "0.2.0"
-    
+
     DEFAULT_HOST = "example.org"
     MULTIPART_BOUNDARY = "----------XnJLe9ZIbbGUYtzPQJ16u1"
 
@@ -27,11 +27,9 @@ module Rack
       include Rack::Test::Utils
 
       def_delegators :@rack_mock_session, :clear_cookies, :set_cookie, :last_response, :last_request
-      
+
       # Initialize a new session for the given Rack app
       def initialize(app, default_host = DEFAULT_HOST)
-        raise ArgumentError.new("app must respond_to?(:call)") unless app.respond_to?(:call)
-
         @headers = {}
         @default_host = default_host
         @rack_mock_session = Rack::MockSession.new(app, default_host)
@@ -109,16 +107,18 @@ module Rack
           @headers[name] = value
         end
       end
-      
+
       # Set the username and password for HTTP Basic authorization, to be
       # included in subsequent requests in the HTTP_AUTHORIZATION header.
       #
       # Example:
-      #   authorize "bryan", "secret"
-      def authorize(username, password)
+      #   basic_authorize "bryan", "secret"
+      def basic_authorize(username, password)
         encoded_login = ["#{username}:#{password}"].pack("m*")
         header('HTTP_AUTHORIZATION', "Basic #{encoded_login}")
       end
+
+      alias_method :authorize, :basic_authorize
 
       def digest_authorize(username, password)
         @digest_username = username
@@ -191,7 +191,7 @@ module Rack
         else
           yield last_response if block_given?
 
-          return last_response
+          last_response
         end
       end
 
@@ -209,7 +209,7 @@ module Rack
 
         params["response"] = MockDigestRequest.new(params).response(@digest_password)
 
-        return "Digest #{params}"
+        "Digest #{params}"
       end
 
       def retry_with_digest_auth?(env)

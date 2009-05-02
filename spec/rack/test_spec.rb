@@ -1,14 +1,6 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
 describe Rack::Test::Session do
-  describe "#initialize" do
-    it "raises ArgumentError if the given app doesn't quack like an app" do
-      lambda {
-        Rack::Test::Session.new(Object.new)
-      }.should raise_error(ArgumentError)
-    end
-  end
-
   describe "#request" do
     it "requests the URI using GET by default" do
       request "/"
@@ -70,7 +62,7 @@ describe Rack::Test::Session do
     context "when input is given" do
       it "should send the input" do
         request "/", :method => "POST", :input => "foo"
-        last_request.env["rack.input"].string.should == "foo"
+        last_request.env["rack.input"].read.should == "foo"
       end
 
       it "should not send a multipart request" do
@@ -162,7 +154,7 @@ describe Rack::Test::Session do
     end
 
     it "includes the header for subsequent requests" do
-      authorize "bryan", "secret"
+      basic_authorize "bryan", "secret"
       request "/"
       request "/"
 
