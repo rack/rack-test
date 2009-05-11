@@ -1,3 +1,14 @@
+== brynary/master (in git)
+
+* Major enhancements
+
+  * Ruby 1.9 compatible (Simon Rozet)
+
+* Minor enhancements
+
+  * Rename #authorize to #basic_authorize (#authorize remains as an alias)
+    (Simon Rozet)
+
 == 0.2.0 / 2009-04-26
 
 Because #last_response is now a MockResponse instead of a Rack::Response,
