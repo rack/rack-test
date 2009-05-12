@@ -65,6 +65,10 @@ module Rack
       def valid?(uri)
         uri ||= default_uri
 
+        if uri.host.nil?
+          uri.host = @default_host
+        end
+
         (!secure? || (secure? && uri.scheme == "https")) &&
         uri.host =~ Regexp.new("#{Regexp.escape(domain)}$", Regexp::IGNORECASE) &&
         uri.path =~ Regexp.new("^#{Regexp.escape(path)}")
