@@ -103,17 +103,16 @@ module Rack
         cookies = []
         raw_cookies.each do |raw|
           c = Cookie.new(raw, uri, @default_host)
-          cookies << c if c.valid?(uri)
+          self << c if c.valid?(uri)
+        end
+      end
+
+      def <<(new_cookie)
+        @jar.reject! do |existing_cookie|
+          new_cookie.replaces?(existing_cookie)
         end
 
-        # Remove all the cookies that will be updated
-        @jar = @jar.reject do |existing|
-          cookies.find do |c|
-            c.replaces?(existing)
-          end
-        end
-
-        @jar.concat cookies
+        @jar << new_cookie
       end
 
       # :api: private
