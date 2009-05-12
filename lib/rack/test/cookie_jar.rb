@@ -48,7 +48,7 @@ module Rack
 
       # :api: private
       def path
-        @options["path"] || "/"
+        @options["path"].strip || "/"
       end
 
       # :api: private
