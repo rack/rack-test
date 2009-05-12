@@ -21,6 +21,10 @@ module Rack
         @options["path"]    ||= uri.path.sub(/\/[^\/]*\Z/, "")
       end
 
+      def replaces?(other)
+        [name.downcase, domain, path] == [other.name.downcase, other.domain, other.path]
+      end
+
       # :api: private
       def raw
         @name_value_raw
@@ -105,7 +109,7 @@ module Rack
         # Remove all the cookies that will be updated
         @jar = @jar.reject do |existing|
           cookies.find do |c|
-            [c.name.downcase, c.domain, c.path] == [existing.name.downcase, existing.domain, existing.path]
+            c.replaces?(existing)
           end
         end
 
