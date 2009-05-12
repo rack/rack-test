@@ -10,7 +10,7 @@ module Rack
 
       # :api: private
       def initialize(raw, uri = nil, default_host = DEFAULT_HOST)
-        uri ||= URI.parse("//" + default_host + "/")
+        uri ||= default_uri
         # separate the name / value pair from the cookie options
         @name_value_raw, options = raw.split(/[;,] */n, 2)
 
@@ -73,6 +73,12 @@ module Rack
         [name, path, domain.reverse] <=> [other.name, other.path, other.domain.reverse]
       end
 
+    protected
+
+      def default_uri
+        URI.parse("//" + @default_host + "/")
+      end
+
     end
 
     class CookieJar
@@ -87,7 +93,7 @@ module Rack
       def merge(raw_cookies, uri = nil)
         return self unless raw_cookies
 
-        uri ||= URI.parse("//" + @default_host + "/")
+        uri ||= default_uri
 
         # Initialize all the the received cookies
         cookies = []
@@ -120,6 +126,12 @@ module Rack
         end
 
         cookies.values.join(';')
+      end
+
+    protected
+
+      def default_uri
+        URI.parse("//" + @default_host + "/")
       end
 
     end
