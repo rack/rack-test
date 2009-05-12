@@ -110,9 +110,9 @@ module Rack
 
         uri ||= default_uri
 
-        raw_cookies.each do |raw|
-          c = Cookie.new(raw, uri, @default_host)
-          self << c if c.valid?(uri)
+        raw_cookies.each do |raw_cookie|
+          cookie = Cookie.new(raw_cookie, uri, @default_host)
+          self << cookie if cookie.valid?(uri)
         end
       end
 
