@@ -14,7 +14,7 @@ module Rack
     end
 
     def set_cookie(cookie, uri = nil)
-      @cookie_jar = cookie_jar.merge(cookie, uri)
+      cookie_jar.merge(cookie, uri)
     end
 
     def request(uri, env)
@@ -22,7 +22,7 @@ module Rack
       @last_request = Rack::Request.new(env)
       status, headers, body = @app.call(@last_request.env)
       @last_response = MockResponse.new(status, headers, body, env["rack.errors"].flush)
-      @cookie_jar = cookie_jar.merge(last_response.headers["Set-Cookie"], uri)
+      cookie_jar.merge(last_response.headers["Set-Cookie"], uri)
 
       @last_response
     end

@@ -97,15 +97,13 @@ module Rack
         end
 
         # Remove all the cookies that will be updated
-        new_jar = @jar.reject do |existing|
+        @jar = @jar.reject do |existing|
           cookies.find do |c|
             [c.name.downcase, c.domain, c.path] == [existing.name.downcase, existing.domain, existing.path]
           end
         end
 
-        new_jar.concat cookies
-
-        self.class.new(new_jar)
+        @jar.concat cookies
       end
 
       # :api: private
