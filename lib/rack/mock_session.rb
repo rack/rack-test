@@ -41,8 +41,6 @@ module Rack
       @last_response
     end
 
-  protected
-
     def cookie_jar
       @cookie_jar ||= Rack::Test::CookieJar.new([], @default_host)
     end
