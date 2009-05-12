@@ -120,6 +120,16 @@ module Rack
         hash_for(uri).values.map { |c| c.raw }.join(';')
       end
 
+      def to_hash
+        cookies = {}
+
+        hash_for(default_uri).each do |name, cookie|
+          cookies[name] = cookie.value
+        end
+
+        return cookies
+      end
+
     protected
 
       def hash_for(uri)
