@@ -90,8 +90,8 @@ module Rack
       # :api: private
       def initialize(cookies = [], default_host = DEFAULT_HOST)
         @default_host = default_host
-        @jar = cookies
-        @jar.sort!
+        @cookies = cookies
+        @cookies.sort!
       end
 
       def merge(raw_cookies, uri = nil)
@@ -108,11 +108,11 @@ module Rack
       end
 
       def <<(new_cookie)
-        @jar.reject! do |existing_cookie|
+        @cookies.reject! do |existing_cookie|
           new_cookie.replaces?(existing_cookie)
         end
 
-        @jar << new_cookie
+        @cookies << new_cookie
       end
 
       # :api: private
@@ -124,7 +124,7 @@ module Rack
         # the cookie can be sent to the current URI. It's added to the hash
         # so that when we are done, the cookies will be unique by name and
         # we'll have grabbed the most specific to the URI.
-        @jar.each do |cookie|
+        @cookies.each do |cookie|
           cookies[cookie.name] = cookie.raw if cookie.matches?(uri)
         end
 
