@@ -124,6 +124,7 @@ module Rack
         end
 
         @cookies << new_cookie
+        @cookies.sort!
       end
 
       # :api: private
