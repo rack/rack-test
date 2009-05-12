@@ -110,8 +110,6 @@ module Rack
 
         uri ||= default_uri
 
-        # Initialize all the the received cookies
-        cookies = []
         raw_cookies.each do |raw|
           c = Cookie.new(raw, uri, @default_host)
           self << c if c.valid?(uri)
