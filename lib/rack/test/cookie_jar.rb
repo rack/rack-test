@@ -94,6 +94,17 @@ module Rack
         @cookies.sort!
       end
 
+      def [](name)
+        cookies = hash_for(default_uri)
+        # TODO: Should be case insensitive
+        cookies[name] && cookies[name].value
+      end
+
+      def []=(name, value)
+        # TODO: needs proper escaping
+        merge("#{name}=#{value}")
+      end
+
       def merge(raw_cookies, uri = nil)
         return self unless raw_cookies
 
