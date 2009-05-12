@@ -106,7 +106,7 @@ module Rack
       end
 
       def merge(raw_cookies, uri = nil)
-        return self unless raw_cookies
+        return unless raw_cookies
 
         uri ||= default_uri
 
