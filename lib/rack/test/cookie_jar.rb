@@ -103,7 +103,7 @@ module Rack
       end
 
       def [](name)
-        cookies = hash_for(default_uri)
+        cookies = hash_for(nil)
         # TODO: Should be case insensitive
         cookies[name] && cookies[name].value
       end
@@ -139,7 +139,7 @@ module Rack
       def to_hash
         cookies = {}
 
-        hash_for(default_uri).each do |name, cookie|
+        hash_for(nil).each do |name, cookie|
           cookies[name] = cookie.value
         end
 
@@ -148,7 +148,7 @@ module Rack
 
     protected
 
-      def hash_for(uri)
+      def hash_for(uri = nil)
         cookies = {}
 
         # The cookies are sorted by most specific first. So, we loop through
