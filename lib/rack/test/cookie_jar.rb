@@ -10,7 +10,9 @@ module Rack
 
       # :api: private
       def initialize(raw, uri = nil, default_host = DEFAULT_HOST)
+        @default_host = default_host
         uri ||= default_uri
+
         # separate the name / value pair from the cookie options
         @name_value_raw, options = raw.split(/[;,] */n, 2)
 
@@ -61,6 +63,8 @@ module Rack
 
       # :api: private
       def valid?(uri)
+        uri ||= default_uri
+
         (!secure? || (secure? && uri.scheme == "https")) &&
         uri.host =~ Regexp.new("#{Regexp.escape(domain)}$", Regexp::IGNORECASE) &&
         uri.path =~ Regexp.new("^#{Regexp.escape(path)}")
@@ -108,8 +112,6 @@ module Rack
       def merge(raw_cookies, uri = nil)
         return unless raw_cookies
 
-        uri ||= default_uri
-
         raw_cookies.each do |raw_cookie|
           cookie = Cookie.new(raw_cookie, uri, @default_host)
           self << cookie if cookie.valid?(uri)
@@ -155,10 +157,6 @@ module Rack
         end
 
         return cookies
-      end
-
-      def default_uri
-        URI.parse("//" + @default_host + "/")
       end
 
     end
