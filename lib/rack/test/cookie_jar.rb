@@ -117,6 +117,12 @@ module Rack
 
       # :api: private
       def for(uri)
+        hash_for(uri).values.map { |c| c.raw }.join(';')
+      end
+
+    protected
+
+      def hash_for(uri)
         cookies = {}
 
         # The cookies are sorted by most specific first. So, we loop through
@@ -125,13 +131,11 @@ module Rack
         # so that when we are done, the cookies will be unique by name and
         # we'll have grabbed the most specific to the URI.
         @cookies.each do |cookie|
-          cookies[cookie.name] = cookie.raw if cookie.matches?(uri)
+          cookies[cookie.name] = cookie if cookie.matches?(uri)
         end
 
-        cookies.values.join(';')
+        return cookies
       end
-
-    protected
 
       def default_uri
         URI.parse("//" + @default_host + "/")
