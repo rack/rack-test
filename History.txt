@@ -2,7 +2,7 @@
 
 * Major enhancements
 
-  * Ruby 1.9 compatible (Simon Rozet)
+  * Ruby 1.9 compatible (Simon Rozet, Michael Fellinger)
 
 * Minor enhancements
 
