@@ -1,4 +1,4 @@
-== brynary/master (in git)
+== 0.3.0 / 2009-05-17
 
 * Major enhancements
 

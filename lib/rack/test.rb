@@ -14,7 +14,7 @@ require "rack/test/uploaded_file"
 module Rack
   module Test
 
-    VERSION = "0.2.0"
+    VERSION = "0.3.0"
 
     DEFAULT_HOST = "example.org"
     MULTIPART_BOUNDARY = "----------XnJLe9ZIbbGUYtzPQJ16u1"
