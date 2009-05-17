@@ -6,6 +6,12 @@
 
 * Minor enhancements
 
+  * Add CookieJar#[] and CookieJar#[]= methods
+  * Make the default host configurable
+  * Use Rack::Lint and fix errors (Simon Rozet)
+  * Extract Rack::MockSession from Rack::Test::Session to handle tracking
+    the last request and response and the cookie jar
+  * Add #set_cookie and #clear_cookies methods
   * Rename #authorize to #basic_authorize (#authorize remains as an alias)
     (Simon Rozet)
 
