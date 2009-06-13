@@ -289,6 +289,11 @@ describe Rack::Test::Session do
     def verb
       "put"
     end
+
+    it "accepts a body" do
+      put "/", "Lobsterlicious!"
+      last_request.body.read.should == "Lobsterlicious!"
+    end
   end
 
   describe "#delete" do

@@ -147,7 +147,8 @@ module Rack
         env.update("HTTPS" => "on")                if URI::HTTPS === uri
         env["X-Requested-With"] = "XMLHttpRequest" if env[:xhr]
 
-        if (env[:method] == "POST" || env["REQUEST_METHOD"] == "POST") && !env.has_key?(:input)
+        if (env[:method] == "POST" || env["REQUEST_METHOD"] == "POST" ||
+            env[:method] == "PUT" || env["REQUEST_METHOD"] == "PUT") && !env.has_key?(:input)
           env["CONTENT_TYPE"] = "application/x-www-form-urlencoded"
 
           multipart = (Hash === env[:params]) &&
