@@ -41,6 +41,11 @@ describe Rack::Test::Session do
       last_request.POST["foo"].should == "bar? baz"
     end
 
+    it "sends params with parens in names" do
+      post "/", "photo" => uploaded_file, "foo(1i)" => "bar"
+      last_request.POST["foo(1i)"].should == "bar"
+    end
+
     it "sends params with encoding sensitive names" do
       post "/", "photo" => uploaded_file, "foo bar" => "baz"
       last_request.POST["foo bar"].should == "baz"

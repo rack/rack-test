@@ -231,6 +231,11 @@ describe Rack::Test::Session do
       last_request.GET.should == { "foo" => "bar" }
     end
 
+    it "sends params with parens in names" do
+      get "/", "foo(1i)" => "bar"
+      last_request.GET["foo(1i)"].should == "bar"
+    end
+
     it "supports params with encoding sensitive names" do
       get "/", "foo bar" => "baz"
       last_request.GET["foo bar"].should == "baz"
