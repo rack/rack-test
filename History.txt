@@ -2,6 +2,7 @@
 
 * Minor enhancements
 
+  * Allow multiple named sessions
   * Initialize Rack::Test::Sessions with Rack::MockSessions instead of apps.
     This change should help integration with other Ruby web frameworks (like Merb).
   * Support sending bodies for PUT requests (Larry Diehl)
