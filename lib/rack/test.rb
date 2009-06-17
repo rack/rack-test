@@ -29,10 +29,10 @@ module Rack
       def_delegators :@rack_mock_session, :clear_cookies, :set_cookie, :last_response, :last_request
 
       # Initialize a new session for the given Rack app
-      def initialize(app, default_host = DEFAULT_HOST)
+      def initialize(mock_session)
         @headers = {}
-        @default_host = default_host
-        @rack_mock_session = Rack::MockSession.new(app, default_host)
+        @rack_mock_session = mock_session
+        @default_host = mock_session.default_host
       end
 
       # Issue a GET request for the given URI with the given params and Rack
