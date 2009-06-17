@@ -138,6 +138,12 @@ describe Rack::Test::Session do
       last_request.cookies.should == { "value" => "10" }
     end
 
+    it "allows an array of cookies to be set" do
+      set_cookie ["value=10", "foo=bar"]
+      get "/cookies/show"
+      last_request.cookies.should == { "value" => "10", "foo" => "bar" }
+    end
+
     it "accepts explicitly provided cookies" do
       request "/cookies/show", :cookie => "value=1"
       last_request.cookies.should == { "value" => "1" }

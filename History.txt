@@ -2,6 +2,8 @@
 
 * Minor enhancements
 
+  * Support passing in arrays of raw cookies in addition to a newline
+    separated string
   * Support after_request callbacks in MockSession for things like running
     background jobs
   * Allow multiple named sessions
