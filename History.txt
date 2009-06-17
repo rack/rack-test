@@ -2,11 +2,13 @@
 
 * Minor enhancements
 
+  * Expose hook for building Rack::MockSessions for frameworks that need
+    to configure them before use
   * Support passing in arrays of raw cookies in addition to a newline
     separated string
   * Support after_request callbacks in MockSession for things like running
     background jobs
-  * Allow multiple named sessions
+  * Allow multiple named sessions using with_session
   * Initialize Rack::Test::Sessions with Rack::MockSessions instead of apps.
     This change should help integration with other Ruby web frameworks
     (like Merb).

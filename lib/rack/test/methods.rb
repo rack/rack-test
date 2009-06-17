@@ -6,15 +6,29 @@ module Rack
       extend Forwardable
 
       def rack_mock_session(name = :default)
-        return Rack::MockSession.new(app) if name.nil?
+        return build_rack_mock_session unless name
 
         @_rack_mock_sessions ||= {}
-        @_rack_mock_sessions[name] ||= Rack::MockSession.new(app)
+        @_rack_mock_sessions[name] ||= build_rack_mock_session
+      end
+
+      def build_rack_mock_session
+        Rack::MockSession.new(app)
       end
 
       def rack_test_session(name = :default)
+        return build_rack_test_session(name) unless name
+
         @_rack_test_sessions ||= {}
-        @_rack_test_sessions[name] ||= Rack::Test::Session.new(rack_mock_session(name))
+        @_rack_test_sessions[name] ||= build_rack_test_session(name)
+      end
+
+      def build_rack_test_session(name)
+        Rack::Test::Session.new(rack_mock_session(name))
+      end
+
+      def with_session(name)
+        yield rack_test_session(name)
       end
 
       METHODS = [
