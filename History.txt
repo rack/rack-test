@@ -2,9 +2,12 @@
 
 * Minor enhancements
 
+  * Support after_request callbacks in MockSession for things like running
+    background jobs
   * Allow multiple named sessions
   * Initialize Rack::Test::Sessions with Rack::MockSessions instead of apps.
-    This change should help integration with other Ruby web frameworks (like Merb).
+    This change should help integration with other Ruby web frameworks
+    (like Merb).
   * Support sending bodies for PUT requests (Larry Diehl)
 
 == 0.3.0 / 2009-05-17

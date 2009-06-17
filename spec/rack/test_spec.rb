@@ -219,6 +219,32 @@ describe Rack::Test::Session do
     end
   end
 
+  describe "after_request" do
+    it "runs callbacks after each request" do
+      ran = false
+
+      rack_mock_session.after_request do
+        ran = true
+      end
+
+      get "/"
+      ran.should == true
+    end
+
+    it "runs multiple callbacks" do
+      count = 0
+
+      2.times do
+        rack_mock_session.after_request do
+          count += 1
+        end
+      end
+
+      get "/"
+      count.should == 2
+    end
+  end
+
   describe "#get" do
     it_should_behave_like "any #verb methods"
 
