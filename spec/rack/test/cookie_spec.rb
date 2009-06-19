@@ -8,6 +8,15 @@ describe Rack::Test::Session do
   end
 
   context "cookies" do
+    it "keeps a cookie jar" do
+      get "/cookies/show"
+      last_request.cookies.should == {}
+
+      get "/cookies/set", "value" => "1"
+      get "/cookies/show"
+      last_request.cookies.should == { "value" => "1" }
+    end
+
     it "doesn't send expired cookies" do
       get "/cookies/set", "value" => "1"
       now = Time.now
@@ -103,15 +112,6 @@ describe Rack::Test::Session do
       last_request.cookies.should == { "secure-cookie" => "set" }
     end
 
-    it "keeps a cookie jar" do
-      get "/cookies/show"
-      last_request.cookies.should == {}
-
-      get "/cookies/set", "value" => "1"
-      get "/cookies/show"
-      last_request.cookies.should == { "value" => "1" }
-    end
-
     it "keeps separate cookie jars for different domains" do
       get "http://example.com/cookies/set", "value" => "example"
       get "http://example.com/cookies/show"
@@ -142,6 +142,30 @@ describe Rack::Test::Session do
       set_cookie ["value=10", "foo=bar"]
       get "/cookies/show"
       last_request.cookies.should == { "value" => "10", "foo" => "bar" }
+    end
+
+    it "supports multiple sessions" do
+      with_session(:first) do
+        get "/cookies/set", "value" => "1"
+        get "/cookies/show"
+        last_request.cookies.should == { "value" => "1" }
+      end
+
+      with_session(:second) do
+        get "/cookies/show"
+        last_request.cookies.should == { }
+      end
+    end
+
+    it "uses :default as the default session name" do
+      get "/cookies/set", "value" => "1"
+      get "/cookies/show"
+      last_request.cookies.should == { "value" => "1" }
+
+      with_session(:default) do
+        get "/cookies/show"
+        last_request.cookies.should == { "value" => "1" }
+      end
     end
 
     it "accepts explicitly provided cookies" do
