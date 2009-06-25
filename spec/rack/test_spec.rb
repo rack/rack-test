@@ -85,6 +85,13 @@ describe Rack::Test::Session do
       end
     end
 
+    context "when CONTENT_TYPE is specified in the env" do
+      it "does not overwrite the CONTENT_TYPE" do
+        request "/", "CONTENT_TYPE" => "application/xml"
+        last_request.env["CONTENT_TYPE"].should == "application/xml"
+      end
+    end
+
     context "when the URL is https://" do
       it "sets SERVER_PORT to 443" do
         get "https://example.org/"
@@ -311,6 +318,13 @@ describe Rack::Test::Session do
     it "accepts a body" do
       post "/", "Lobsterlicious!"
       last_request.body.read.should == "Lobsterlicious!"
+    end
+
+    context "when CONTENT_TYPE is specified in the env" do
+      it "does not overwrite the CONTENT_TYPE" do
+        post "/", {}, { "CONTENT_TYPE" => "application/xml" }
+        last_request.env["CONTENT_TYPE"].should == "application/xml"
+      end
     end
   end
 
