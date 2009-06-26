@@ -31,8 +31,14 @@ module Rack
       # Initialize a new session for the given Rack app
       def initialize(mock_session)
         @headers = {}
-        @rack_mock_session = mock_session
-        @default_host = mock_session.default_host
+
+        if mock_session.is_a?(MockSession)
+          @rack_mock_session = mock_session
+        else
+          @rack_mock_session = MockSession.new(mock_session)
+        end
+
+        @default_host = @rack_mock_session.default_host
       end
 
       # Issue a GET request for the given URI with the given params and Rack

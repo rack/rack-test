@@ -1,6 +1,18 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
 describe Rack::Test::Session do
+  describe "initialization" do
+    it "supports being initialized with a Rack::MockSession app" do
+      session = Rack::Test::Session.new(Rack::MockSession.new(app))
+      session.request("/").should be_ok
+    end
+
+    it "supports being initialized with an app" do
+      session = Rack::Test::Session.new(app)
+      session.request("/").should be_ok
+    end
+  end
+
   describe "#request" do
     it "requests the URI using GET by default" do
       request "/"

@@ -2,6 +2,8 @@
 
 * Minor enhancements
 
+  * Support initializing a Rack::Test::Session with an app in addition to
+    a Rack::MockSession
   * Allow CONTENT_TYPE to be specified in the env and not overwritten when
     sending a POST or PUT
 
