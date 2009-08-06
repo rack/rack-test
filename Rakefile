@@ -1,9 +1,25 @@
 require "rubygems"
 require "rake/rdoctask"
-require "rake/gempackagetask"
-require "rake/clean"
 require "spec/rake/spectask"
-require File.expand_path("./lib/rack/test")
+
+begin
+  require "jeweler"
+
+  Jeweler::Tasks.new do |s|
+    s.name      = "rack-test"
+    s.author    = "Bryan Helmkamp"
+    s.email     = "bryan" + "@" + "brynary.com"
+    s.homepage  = "http://github.com/brynary/rack-test"
+    s.summary   = "Simple testing API built on Rack"
+    # s.description = "TODO"
+    s.rubyforge_project = "rack-test"
+    s.extra_rdoc_files = %w[README.rdoc MIT-LICENSE.txt]
+  end
+
+  Jeweler::RubyforgeTasks.new
+rescue LoadError
+  puts "Jeweler not available. Install it with: gem install jeweler"
+end
 
 Spec::Rake::SpecTask.new do |t|
   t.spec_opts = ['--options', "\"#{File.dirname(__FILE__)}/spec/spec.opts\""]
@@ -18,45 +34,18 @@ Spec::Rake::SpecTask.new(:rcov) do |t|
   end
 end
 
-desc "Run the specs"
-task :default => :spec
-
-spec = Gem::Specification.new do |s|
-  s.name         = "rack-test"
-  s.version      = Rack::Test::VERSION
-  s.author       = "Bryan Helmkamp"
-  s.email        = "bryan" + "@" + "brynary.com"
-  s.homepage     = "http://github.com/brynary/rack-test"
-  s.summary      = "Simple testing API built on Rack"
-  s.description  = s.summary
-  s.files        = %w[History.txt Rakefile README.rdoc] + Dir["lib/**/*"]
-
-  # rdoc
-  s.has_rdoc         = true
-  s.extra_rdoc_files = %w(README.rdoc MIT-LICENSE.txt)
-end
-
-Rake::GemPackageTask.new(spec) do |package|
-  package.gem_spec = spec
-end
-
-desc "Delete generated RDoc"
-task :clobber_docs do
-  FileUtils.rm_rf("doc")
-end
-
 desc "Generate RDoc"
-task :docs => :clobber_docs do
+task :docs do
+  FileUtils.rm_rf("doc")
   system "hanna --title 'Rack::Test #{Rack::Test::VERSION} API Documentation'"
-end
-
-desc 'Install the package as a gem.'
-task :install => [:clean, :package] do
-  gem = Dir['pkg/*.gem'].first
-  sh "sudo gem install --no-rdoc --no-ri --local #{gem}"
 end
 
 desc 'Removes trailing whitespace'
 task :whitespace do
   sh %{find . -name '*.rb' -exec sed -i '' 's/ *$//g' {} \\;}
 end
+
+task :spec => :check_dependencies
+
+desc "Run the specs"
+task :default => :spec
