@@ -1,4 +1,4 @@
-== Git
+== 0.4.1 / 2009-08-06
 
 * Minor enhancements
 
