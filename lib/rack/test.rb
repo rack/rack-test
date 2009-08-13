@@ -150,7 +150,7 @@ module Rack
         env = default_env.merge(env)
 
         env.update("HTTPS" => "on")                if URI::HTTPS === uri
-        env["X-Requested-With"] = "XMLHttpRequest" if env[:xhr]
+        env["HTTP_X_REQUESTED_WITH"] = "XMLHttpRequest" if env[:xhr]
 
         if (env[:method] == "POST" || env["REQUEST_METHOD"] == "POST" ||
             env[:method] == "PUT" || env["REQUEST_METHOD"] == "PUT") && !env.has_key?(:input)
