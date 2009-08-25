@@ -92,6 +92,12 @@ module Rack
         "Set"
       end
 
+      get "/cookies/set-multiple" do
+        response.set_cookie("key1", :value => "value1")
+        response.set_cookie("key2", :value => "value2")
+        "Set"
+      end
+
       post "/" do
         "Hello, POST: #{params.inspect}"
       end

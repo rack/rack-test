@@ -116,7 +116,8 @@ module Rack
       def merge(raw_cookies, uri = nil)
         return unless raw_cookies
 
-        Array(raw_cookies).join("\n").split("\n").each do |raw_cookie|
+        raw_cookies = raw_cookies.split("\n") if raw_cookies.is_a? String
+        raw_cookies.each do |raw_cookie|
           cookie = Cookie.new(raw_cookie, uri, @default_host)
           self << cookie if cookie.valid?(uri)
         end

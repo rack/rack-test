@@ -144,6 +144,12 @@ describe Rack::Test::Session do
       last_request.cookies.should == { "value" => "10", "foo" => "bar" }
     end
 
+    it "parses multiple cookies properly" do
+      get "/cookies/set-multiple"
+      get "/cookies/show"
+      last_request.cookies.should == { "key1" => "value1", "key2" => "value2" }
+    end
+
     it "supports multiple sessions" do
       with_session(:first) do
         get "/cookies/set", "value" => "1"
