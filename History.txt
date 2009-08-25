@@ -1,3 +1,9 @@
+== Git
+
+* Bug fixes
+
+  * Fixed using multiple cookies in a string on Ruby 1.8 (Tuomas Kareinen and Hermanni Hyytiälä)
+
 == 0.4.1 / 2009-08-06
 
 * Minor enhancements
