@@ -148,6 +148,10 @@ module Rack
         env.update("HTTPS" => "on")                if URI::HTTPS === uri
         env["X-Requested-With"] = "XMLHttpRequest" if env[:xhr]
 
+        # TODO: Remove this after Rack 1.1 has been released.
+        # Stringifying and upcasing methods has be commit upstream
+        env[:method] = env[:method].to_s.upcase if env[:method]
+
         if (env[:method] == "POST" || env["REQUEST_METHOD"] == "POST" ||
             env[:method] == "PUT" || env["REQUEST_METHOD"] == "PUT") && !env.has_key?(:input)
           env["CONTENT_TYPE"] ||= "application/x-www-form-urlencoded"

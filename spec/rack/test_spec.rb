@@ -71,6 +71,11 @@ describe Rack::Test::Session do
       last_response.body.should be_empty
     end
 
+    it "stringify and upcases method" do
+      request "/", :method => :post, :input => "foo"
+      last_request.env["rack.input"].read.should == "foo"
+    end
+
     context "when input is given" do
       it "should send the input" do
         request "/", :method => "POST", :input => "foo"
