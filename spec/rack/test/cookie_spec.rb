@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/../../spec_helper"
+require "spec_helper"
 
 describe Rack::Test::Session do
   def have_body(string)
