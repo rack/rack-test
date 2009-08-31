@@ -13,7 +13,7 @@ require "rack/test/uploaded_file"
 
 module Rack
   module Test
-    VERSION = ::File.read(::File.join(::File.dirname(__FILE__), "..", "..", "VERSION")).strip
+    VERSION = "0.4.1"
 
     DEFAULT_HOST = "example.org"
     MULTIPART_BOUNDARY = "----------XnJLe9ZIbbGUYtzPQJ16u1"
