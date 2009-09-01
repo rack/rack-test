@@ -155,8 +155,8 @@ module Rack
 
         if env["REQUEST_METHOD"] == "GET"
           params = env[:params] || {}
+          params = parse_nested_query(params) if params.is_a?(String)
           params.update(parse_query(uri.query))
-
           uri.query = build_nested_query(params)
         elsif !env.has_key?(:input)
           env["CONTENT_TYPE"] ||= "application/x-www-form-urlencoded"
