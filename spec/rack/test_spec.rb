@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/../spec_helper"
+require "spec_helper"
 
 describe Rack::Test::Session do
   describe "initialization" do
@@ -69,6 +69,11 @@ describe Rack::Test::Session do
       request "/redirect"
       last_response.should be_redirect
       last_response.body.should be_empty
+    end
+
+    it "stringify and upcases method" do
+      request "/", :method => :post, :input => "foo"
+      last_request.env["rack.input"].read.should == "foo"
     end
 
     context "when input is given" do

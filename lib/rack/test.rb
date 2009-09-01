@@ -1,7 +1,3 @@
-unless $LOAD_PATH.include?(File.expand_path(File.dirname(__FILE__) + "/.."))
-  $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + "/.."))
-end
-
 require "uri"
 require "rack"
 require "rack/mock_session"
@@ -13,7 +9,7 @@ require "rack/test/uploaded_file"
 
 module Rack
   module Test
-    VERSION = ::File.read(::File.join(::File.dirname(__FILE__), "..", "..", "VERSION")).strip
+    VERSION = "0.4.1"
 
     DEFAULT_HOST = "example.org"
     MULTIPART_BOUNDARY = "----------XnJLe9ZIbbGUYtzPQJ16u1"
@@ -151,6 +147,10 @@ module Rack
 
         env.update("HTTPS" => "on")                if URI::HTTPS === uri
         env["X-Requested-With"] = "XMLHttpRequest" if env[:xhr]
+
+        # TODO: Remove this after Rack 1.1 has been released.
+        # Stringifying and upcasing methods has be commit upstream
+        env[:method] = env[:method].to_s.upcase if env[:method]
 
         if (env[:method] == "POST" || env["REQUEST_METHOD"] == "POST" ||
             env[:method] == "PUT" || env["REQUEST_METHOD"] == "PUT") && !env.has_key?(:input)

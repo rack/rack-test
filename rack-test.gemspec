@@ -22,7 +22,6 @@ Gem::Specification.new do |s|
      "MIT-LICENSE.txt",
      "README.rdoc",
      "Rakefile",
-     "VERSION",
      "lib/rack/mock_session.rb",
      "lib/rack/test.rb",
      "lib/rack/test/cookie_jar.rb",
