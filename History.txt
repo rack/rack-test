@@ -1,7 +1,12 @@
 == Git
 
+* Minor enhancements
+
+  * Stringify and upcase request method (e.g. :post => "POST") (Josh Peek)
+
 * Bug fixes
 
+  * Requiring Rack-Test never modifies the Ruby load path anymore (Josh Peek)
   * Fixed using multiple cookies in a string on Ruby 1.8 (Tuomas Kareinen and Hermanni Hyytiälä)
 
 == 0.4.1 / 2009-08-06
