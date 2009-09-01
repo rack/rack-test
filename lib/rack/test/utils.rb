@@ -4,22 +4,22 @@ module Rack
     module Utils
       include Rack::Utils
 
-      def requestify(value, prefix = nil)
+      def build_nested_query(value, prefix = nil)
         case value
         when Array
           value.map do |v|
-            requestify(v, "#{prefix}[]")
+            build_nested_query(v, "#{prefix}[]")
           end.join("&")
         when Hash
           value.map do |k, v|
-            requestify(v, prefix ? "#{prefix}[#{escape(k)}]" : escape(k))
+            build_nested_query(v, prefix ? "#{prefix}[#{escape(k)}]" : escape(k))
           end.join("&")
         else
           "#{prefix}=#{escape(value)}"
         end
       end
 
-      module_function :requestify
+      module_function :build_nested_query
 
       def multipart_requestify(params, first=true)
         p = Hash.new

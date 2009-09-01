@@ -171,7 +171,7 @@ module Rack
         params = env[:params] || {}
         params.update(parse_query(uri.query))
 
-        uri.query = requestify(params)
+        uri.query = build_nested_query(params)
 
         if env.has_key?(:cookie)
           set_cookie(env.delete(:cookie), uri)
@@ -233,7 +233,7 @@ module Rack
 
       def params_to_string(params)
         case params
-        when Hash then requestify(params)
+        when Hash then build_nested_query(params)
         when nil  then ""
         else params
         end
