@@ -2,10 +2,13 @@
 
 * Minor enhancements
 
+  * Merge in rack/master's build_multipart method which covers additional cases
+  * Accept raw :params string input and merge it with the query string
   * Stringify and upcase request method (e.g. :post => "POST") (Josh Peek)
 
 * Bug fixes
 
+  * Prepend a slash to the URI path if it doesn't start with one (Josh Peek)
   * Requiring Rack-Test never modifies the Ruby load path anymore (Josh Peek)
   * Fixed using multiple cookies in a string on Ruby 1.8 (Tuomas Kareinen and Hermanni Hyytiälä)
 
