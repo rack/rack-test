@@ -45,7 +45,7 @@ task :whitespace do
   sh %{find . -name '*.rb' -exec sed -i '' 's/ *$//g' {} \\;}
 end
 
-task :spec => :check_dependencies
+task :spec => :check_dependencies if defined?(Jeweler)
 
 desc "Run the specs"
 task :default => :spec
