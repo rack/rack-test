@@ -71,9 +71,14 @@ describe Rack::Test::Session do
       last_response.body.should be_empty
     end
 
-    it "stringify and upcases method" do
+    it "allows passing :input in for POSTs" do
       request "/", :method => :post, :input => "foo"
       last_request.env["rack.input"].read.should == "foo"
+    end
+    
+    it "converts method names to a uppercase strings" do
+      request "/", :method => :put
+      last_request.env["REQUEST_METHOD"].should == "PUT"
     end
 
     context "when input is given" do
