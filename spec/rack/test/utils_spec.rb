@@ -8,8 +8,12 @@ describe Rack::Test::Utils do
       build_nested_query("").should == "="
     end
 
-    it "converts nil to =" do
-      build_nested_query(nil).should == "="
+    it "converts nil to an empty string" do
+      build_nested_query(nil).should == ""
+    end
+
+    it "converts hashes with nil values" do
+      build_nested_query(:a => nil).should == "a"
     end
 
     it "converts hashes" do

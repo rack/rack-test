@@ -14,6 +14,8 @@ module Rack
           value.map do |k, v|
             build_nested_query(v, prefix ? "#{prefix}[#{escape(k)}]" : escape(k))
           end.join("&")
+        when NilClass
+          prefix.to_s
         else
           "#{prefix}=#{escape(value)}"
         end

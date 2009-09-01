@@ -8,6 +8,7 @@
 
 * Bug fixes
 
+  * Properly convert hashes with nil values (e.g. :foo => nil becomes simply "foo", not "foo=")
   * Prepend a slash to the URI path if it doesn't start with one (Josh Peek)
   * Requiring Rack-Test never modifies the Ruby load path anymore (Josh Peek)
   * Fixed using multiple cookies in a string on Ruby 1.8 (Tuomas Kareinen and Hermanni Hyytiälä)
