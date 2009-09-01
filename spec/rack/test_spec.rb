@@ -81,6 +81,11 @@ describe Rack::Test::Session do
       last_request.env["REQUEST_METHOD"].should == "PUT"
     end
 
+    it "prepends a slash to the URI path" do
+      request "foo"
+      last_request.env["PATH_INFO"].should == "/foo"
+    end
+
     context "when input is given" do
       it "should send the input" do
         request "/", :method => "POST", :input => "foo"

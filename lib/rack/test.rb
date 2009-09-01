@@ -141,6 +141,7 @@ module Rack
 
       def env_for(path, env)
         uri = URI.parse(path)
+        uri.path = "/#{uri.path}" unless uri.path[0] == ?/
         uri.host ||= @default_host
 
         env = default_env.merge(env)
