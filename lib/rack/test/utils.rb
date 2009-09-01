@@ -21,53 +21,77 @@ module Rack
 
       module_function :build_nested_query
 
-      def multipart_requestify(params, first=true)
-        p = Hash.new
+      def build_multipart(params, first = true)
+        if first
+          unless params.is_a?(Hash)
+            raise ArgumentError, "value must be a Hash"
+          end
+
+          multipart = false
+          query = lambda { |value|
+            case value
+            when Array
+              value.each(&query)
+            when Hash
+              value.values.each(&query)
+            when UploadedFile
+              multipart = true
+            end
+          }
+          params.values.each(&query)
+          return nil unless multipart
+        end
+
+        flattened_params = Hash.new
 
         params.each do |key, value|
           k = first ? key.to_s : "[#{key}]"
 
-          if Hash === value
-            multipart_requestify(value, false).each do |subkey, subvalue|
-              p[k + subkey] = subvalue
-            end
+          case value
+          when Array
+            value.map { |v|
+              build_multipart(v, false).each { |subkey, subvalue|
+                flattened_params["#{k}[]#{subkey}"] = subvalue
+              }
+            }
+          when Hash
+            build_multipart(value, false).each { |subkey, subvalue|
+              flattened_params[k + subkey] = subvalue
+            }
           else
-            p[k] = value
+            flattened_params[k] = value
           end
         end
 
-        return p
-      end
-
-      module_function :multipart_requestify
-
-      def multipart_body(params)
-        multipart_requestify(params).map do |key, value|
-          if value.respond_to?(:original_filename)
-            ::File.open(value.path, "rb") do |f|
-              f.set_encoding(Encoding::BINARY) if f.respond_to?(:set_encoding)
-
-              <<-EOF
+        if first
+          flattened_params.map { |name, file|
+            if file.respond_to?(:original_filename)
+              ::File.open(file.path, "rb") do |f|
+                f.set_encoding(Encoding::BINARY) if f.respond_to?(:set_encoding)
+<<-EOF
 --#{MULTIPART_BOUNDARY}\r
-Content-Disposition: form-data; name="#{key}"; filename="#{escape(value.original_filename)}"\r
-Content-Type: #{value.content_type}\r
-Content-Length: #{::File.stat(value.path).size}\r
+Content-Disposition: form-data; name="#{name}"; filename="#{escape(file.original_filename)}"\r
+Content-Type: #{file.content_type}\r
+Content-Length: #{::File.stat(file.path).size}\r
 \r
 #{f.read}\r
 EOF
-            end
-          else
+              end
+            else
 <<-EOF
 --#{MULTIPART_BOUNDARY}\r
-Content-Disposition: form-data; name="#{key}"\r
+Content-Disposition: form-data; name="#{name}"\r
 \r
-#{value}\r
+#{file}\r
 EOF
-          end
-        end.join("")+"--#{MULTIPART_BOUNDARY}--\r"
+            end
+          }.join + "--#{MULTIPART_BOUNDARY}--\r"
+        else
+          flattened_params
+        end
       end
 
-      module_function :multipart_body
+      module_function :build_multipart
 
     end
 

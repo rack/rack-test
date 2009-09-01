@@ -150,28 +150,28 @@ module Rack
 
         # TODO: Remove this after Rack 1.1 has been released.
         # Stringifying and upcasing methods has be commit upstream
-        env[:method] = env[:method].to_s.upcase if env[:method]
+        env["REQUEST_METHOD"] ||= env[:method] ? env[:method].to_s.upcase : "GET"
 
-        if (env[:method] == "POST" || env["REQUEST_METHOD"] == "POST" ||
-            env[:method] == "PUT" || env["REQUEST_METHOD"] == "PUT") && !env.has_key?(:input)
+        if env["REQUEST_METHOD"] == "GET"
+          params = env[:params] || {}
+          params.update(parse_query(uri.query))
+
+          uri.query = build_nested_query(params)
+        elsif !env.has_key?(:input)
           env["CONTENT_TYPE"] ||= "application/x-www-form-urlencoded"
 
-          multipart = (Hash === env[:params]) &&
-            env[:params].any? { |_, v| UploadedFile === v }
-
-          if multipart
-            env[:input] = multipart_body(env.delete(:params))
-            env["CONTENT_LENGTH"] ||= env[:input].length.to_s
-            env["CONTENT_TYPE"] = "multipart/form-data; boundary=#{MULTIPART_BOUNDARY}"
+          if env[:params].is_a?(Hash)
+            if data = build_multipart(env[:params])
+              env[:input] = data
+              env["CONTENT_LENGTH"] ||= data.length.to_s
+              env["CONTENT_TYPE"] = "multipart/form-data; boundary=#{MULTIPART_BOUNDARY}"
+            else
+              env[:input] = params_to_string(env[:params])
+            end
           else
-            env[:input] = params_to_string(env.delete(:params))
+            env[:input] = env[:params]
           end
         end
-
-        params = env[:params] || {}
-        params.update(parse_query(uri.query))
-
-        uri.query = build_nested_query(params)
 
         if env.has_key?(:cookie)
           set_cookie(env.delete(:cookie), uri)
