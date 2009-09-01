@@ -75,7 +75,7 @@ describe Rack::Test::Session do
       request "/", :method => :post, :input => "foo"
       last_request.env["rack.input"].read.should == "foo"
     end
-    
+
     it "converts method names to a uppercase strings" do
       request "/", :method => :put
       last_request.env["REQUEST_METHOD"].should == "PUT"
@@ -115,6 +115,11 @@ describe Rack::Test::Session do
     end
 
     context "when the URL is https://" do
+      it "sets rack.url_scheme to https" do
+        get "https://example.org/"
+        last_request.env["rack.url_scheme"].should == "https"
+      end
+
       it "sets SERVER_PORT to 443" do
         get "https://example.org/"
         last_request.env["SERVER_PORT"].should == "443"
