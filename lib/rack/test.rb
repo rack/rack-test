@@ -174,6 +174,8 @@ module Rack
           end
         end
 
+        env.delete(:params)
+
         if env.has_key?(:cookie)
           set_cookie(env.delete(:cookie), uri)
         end
