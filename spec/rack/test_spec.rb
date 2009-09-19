@@ -100,7 +100,7 @@ describe Rack::Test::Session do
       request "/foo", :method => :post, :params => {:foo => {:bar => "1"}}
       last_request.env["rack.input"].read.should == "foo[bar]=1"
     end
-    
+
     it "accepts raw input in params for POST requests" do
       request "/foo", :method => :post, :params => "foo[bar]=1"
       last_request.env["rack.input"].read.should == "foo[bar]=1"
