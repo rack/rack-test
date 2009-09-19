@@ -1,3 +1,10 @@
+== 0.4.3pre
+
+* Bug fixes
+
+  * Set headers in the Rack env in HTTP_USER_AGENT form
+  * Rack::Test now generates no Ruby warnings
+
 == 0.4.2 / 2009-09-01
 
 * Minor enhancements
