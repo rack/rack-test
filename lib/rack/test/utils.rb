@@ -1,7 +1,7 @@
 module Rack
   module Test
 
-    module Utils
+    module Utils # :nodoc:
       include Rack::Utils
 
       def build_nested_query(value, prefix = nil)

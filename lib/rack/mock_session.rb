@@ -1,6 +1,6 @@
 module Rack
 
-  class MockSession
+  class MockSession # :nodoc:
     attr_writer :cookie_jar
     attr_reader :default_host
 

@@ -1,8 +1,9 @@
 require "uri"
+
 module Rack
   module Test
 
-    class Cookie
+    class Cookie # :nodoc:
       include Rack::Utils
 
       # :api: private
@@ -93,7 +94,7 @@ module Rack
 
     end
 
-    class CookieJar
+    class CookieJar # :nodoc:
 
       # :api: private
       def initialize(cookies = [], default_host = DEFAULT_HOST)

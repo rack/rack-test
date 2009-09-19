@@ -1,7 +1,8 @@
 module Rack
   module Test
 
-    class MockDigestRequest
+    class MockDigestRequest # :nodoc:
+
       def initialize(params)
         @params = params
       end
@@ -21,6 +22,7 @@ module Rack
       def response(password)
         Rack::Auth::Digest::MD5.new(nil).send :digest, self, password
       end
+
     end
 
   end

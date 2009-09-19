@@ -17,13 +17,22 @@ module Rack
     # The common base class for exceptions raised by Rack::Test
     class Error < StandardError; end
 
+    # This class represents a series of requests issued to a Rack app, sharing
+    # a single cookie jar
+    #
+    # Rack::Test::Session's methods are most often called through Rack::Test::Methods,
+    # which will automatically build a session when it's first used.
     class Session
       extend Forwardable
       include Rack::Test::Utils
 
       def_delegators :@rack_mock_session, :clear_cookies, :set_cookie, :last_response, :last_request
 
-      # Initialize a new session for the given Rack app
+      # Creates a Rack::Test::Session for a given Rack app or Rack::MockSession.
+      #
+      # Note: Generally, you won't need to initialize a Rack::Test::Session directly.
+      # Instead, you should include Rack::Test::Methods into your testing context.
+      # (See README.rdoc for an example)
       def initialize(mock_session)
         @headers = {}
 
@@ -99,6 +108,9 @@ module Rack
       # Set a header to be included on all subsequent requests through the
       # session. Use a value of nil to remove a previously configured header.
       #
+      # In accordance with the Rack spec, headers will be included in the Rack
+      # environment hash in HTTP_USER_AGENT form.
+      #
       # Example:
       #   header "User-Agent", "Firefox"
       def header(name, value)
@@ -121,6 +133,11 @@ module Rack
 
       alias_method :authorize, :basic_authorize
 
+      # Set the username and password for HTTP Digest authorization, to be
+      # included in subsequent requests in the HTTP_AUTHORIZATION header.
+      #
+      # Example:
+      #   digest_authorize "bryan", "secret"
       def digest_authorize(username, password)
         @digest_username = username
         @digest_password = password
