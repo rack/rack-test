@@ -160,6 +160,7 @@ describe Rack::Test::Session do
       it "sends XMLHttpRequest for the X-Requested-With header" do
         request "/", :xhr => true
         last_request.env["HTTP_X_REQUESTED_WITH"].should == "XMLHttpRequest"
+        last_request.should be_xhr
       end
     end
   end
