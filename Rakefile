@@ -22,6 +22,8 @@ request helpers feature.
     EOS
     s.rubyforge_project = "rack-test"
     s.extra_rdoc_files = %w[README.rdoc MIT-LICENSE.txt]
+
+    s.add_dependency "rack", ">= 1.0"
   end
 
   Jeweler::RubyforgeTasks.new
