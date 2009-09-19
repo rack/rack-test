@@ -13,13 +13,16 @@ Spec::Runner.configure do |config|
     Rack::Lint.new(Rack::Test::FakeApp.new)
   end
 
+  def check(*args)
+  end
+
 end
 
 describe "any #verb methods", :shared => true do
   it "requests the URL using VERB" do
     send(verb, "/")
 
-    last_request.env["REQUEST_METHOD"].should == verb.upcase
+    check last_request.env["REQUEST_METHOD"].should == verb.upcase
     last_response.should be_ok
   end
 

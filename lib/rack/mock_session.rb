@@ -2,13 +2,14 @@ module Rack
 
   class MockSession
     attr_writer :cookie_jar
-    attr_reader :last_response
     attr_reader :default_host
 
     def initialize(app, default_host = Rack::Test::DEFAULT_HOST)
       @app = app
       @after_request = []
       @default_host = default_host
+      @last_request = nil
+      @last_response = nil
     end
 
     def after_request(&block)
