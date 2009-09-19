@@ -1,10 +1,14 @@
 require "rubygems"
 require "rake/rdoctask"
-require "spec/rake/spectask"
 
 begin
   require "jeweler"
-
+rescue LoadError
+  desc "Install gem using sudo"
+  task(:install) do
+    $stderr.puts "Jeweler not available. `gem install jeweler` to install this gem"
+  end
+else
   Jeweler::Tasks.new do |s|
     s.name      = "rack-test"
     s.author    = "Bryan Helmkamp"
@@ -22,29 +26,39 @@ request helpers feature.
   end
 
   Jeweler::RubyforgeTasks.new
+
+  task :spec => :check_dependencies
+end
+
+begin
+  require "spec/rake/spectask"
 rescue LoadError
-  puts "Jeweler not available. Install it with: gem install jeweler"
-end
+  desc "Run specs"
+  task(:spec) { $stderr.puts '`gem install rspec` to run specs' }
+else
+  Spec::Rake::SpecTask.new do |t|
+    t.spec_opts = ['--options', "\"#{File.dirname(__FILE__)}/spec/spec.opts\""]
+    t.libs << 'lib'
+    t.libs << 'spec'
+    t.warning = true
+  end
 
-Spec::Rake::SpecTask.new do |t|
-  t.spec_opts = ['--options', "\"#{File.dirname(__FILE__)}/spec/spec.opts\""]
-  t.libs << 'lib'
-  t.libs << 'spec'
-  t.warning = true
-end
+  task :default => :spec
 
-desc "Run all specs in spec directory with RCov"
-Spec::Rake::SpecTask.new(:rcov) do |t|
-  t.spec_opts = ['--options', "\"#{File.dirname(__FILE__)}/spec/spec.opts\""]
-  t.rcov = true
-  t.rcov_opts = lambda do
-    IO.readlines(File.dirname(__FILE__) + "/spec/rcov.opts").map {|l| l.chomp.split " "}.flatten
+  desc "Run all specs in spec directory with RCov"
+  Spec::Rake::SpecTask.new(:rcov) do |t|
+    t.spec_opts = ['--options', "\"#{File.dirname(__FILE__)}/spec/spec.opts\""]
+    t.rcov = true
+    t.rcov_opts = lambda do
+      IO.readlines(File.dirname(__FILE__) + "/spec/rcov.opts").map {|l| l.chomp.split " "}.flatten
+    end
   end
 end
 
 desc "Generate RDoc"
 task :docs do
   FileUtils.rm_rf("doc")
+  require "rack/test"
   system "hanna --title 'Rack::Test #{Rack::Test::VERSION} API Documentation'"
 end
 
@@ -52,8 +66,3 @@ desc 'Removes trailing whitespace'
 task :whitespace do
   sh %{find . -name '*.rb' -exec sed -i '' 's/ *$//g' {} \\;}
 end
-
-task :spec => :check_dependencies if defined?(Jeweler)
-
-desc "Run the specs"
-task :default => :spec
