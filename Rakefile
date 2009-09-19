@@ -1,5 +1,4 @@
 require "rubygems"
-require "rake/rdoctask"
 
 begin
   require "jeweler"
