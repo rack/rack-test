@@ -47,10 +47,11 @@ else
   desc "Run all specs in spec directory with RCov"
   Spec::Rake::SpecTask.new(:rcov) do |t|
     t.spec_opts = ['--options', "\"#{File.dirname(__FILE__)}/spec/spec.opts\""]
+    t.libs << 'lib'
+    t.libs << 'spec'
+    t.warning = true
     t.rcov = true
-    t.rcov_opts = lambda do
-      IO.readlines(File.dirname(__FILE__) + "/spec/rcov.opts").map {|l| l.chomp.split " "}.flatten
-    end
+    t.rcov_opts = ['-x spec']
   end
 end
 
