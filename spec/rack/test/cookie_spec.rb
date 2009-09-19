@@ -51,11 +51,13 @@ describe Rack::Test::Session do
       last_request.cookies.should == { }
     end
 
-    xit "respects cookie domains when no domain is explicitly set" do
-      request("http://example.org/cookies/count").should     have_body("1")
-      request("http://www.example.org/cookies/count").should have_body("1")
-      request("http://example.org/cookies/count").should     have_body("2")
-      request("http://www.example.org/cookies/count").should have_body("2")
+    it "respects cookie domains when no domain is explicitly set" do
+      pending "FIXME: www.example.org should not get the first cookie" do
+        request("http://example.org/cookies/count").should     have_body("1")
+        request("http://www.example.org/cookies/count").should have_body("1")
+        request("http://example.org/cookies/count").should     have_body("2")
+        request("http://www.example.org/cookies/count").should have_body("2")
+      end
     end
 
     it "treats domains case insensitively" do
