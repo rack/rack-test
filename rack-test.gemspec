@@ -5,11 +5,15 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rack-test}
-  s.version = "0.4.2"
+  s.version = "0.5.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Bryan Helmkamp"]
-  s.date = %q{2009-09-01}
+  s.date = %q{2009-09-19}
+  s.description = %q{Rack::Test is a small, simple testing API for Rack apps. It can be used on its
+own or as a reusable starting point for Web frameworks and testing libraries
+to build on. Most of its initial functionality is an extraction of Merb 1.0's
+request helpers feature.}
   s.email = %q{bryan@brynary.com}
   s.extra_rdoc_files = [
     "MIT-LICENSE.txt",
@@ -38,7 +42,6 @@ Gem::Specification.new do |s|
      "spec/rack/test/multipart_spec.rb",
      "spec/rack/test/utils_spec.rb",
      "spec/rack/test_spec.rb",
-     "spec/rcov.opts",
      "spec/spec.opts",
      "spec/spec_helper.rb"
   ]
