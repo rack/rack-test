@@ -27,8 +27,8 @@ describe "any #verb methods", :shared => true do
   end
 
   it "uses the provided env" do
-    send(verb, "/", {}, { "User-Agent" => "Rack::Test" })
-    last_request.env["User-Agent"].should == "Rack::Test"
+    send(verb, "/", {}, { "HTTP_USER_AGENT" => "Rack::Test" })
+    last_request.env["HTTP_USER_AGENT"].should == "Rack::Test"
   end
 
   it "yields the response to a given block" do
@@ -45,7 +45,7 @@ describe "any #verb methods", :shared => true do
   context "for a XHR" do
     it "sends XMLHttpRequest for the X-Requested-With header" do
       send(verb, "/", {}, { :xhr => true })
-      last_request.env["X-Requested-With"].should == "XMLHttpRequest"
+      last_request.env["HTTP_X_REQUESTED_WITH"].should == "XMLHttpRequest"
     end
   end
 end

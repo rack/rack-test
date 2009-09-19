@@ -116,7 +116,7 @@ module Rack
       #   basic_authorize "bryan", "secret"
       def basic_authorize(username, password)
         encoded_login = ["#{username}:#{password}"].pack("m*")
-        header('HTTP_AUTHORIZATION', "Basic #{encoded_login}")
+        header('Authorization', "Basic #{encoded_login}")
       end
 
       alias_method :authorize, :basic_authorize
@@ -146,8 +146,8 @@ module Rack
 
         env = default_env.merge(env)
 
-        env.update("HTTPS" => "on")                if URI::HTTPS === uri
-        env["X-Requested-With"] = "XMLHttpRequest" if env[:xhr]
+        env.update("HTTPS" => "on") if URI::HTTPS === uri
+        env["HTTP_X_REQUESTED_WITH"] = "XMLHttpRequest" if env[:xhr]
 
         # TODO: Remove this after Rack 1.1 has been released.
         # Stringifying and upcasing methods has be commit upstream
@@ -231,7 +231,18 @@ module Rack
       end
 
       def default_env
-        { "rack.test" => true, "REMOTE_ADDR" => "127.0.0.1" }.merge(@headers)
+        { "rack.test" => true, "REMOTE_ADDR" => "127.0.0.1" }.merge(headers_for_env)
+      end
+
+      def headers_for_env
+        converted_headers = {}
+
+        @headers.each do |name, value|
+          env_key = "HTTP_" + name.upcase.gsub("-", "_")
+          converted_headers[env_key] = value
+        end
+
+        converted_headers
       end
 
       def params_to_string(params)

@@ -159,7 +159,7 @@ describe Rack::Test::Session do
     context "for a XHR" do
       it "sends XMLHttpRequest for the X-Requested-With header" do
         request "/", :xhr => true
-        last_request.env["X-Requested-With"].should == "XMLHttpRequest"
+        last_request.env["HTTP_X_REQUESTED_WITH"].should == "XMLHttpRequest"
       end
     end
   end
@@ -169,7 +169,7 @@ describe Rack::Test::Session do
       header "User-Agent", "Firefox"
       request "/"
 
-      last_request.env["User-Agent"].should == "Firefox"
+      last_request.env["HTTP_USER_AGENT"].should == "Firefox"
     end
 
     it "persists across multiple requests" do
@@ -177,7 +177,7 @@ describe Rack::Test::Session do
       request "/"
       request "/"
 
-      last_request.env["User-Agent"].should == "Firefox"
+      last_request.env["HTTP_USER_AGENT"].should == "Firefox"
     end
 
     it "overwrites previously set headers" do
@@ -185,7 +185,7 @@ describe Rack::Test::Session do
       header "User-Agent", "Safari"
       request "/"
 
-      last_request.env["User-Agent"].should == "Safari"
+      last_request.env["HTTP_USER_AGENT"].should == "Safari"
     end
 
     it "can be used to clear a header" do
@@ -193,14 +193,14 @@ describe Rack::Test::Session do
       header "User-Agent", nil
       request "/"
 
-      last_request.env.should_not have_key("User-Agent")
+      last_request.env.should_not have_key("HTTP_USER_AGENT")
     end
 
     it "is overridden by headers sent during the request" do
       header "User-Agent", "Firefox"
-      request "/", "User-Agent" => "Safari"
+      request "/", "HTTP_USER_AGENT" => "Safari"
 
-      last_request.env["User-Agent"].should == "Safari"
+      last_request.env["HTTP_USER_AGENT"].should == "Safari"
     end
   end
 
