@@ -1,4 +1,5 @@
 require "tempfile"
+require "fileutils"
 
 module Rack
   module Test
