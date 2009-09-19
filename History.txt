@@ -2,6 +2,7 @@
 
 * Bug fixes
 
+  * Set HTTP_X_REQUESTED_WITH in the Rack env when a request is made with :xhr => true (Ben Sales)
   * Set headers in the Rack env in HTTP_USER_AGENT form
   * Rack::Test now generates no Ruby warnings
 
