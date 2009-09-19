@@ -88,12 +88,12 @@ describe Rack::Test::Session do
 
     it "accepts params and builds query strings for GET requests" do
       request "/foo?baz=2", :params => {:foo => {:bar => "1"}}
-      last_request.env["QUERY_STRING"].should == "baz=2&foo[bar]=1"
+      last_request.GET.should == { "baz" => "2", "foo" => { "bar" => "1" }}
     end
 
     it "accepts raw input in params for GET requests" do
       request "/foo?baz=2", :params => "foo[bar]=1"
-      last_request.env["QUERY_STRING"].should == "baz=2&foo[bar]=1"
+      last_request.GET.should == { "baz" => "2", "foo" => { "bar" => "1" }}
     end
 
     it "accepts params and builds url encoded params for POST requests" do
