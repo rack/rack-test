@@ -25,6 +25,7 @@ Spec::Rake::SpecTask.new do |t|
   t.spec_opts = ['--options', "\"#{File.dirname(__FILE__)}/spec/spec.opts\""]
   t.libs << 'lib'
   t.libs << 'spec'
+  t.warning = true
 end
 
 desc "Run all specs in spec directory with RCov"
