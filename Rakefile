@@ -27,6 +27,29 @@ request helpers feature.
   Jeweler::RubyforgeTasks.new
 
   task :spec => :check_dependencies
+
+  namespace :version do
+    task :verify do
+      $LOAD_PATH.unshift "lib"
+      require "rack/test"
+
+      jeweler_version = Gem::Version.new(File.read("VERSION").strip)
+      lib_version = Gem::Version.new(Rack::Test::VERSION)
+
+      if jeweler_version != lib_version
+        raise <<-EOS
+
+  Error: Version number mismatch!
+
+    VERSION: #{jeweler_version}
+    Rack::Test::VERSION: #{lib_version}
+
+        EOS
+      end
+    end
+  end
+
+  task :gemspec => "version:verify"
 end
 
 begin
@@ -66,3 +89,4 @@ desc 'Removes trailing whitespace'
 task :whitespace do
   sh %{find . -name '*.rb' -exec sed -i '' 's/ *$//g' {} \\;}
 end
+
