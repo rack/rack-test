@@ -28,6 +28,8 @@ module Rack
       env["HTTP_COOKIE"] ||= cookie_jar.for(uri)
       @last_request = Rack::Request.new(env)
       status, headers, body = @app.call(@last_request.env)
+      body.close if body.respond_to?(:close)
+
       @last_response = MockResponse.new(status, headers, body, env["rack.errors"].flush)
       cookie_jar.merge(last_response.headers["Set-Cookie"], uri)
 

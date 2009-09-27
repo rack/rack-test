@@ -106,6 +106,15 @@ describe Rack::Test::Session do
       last_request.env["rack.input"].read.should == "foo[bar]=1"
     end
 
+    it "closes response's body" do
+      body = "Hello, World!"
+      body.should_receive(:close)
+      app = lambda {|env| 
+        [200, {"Content-Type" => "text/html", "Content-Length" => "13"}, body]
+      }
+      Rack::Test::Session.new(Rack::MockSession.new(app)).request("/")
+    end
+
     context "when input is given" do
       it "should send the input" do
         request "/", :method => "POST", :input => "foo"
