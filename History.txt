@@ -2,6 +2,7 @@
 
 * Bug fixes
 
+  * Escape cookie values (John Pignata)
   * Close the response body after each request, as per the Rack spec (Elomar França)
 
 == 0.5.0 / 2009-09-19
