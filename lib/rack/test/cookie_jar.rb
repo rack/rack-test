@@ -95,7 +95,6 @@ module Rack
     end
 
     class CookieJar # :nodoc:
-      include Rack::Utils
 
       # :api: private
       def initialize(cookies = [], default_host = DEFAULT_HOST)
@@ -111,7 +110,7 @@ module Rack
       end
 
       def []=(name, value)
-        merge("#{name}=#{escape(value)}")
+        merge("#{name}=#{Rack::Utils.escape(value)}")
       end
 
       def merge(raw_cookies, uri = nil)
