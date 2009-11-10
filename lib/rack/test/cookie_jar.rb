@@ -54,6 +54,7 @@ module Rack
 
       # :api: private
       def expires
+        require 'time'  # avoid NoMethodError: undefined method `parse' for Time:Class
         Time.parse(@options["expires"]) if @options["expires"]
       end
 
