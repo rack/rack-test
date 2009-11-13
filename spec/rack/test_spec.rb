@@ -106,16 +106,43 @@ describe Rack::Test::Session do
       last_request.env["rack.input"].read.should == "foo[bar]=1"
     end
 
-    it "closes response's body" do
-      body = "Hello, World!"
-      body.should_receive(:close)
+    context "when the response body responds_to?(:close)" do
+      class CloseableBody
+        def initialize
+          @closed = false
+        end
 
-      app = lambda do |env|
-        [200, {"Content-Type" => "text/html", "Content-Length" => "13"}, body]
+        def each
+          return if @closed
+          yield "Hello, World!"
+        end
+
+        def close
+          @closed = true
+        end
       end
 
-      session = Rack::Test::Session.new(Rack::MockSession.new(app))
-      session.request("/")
+      it "closes response's body" do
+        body = CloseableBody.new
+        body.should_receive(:close)
+
+        app = lambda do |env|
+          [200, {"Content-Type" => "text/html", "Content-Length" => "13"}, body]
+        end
+
+        session = Rack::Test::Session.new(Rack::MockSession.new(app))
+        session.request("/")
+      end
+
+      it "closes response's body after iteration" do
+        app = lambda do |env|
+          [200, {"Content-Type" => "text/html", "Content-Length" => "13"}, CloseableBody.new]
+        end
+
+        session = Rack::Test::Session.new(Rack::MockSession.new(app))
+        session.request("/")
+        session.last_response.body.should == "Hello, World!"
+      end
     end
 
     context "when input is given" do
