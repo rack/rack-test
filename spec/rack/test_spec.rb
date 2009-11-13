@@ -109,7 +109,7 @@ describe Rack::Test::Session do
     it "closes response's body" do
       body = "Hello, World!"
       body.should_receive(:close)
-      app = lambda {|env| 
+      app = lambda {|env|
         [200, {"Content-Type" => "text/html", "Content-Length" => "13"}, body]
       }
       Rack::Test::Session.new(Rack::MockSession.new(app)).request("/")
