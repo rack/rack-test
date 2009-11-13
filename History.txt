@@ -2,6 +2,7 @@
 
 * Bug fixes
 
+  * Call close on response body after iteration, not before (Simon Rozet)
   * Add missing require for time in cookie_jar.rb (Jerry West)
 
 == 0.5.1 / 2009-10-27
