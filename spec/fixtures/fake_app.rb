@@ -81,6 +81,14 @@ module Rack
         new_value
       end
 
+      get "/cookies/subdomain" do
+        old_value = request.cookies["count"].to_i || 0
+        new_value = (old_value + 1).to_s
+
+        response.set_cookie("count", :value => new_value, :domain => ".example.org")
+        new_value
+      end
+
       get "/cookies/set-uppercase" do
         raise if params["value"].nil?
 

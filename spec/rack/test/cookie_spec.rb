@@ -133,6 +133,15 @@ describe Rack::Test::Session do
       last_request.cookies.should == { "value" => "example" }
     end
 
+    it "keeps one cookie jar for domain and its subdomains" do
+      get "http://example.org/cookies/subdomain"
+      get "http://example.org/cookies/subdomain"
+      last_request.cookies.should == { "count" => "1" }
+
+      get "http://foo.example.org/cookies/subdomain"
+      last_request.cookies.should == { "count" => "2" }
+    end
+
     it "allows cookies to be cleared" do
       get "/cookies/set", "value" => "1"
       clear_cookies
