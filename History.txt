@@ -1,3 +1,9 @@
+== Git
+
+* Bug fixes
+
+  * Fix cookie matching for subdomains (Marcin Kulik)
+
 == 0.5.2 / 2009-11-13
 
 * Bug fixes
