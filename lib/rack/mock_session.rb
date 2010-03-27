@@ -3,11 +3,12 @@ module Rack
   class MockSession # :nodoc:
     attr_writer :cookie_jar
     attr_reader :default_host
+    attr_accessor :current_host
 
     def initialize(app, default_host = Rack::Test::DEFAULT_HOST)
       @app = app
       @after_request = []
-      @default_host = default_host
+      @current_host = @default_host = default_host
       @last_request = nil
       @last_response = nil
     end
@@ -25,6 +26,8 @@ module Rack
     end
 
     def request(uri, env)
+      @current_host = uri.host || @current_host || @default_host
+      uri.host = env["HTTP_HOST"] = @current_host
       env["HTTP_COOKIE"] ||= cookie_jar.for(uri)
       @last_request = Rack::Request.new(env)
       status, headers, body = @app.call(@last_request.env)
