@@ -67,6 +67,26 @@ describe Rack::Test::Utils do
       params["files"][:tempfile].read.should == "bar\n"
     end
 
+   it "builds multipart bodies from array of files" do
+      files = [Rack::Test::UploadedFile.new(multipart_file("foo.txt")), Rack::Test::UploadedFile.new(multipart_file("bar.txt"))]
+      data  = build_multipart("submit-name" => "Larry", "files" => files)
+
+      options = {
+        "CONTENT_TYPE" => "multipart/form-data; boundary=#{Rack::Test::MULTIPART_BOUNDARY}",
+        "CONTENT_LENGTH" => data.length.to_s,
+        :input => StringIO.new(data)
+      }
+      env = Rack::MockRequest.env_for("/", options)
+      params = Rack::Utils::Multipart.parse_multipart(env)
+      check params["submit-name"].should == "Larry"
+
+      check params["files"][0][:filename].should == "foo.txt"
+      params["files"][0][:tempfile].read.should == "bar\n"
+
+      check params["files"][1][:filename].should == "bar.txt"
+      params["files"][1][:tempfile].read.should == "baz\n"
+    end
+
     it "builds nested multipart bodies" do
       files = Rack::Test::UploadedFile.new(multipart_file("foo.txt"))
       data  = build_multipart("people" => [{"submit-name" => "Larry", "files" => files}])

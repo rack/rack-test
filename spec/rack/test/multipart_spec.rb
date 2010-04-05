@@ -6,8 +6,16 @@ describe Rack::Test::Session do
     File.dirname(__FILE__) + "/../../fixtures/foo.txt"
   end
 
+  def second_test_file_path
+    File.dirname(__FILE__) + "/../../fixtures/bar.txt"
+  end
+
   def uploaded_file
     Rack::Test::UploadedFile.new(test_file_path)
+  end
+
+  def second_uploaded_file
+    Rack::Test::UploadedFile.new(second_test_file_path)
   end
 
   context "uploading a file" do
@@ -84,4 +92,43 @@ describe Rack::Test::Session do
     end
   end
 
+
+  context "uploading two files" do
+    it "sends the multipart/form-data content type" do
+      post "/", "photos" => [uploaded_file, second_uploaded_file]
+      last_request.env["CONTENT_TYPE"].should include("multipart/form-data;")
+    end
+
+    it "sends files with the filename" do
+      post "/", "photos" => [uploaded_file, second_uploaded_file]
+      last_request.POST["photos"].collect{|photo| photo[:filename]}.should == ["foo.txt", "bar.txt"]
+    end
+
+    it "sends files with the text/plain MIME type by default" do
+      post "/", "photos" => [uploaded_file, second_uploaded_file]
+      last_request.POST["photos"].collect{|photo| photo[:type]}.should == ["text/plain", "text/plain"]
+    end
+
+    it "sends files with the right names" do
+      post "/", "photos" => [uploaded_file, second_uploaded_file]
+      last_request.POST["photos"].all?{|photo| photo[:name].should == "photos[]" }
+    end
+
+    it "allows mixed content types" do
+      image_file = Rack::Test::UploadedFile.new(test_file_path, "image/jpeg")
+
+      post "/", "photos" => [uploaded_file, image_file]
+      last_request.POST["photos"].collect{|photo| photo[:type]}.should == ["text/plain", "image/jpeg"]
+    end
+
+    it "sends files with a Content-Length in the header" do
+      post "/", "photos" => [uploaded_file, second_uploaded_file]
+      last_request.POST["photos"].all?{|photo| photo[:head].should include("Content-Length: 4") }
+    end
+
+    it "sends both files as Tempfiles" do
+      post "/", "photos" => [uploaded_file, second_uploaded_file]
+      last_request.POST["photos"].all?{|photo| photo[:tempfile].should be_a(::Tempfile) }
+    end
+  end
 end

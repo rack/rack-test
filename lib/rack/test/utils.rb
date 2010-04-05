@@ -54,11 +54,17 @@ module Rack
 
           case value
           when Array
-            value.map { |v|
-              build_multipart(v, false).each { |subkey, subvalue|
-                flattened_params["#{k}[]#{subkey}"] = subvalue
-              }
-            }
+            value.map do |v|
+
+              if (v.is_a?(Hash))
+                build_multipart(v, false).each { |subkey, subvalue|
+                  flattened_params["#{k}[]#{subkey}"] = subvalue
+                }
+              else
+                flattened_params["#{k}[]"] = value
+              end
+
+            end
           when Hash
             build_multipart(value, false).each { |subkey, subvalue|
               flattened_params[k + subkey] = subvalue
@@ -69,34 +75,54 @@ module Rack
         end
 
         if first
-          flattened_params.map { |name, file|
-            if file.respond_to?(:original_filename)
-              ::File.open(file.path, "rb") do |f|
-                f.set_encoding(Encoding::BINARY) if f.respond_to?(:set_encoding)
-<<-EOF
---#{MULTIPART_BOUNDARY}\r
-Content-Disposition: form-data; name="#{name}"; filename="#{escape(file.original_filename)}"\r
-Content-Type: #{file.content_type}\r
-Content-Length: #{::File.stat(file.path).size}\r
-\r
-#{f.read}\r
-EOF
-              end
-            else
-<<-EOF
---#{MULTIPART_BOUNDARY}\r
-Content-Disposition: form-data; name="#{name}"\r
-\r
-#{file}\r
-EOF
-            end
-          }.join + "--#{MULTIPART_BOUNDARY}--\r"
+          build_parts(flattened_params)
         else
           flattened_params
         end
       end
 
       module_function :build_multipart
+
+    private
+      def build_parts(parameters)
+        parameters.map { |name, value|
+          if value.respond_to?(:original_filename)
+            build_file_part(name, value)
+
+          elsif value.is_a?(Array) and value.all? { |v| v.respond_to?(:original_filename) }
+            value.map do |v|
+              build_file_part(name, v)
+            end.join
+
+          else
+            build_primitive_part(name, value)
+          end
+
+        }.join + "--#{MULTIPART_BOUNDARY}--\r"
+      end
+
+      def build_primitive_part(parameter_name, value)
+<<-EOF
+--#{MULTIPART_BOUNDARY}\r
+Content-Disposition: form-data; name="#{parameter_name}"\r
+\r
+#{value}\r
+EOF
+      end
+
+      def build_file_part(parameter_name, uploaded_file)
+        ::File.open(uploaded_file.path, "rb") do |physical_file|
+          physical_file.set_encoding(Encoding::BINARY) if physical_file.respond_to?(:set_encoding)
+<<-EOF
+--#{MULTIPART_BOUNDARY}\r
+Content-Disposition: form-data; name="#{parameter_name}"; filename="#{escape(uploaded_file.original_filename)}"\r
+Content-Type: #{uploaded_file.content_type}\r
+Content-Length: #{::File.stat(uploaded_file.path).size}\r
+\r
+#{physical_file.read}\r
+EOF
+        end
+      end
 
     end
 
