@@ -42,6 +42,11 @@ describe "any #verb methods", :shared => true do
     yielded.should be_true
   end
 
+  it "sets the HTTP host" do
+    send(verb, "http://example.com:80/uri")
+    last_request.env["HTTP_HOST"].should == "example.com:80"
+  end
+
   context "for a XHR" do
     it "sends XMLHttpRequest for the X-Requested-With header" do
       send(verb, "/", {}, { :xhr => true })

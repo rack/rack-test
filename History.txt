@@ -1,3 +1,9 @@
+== Git
+
+* Bug fixes
+
+  * Set env["HTTP_HOST"] when making requests (Istvan Hoka)
+
 == 0.5.4 / 2009-05-26
 
 * Bug fixes
