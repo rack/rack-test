@@ -33,6 +33,10 @@ describe Rack::Test::Utils do
       build_nested_query(:a => [1, 2]).should == "a[]=1&a[]=2"
     end
 
+    it "converts arrays with brackets '[]' in the name" do
+      build_nested_query("a[]" => [1, 2]).should == "a%5B%5D=1&a%5B%5D=2"
+    end
+
     it "converts nested hashes" do
       build_nested_query(:a => { :b => 1 }).should == "a[b]=1"
     end

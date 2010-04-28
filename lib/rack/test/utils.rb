@@ -8,7 +8,10 @@ module Rack
         case value
         when Array
           value.map do |v|
-            build_nested_query(v, "#{prefix}[]")
+            unless unescape(prefix) =~ /\[\]$/
+              prefix = "#{prefix}[]"
+            end
+            build_nested_query(v, "#{prefix}")
           end.join("&")
         when Hash
           value.map do |k, v|
