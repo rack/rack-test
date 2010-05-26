@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rack-test}
-  s.version = "0.5.4.pre"
+  s.version = "0.5.4"
 
-  s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
+  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Bryan Helmkamp"]
-  s.date = %q{2009-11-27}
+  s.date = %q{2010-05-26}
   s.description = %q{Rack::Test is a small, simple testing API for Rack apps. It can be used on its
 own or as a reusable starting point for Web frameworks and testing libraries
 to build on. Most of its initial functionality is an extraction of Merb 1.0's
@@ -32,6 +32,7 @@ request helpers feature.}
     "lib/rack/test/uploaded_file.rb",
     "lib/rack/test/utils.rb",
     "rack-test.gemspec",
+    "spec/fixtures/bar.txt",
     "spec/fixtures/config.ru",
     "spec/fixtures/fake_app.rb",
     "spec/fixtures/foo.txt",
@@ -46,7 +47,7 @@ request helpers feature.}
   s.homepage = %q{http://github.com/brynary/rack-test}
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{rack-test}
-  s.rubygems_version = %q{1.3.5}
+  s.rubygems_version = %q{1.3.7}
   s.summary = %q{Simple testing API built on Rack}
   s.test_files = [
     "spec/fixtures/fake_app.rb",
@@ -62,7 +63,7 @@ request helpers feature.}
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
-    if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
+    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<rack>, [">= 1.0"])
     else
       s.add_dependency(%q<rack>, [">= 1.0"])
