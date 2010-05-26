@@ -212,6 +212,13 @@ describe Rack::Test::Session do
       last_request.env["HTTP_USER_AGENT"].should == "Firefox"
     end
 
+    it "sets a Content-Type to be sent with requests" do
+      header "Content-Type", "application/json"
+      request "/"
+
+      last_request.env["CONTENT_TYPE"].should == "application/json"
+    end
+
     it "persists across multiple requests" do
       header "User-Agent", "Firefox"
       request "/"

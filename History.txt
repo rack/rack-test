@@ -2,6 +2,7 @@
 
 * Bug fixes
 
+  * Don't stomp on Content-Type's supplied via #header (Bryan Helmkamp)
   * Fixed build_multipart to allow for arrays of files (Louis Rose)
   * Don't raise an error if raw cookies contain a blank line (John Reilly)
   * Handle parameter names with brackets properly (Tanner Donovan)
