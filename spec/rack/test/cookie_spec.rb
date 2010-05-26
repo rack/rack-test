@@ -161,6 +161,12 @@ describe Rack::Test::Session do
       last_request.cookies.should == { "value" => "10", "foo" => "bar" }
     end
 
+    it "skips emtpy string cookies" do
+      set_cookie "value=10\n\nfoo=bar"
+      get "/cookies/show"
+      last_request.cookies.should == { "value" => "10", "foo" => "bar" }
+    end
+
     it "parses multiple cookies properly" do
       get "/cookies/set-multiple"
       get "/cookies/show"
