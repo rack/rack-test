@@ -93,10 +93,10 @@ module Rack
             if value.all? { |v| v.respond_to?(:original_filename) }
               value.map do |v|
                 build_file_part(name, v)
-             end.join
+              end.join
             else
               value.collect do |v|
-                build_primitive_part(name, v) }
+                build_primitive_part(name, v)
               end.join
             end
           else
