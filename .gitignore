@@ -3,3 +3,4 @@ doc
 coverage
 VERSION
 *.rbc
+.bundle

@@ -1,7 +1,9 @@
 require "rubygems"
+require "bundler/setup"
+
+require "rack"
 require "spec"
 
-gem "rack", "~> 1.0.0"
 
 require "rack/test"
 require File.dirname(__FILE__) + "/fixtures/fake_app"
