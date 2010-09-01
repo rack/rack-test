@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Bryan Helmkamp"]
-  s.date = %q{2010-05-26}
+  s.date = %q{2010-09-01}
   s.description = %q{Rack::Test is a small, simple testing API for Rack apps. It can be used on its
 own or as a reusable starting point for Web frameworks and testing libraries
 to build on. Most of its initial functionality is an extraction of Merb 1.0's
@@ -19,6 +19,8 @@ request helpers feature.}
   s.files = [
     ".document",
     ".gitignore",
+    "Gemfile",
+    "Gemfile.lock",
     "History.txt",
     "MIT-LICENSE.txt",
     "README.rdoc",
@@ -41,8 +43,10 @@ request helpers feature.}
     "spec/rack/test/multipart_spec.rb",
     "spec/rack/test/utils_spec.rb",
     "spec/rack/test_spec.rb",
-    "spec/spec.opts",
-    "spec/spec_helper.rb"
+    "spec/spec_helper.rb",
+    "spec/support/core_ext/string.rb",
+    "spec/support/matchers/body.rb",
+    "spec/support/matchers/challenge.rb"
   ]
   s.homepage = %q{http://github.com/brynary/rack-test}
   s.require_paths = ["lib"]
@@ -56,7 +60,10 @@ request helpers feature.}
     "spec/rack/test/multipart_spec.rb",
     "spec/rack/test/utils_spec.rb",
     "spec/rack/test_spec.rb",
-    "spec/spec_helper.rb"
+    "spec/spec_helper.rb",
+    "spec/support/core_ext/string.rb",
+    "spec/support/matchers/body.rb",
+    "spec/support/matchers/challenge.rb"
   ]
 
   if s.respond_to? :specification_version then
