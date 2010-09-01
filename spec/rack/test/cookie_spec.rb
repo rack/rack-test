@@ -1,11 +1,6 @@
 require "spec_helper"
 
 describe Rack::Test::Session do
-  def have_body(string)
-    simple_matcher "have body #{string.inspect}" do |response|
-      response.body.should == string
-    end
-  end
 
   context "cookies" do
     it "keeps a cookie jar" do

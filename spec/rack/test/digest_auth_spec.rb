@@ -12,14 +12,6 @@ describe Rack::Test::Session do
       app
     end
 
-    def be_challenge
-      simple_matcher "a HTTP Digest challenge response" do |response|
-        response.status == 401 &&
-        response['WWW-Authenticate'] =~ /^Digest / &&
-        response.body.empty?
-      end
-    end
-
     it 'incorrectly authenticates GETs' do
       digest_authorize 'foo', 'bar'
       get '/'
