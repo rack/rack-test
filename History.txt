@@ -2,6 +2,7 @@
 
 * Bug fixes
 
+  * Fix encoding of file uploads on Ruby 1.9 (Alan Kennedy)
   * Set env["HTTP_HOST"] when making requests (Istvan Hoka)
 
 == 0.5.4 / 2009-05-26
