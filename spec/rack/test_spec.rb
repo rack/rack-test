@@ -146,12 +146,12 @@ describe Rack::Test::Session do
     end
 
     context "when input is given" do
-      it "should send the input" do
+      it "sends the input" do
         request "/", :method => "POST", :input => "foo"
         last_request.env["rack.input"].read.should == "foo"
       end
 
-      it "should not send a multipart request" do
+      it "does not send a multipart request" do
         request "/", :method => "POST", :input => "foo"
         last_request.env["CONTENT_TYPE"].should_not == "application/x-www-form-urlencoded"
       end

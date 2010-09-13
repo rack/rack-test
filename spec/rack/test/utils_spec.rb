@@ -103,7 +103,7 @@ describe Rack::Test::Utils do
       params["people"][0]["files"][:tempfile].read.should == "bar\n"
     end
 
-    it "should return nil if no UploadedFiles were used" do
+    it "returns nil if no UploadedFiles were used" do
       data = build_multipart("people" => [{"submit-name" => "Larry", "files" => "contents"}])
       data.should be_nil
     end
