@@ -6,7 +6,7 @@ require "rspec/core/rake_task"
 
 RSpec::Core::RakeTask.new do |t|
   t.pattern = "./**/*_spec.rb"
-  t.warning = false
+  t.ruby_opts = "-w"
 end
 
 task :default => :spec
