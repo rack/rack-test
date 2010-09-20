@@ -2,6 +2,7 @@
 
 * Bug fixes
 
+  * Use parse_nested_query for parsing URI like Rack does (Eugene Bolshakov)
   * Don't depend on ActiveSupport extension to String (Bryan Helmkamp)
   * Do not overwrite HTTP_HOST if it is set (Krekoten' Marjan)
 

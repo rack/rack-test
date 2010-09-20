@@ -96,6 +96,11 @@ describe Rack::Test::Session do
       last_request.GET.should == { "baz" => "2", "foo" => { "bar" => "1" }}
     end
 
+    it "parses query strings with repeated variable names correctly" do
+      request "/foo?bar=2&bar=3"
+      last_request.GET.should == { "bar" => "3" }
+    end
+
     it "accepts raw input in params for GET requests" do
       request "/foo?baz=2", :params => "foo[bar]=1"
       last_request.GET.should == { "baz" => "2", "foo" => { "bar" => "1" }}
