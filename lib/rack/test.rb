@@ -275,5 +275,9 @@ module Rack
 
     end
 
+    def self.encoding_aware_strings?
+      defined?(Encoding) && "".respond_to?(:encode)
+    end
+
   end
 end
