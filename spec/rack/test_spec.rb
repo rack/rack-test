@@ -28,6 +28,11 @@ describe Rack::Test::Session do
       request "/", "X-Foo" => "bar"
       last_request.env["X-Foo"].should == "bar"
     end
+    
+    it "allows to set host" do
+      request "/", "HTTP_HOST" => "www.example.ua"
+      last_request.env['HTTP_HOST'].should == "www.example.ua"
+    end
 
     it "defaults to GET" do
       request "/"
