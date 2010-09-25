@@ -29,6 +29,11 @@ describe Rack::Test::Session do
       last_request.env["X-Foo"].should == "bar"
     end
 
+    it "allows HTTP_HOST to be set" do
+      request "/", "HTTP_HOST" => "www.example.ua"
+      last_request.env['HTTP_HOST'].should == "www.example.ua"
+    end
+
     it "defaults to GET" do
       request "/"
       last_request.env["REQUEST_METHOD"].should == "GET"

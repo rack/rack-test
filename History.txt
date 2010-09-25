@@ -1,3 +1,9 @@
+== Git
+
+* Bug fixes
+
+  * Do not overwrite HTTP_HOST if it is set (Krekoten' Marjan)
+
 == 0.5.5 / 2010-09-22
 
 * Bug fixes
