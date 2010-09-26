@@ -53,10 +53,10 @@ describe Rack::Test::Session do
     end
 
     it "respects cookie domains when no domain is explicitly set" do
-        request("http://example.org/cookies/count").should     have_body("1")
-        request("http://www.example.org/cookies/count").should have_body("1")
-        request("http://example.org/cookies/count").should     have_body("2")
-        request("http://www.example.org/cookies/count").should have_body("2")
+      request("http://example.org/cookies/count").should     have_body("1")
+      request("http://www.example.org/cookies/count").should have_body("1")
+      request("http://example.org/cookies/count").should     have_body("2")
+      request("http://www.example.org/cookies/count").should have_body("2")
     end
 
     it "treats domains case insensitively" do
