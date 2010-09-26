@@ -73,7 +73,11 @@ module Rack
 
         real_domain = domain =~ /^\./ ? domain[1..-1] : domain
         (!secure? || (secure? && uri.scheme == "https")) &&
-        uri.host =~ Regexp.new("#{Regexp.escape(real_domain)}$", Regexp::IGNORECASE) &&
+        (
+          domain =~ /^\./ ? 
+            uri.host =~ Regexp.new("#{Regexp.escape(real_domain)}$", Regexp::IGNORECASE) :
+            uri.host =~ Regexp.new("^#{Regexp.escape(real_domain)}$", Regexp::IGNORECASE)
+        ) &&
         uri.path =~ Regexp.new("^#{Regexp.escape(path)}")
       end
 
