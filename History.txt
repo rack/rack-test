@@ -2,6 +2,7 @@
 
 * Bug fixes
 
+  * Don't depend on ActiveSupport extension to String (Bryan Helmkamp)
   * Do not overwrite HTTP_HOST if it is set (Krekoten' Marjan)
 
 == 0.5.5 / 2010-09-22
