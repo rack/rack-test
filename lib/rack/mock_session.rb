@@ -26,8 +26,14 @@ module Rack
     end
 
     def request(uri, env)
-      @current_host = uri.host || @current_host || @default_host
-      uri.host = env["HTTP_HOST"] = @current_host
+      @current_host = uri.host || env['HTTP_HOST'] || @current_host || @default_host
+      if uri.port == 80 || uri.port.nil?
+        uri.host = env["HTTP_HOST"] = @current_host
+      else
+        uri.host = @current_host
+        env['HTTP_HOST'] = "#{@current_host}:#{uri.port}"
+      end
+
       env["HTTP_COOKIE"] ||= cookie_jar.for(uri)
       @last_request = Rack::Request.new(env)
       status, headers, body = @app.call(@last_request.env)
