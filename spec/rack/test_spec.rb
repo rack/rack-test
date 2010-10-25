@@ -228,6 +228,13 @@ describe Rack::Test::Session do
 
       last_request.env["CONTENT_TYPE"].should == "application/json"
     end
+    
+    it "sets a Host to be sent with requests" do
+      header "Host", "www.example.ua"
+      request "/"
+
+      last_request.env["HTTP_HOST"].should == "www.example.ua"
+    end
 
     it "persists across multiple requests" do
       header "User-Agent", "Firefox"
