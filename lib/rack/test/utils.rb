@@ -103,7 +103,7 @@ module Rack
             build_primitive_part(name, value)
           end
 
-        }.join + "--#{MULTIPART_BOUNDARY}--\r"
+        }.join + "--#{MULTIPART_BOUNDARY}--\r\n"
       end
 
       def build_primitive_part(parameter_name, value)
