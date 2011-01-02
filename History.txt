@@ -1,6 +1,12 @@
 == Git
 
+* Bug fixes
+
+  * If no URI is present, include all cookies (Pratik Naik)
+
 == 0.5.6 / 2010-09-25
+
+* Bug fixes
 
   * Use parse_nested_query for parsing URI like Rack does (Eugene Bolshakov)
   * Don't depend on ActiveSupport extension to String (Bryan Helmkamp)

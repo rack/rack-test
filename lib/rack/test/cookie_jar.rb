@@ -164,7 +164,7 @@ module Rack
         # so that when we are done, the cookies will be unique by name and
         # we'll have grabbed the most specific to the URI.
         @cookies.each do |cookie|
-          cookies[cookie.name] = cookie if cookie.matches?(uri)
+          cookies[cookie.name] = cookie if !uri || cookie.matches?(uri)
         end
 
         return cookies
