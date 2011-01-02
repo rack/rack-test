@@ -1,5 +1,5 @@
-source :gemcutter
+source :rubygems
 
-gem 'rspec', '>= 2.0.0.beta.15'
+gem 'rspec'
 gem "rack"
 gem "sinatra"
