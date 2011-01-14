@@ -1,3 +1,9 @@
+== Git
+
+* Bug fixes
+
+  * Call #finish on MockResponses if it's available (Aaron Patterson)
+
 == 0.5.7 / 2011-01-01
 
 * Bug fixes
