@@ -89,7 +89,7 @@ describe Rack::Test::Utils do
 
     it "builds nested multipart bodies" do
       files = Rack::Test::UploadedFile.new(multipart_file("foo.txt"))
-      data  = build_multipart("people" => [{"submit-name" => "Larry", "files" => files}])
+      data  = build_multipart("people" => [{"submit-name" => "Larry", "files" => files}], "foo" => ['1', '2'])
 
       options = {
         "CONTENT_TYPE" => "multipart/form-data; boundary=#{Rack::Test::MULTIPART_BOUNDARY}",
@@ -101,6 +101,7 @@ describe Rack::Test::Utils do
       check params["people"][0]["submit-name"].should == "Larry"
       check params["people"][0]["files"][:filename].should == "foo.txt"
       params["people"][0]["files"][:tempfile].read.should == "bar\n"
+      check params["foo"].should == ["1", "2"]
     end
 
     it "returns nil if no UploadedFiles were used" do

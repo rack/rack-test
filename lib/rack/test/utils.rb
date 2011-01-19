@@ -103,12 +103,17 @@ module Rack
       end
 
       def build_primitive_part(parameter_name, value)
+        unless value.is_a? Array
+          value = [value]
+        end
+        value.map do |v|
 <<-EOF
 --#{MULTIPART_BOUNDARY}\r
 Content-Disposition: form-data; name="#{parameter_name}"\r
 \r
-#{value}\r
+#{v}\r
 EOF
+        end.join
       end
 
       def build_file_part(parameter_name, uploaded_file)
