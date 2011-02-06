@@ -61,7 +61,7 @@ module Rack
                   flattened_params["#{k}[]#{subkey}"] = subvalue
                 }
               else
-                flattened_params["#{k}[]"] = value
+                flattened_params["#{k}[]"] = v
               end
 
             end
