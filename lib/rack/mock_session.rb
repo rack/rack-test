@@ -44,7 +44,12 @@ module Rack
       cookie_jar.merge(last_response.headers["Set-Cookie"], uri)
 
       @after_request.each { |hook| hook.call }
-      @last_response
+
+      if @last_response.respond_to?(:finish)
+        @last_response.finish
+      else
+        @last_response
+      end
     end
 
     # Return the last request issued in the session. Raises an error if no

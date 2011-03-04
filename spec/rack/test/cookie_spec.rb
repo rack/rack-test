@@ -113,6 +113,7 @@ describe Rack::Test::Session do
 
       get "https://example.com/cookies/show"
       last_request.cookies.should == { "secure-cookie" => "set" }
+      rack_mock_session.cookie_jar['secure-cookie'].should == 'set'
     end
 
     it "keeps separate cookie jars for different domains" do
