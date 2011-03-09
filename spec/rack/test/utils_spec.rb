@@ -89,7 +89,7 @@ describe Rack::Test::Utils do
 
     it "builds nested multipart bodies" do
       files = Rack::Test::UploadedFile.new(multipart_file("foo.txt"))
-      data  = build_multipart("people" => [{"submit-name" => "Larry", "files" => files}])
+      data  = build_multipart("people" => [{"submit-name" => "Larry", "files" => files,"multi_select" => ["1","2"]}])
 
       options = {
         "CONTENT_TYPE" => "multipart/form-data; boundary=#{Rack::Test::MULTIPART_BOUNDARY}",
@@ -99,6 +99,7 @@ describe Rack::Test::Utils do
       env = Rack::MockRequest.env_for("/", options)
       params = Rack::Utils::Multipart.parse_multipart(env)
       check params["people"][0]["submit-name"].should == "Larry"
+      check params["people"][0]["multi_select"].should == ["1","2"]
       check params["people"][0]["files"][:filename].should == "foo.txt"
       params["people"][0]["files"][:tempfile].read.should == "bar\n"
     end
