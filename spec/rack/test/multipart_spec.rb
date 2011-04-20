@@ -58,7 +58,7 @@ describe Rack::Test::Session do
       last_request.POST["foo"].should == "bar"
 
       if Rack::Test.encoding_aware_strings?
-        last_request.POST["utf8"].should == "\xE2\x98\x83".force_encoding("BINARY")
+        last_request.POST["utf8"].should == "☃"
       else
         last_request.POST["utf8"].should == "\xE2\x98\x83"
       end

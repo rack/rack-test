@@ -84,6 +84,15 @@ module Rack
         process_request(uri, env, &block)
       end
 
+      # Issue an OPTIONS request for the given URI. See #get
+      #
+      # Example:
+      #   options "/"
+      def options(uri, params = {}, env = {}, &block)
+        env = env_for(uri, env.merge(:method => "OPTIONS", :params => params))
+        process_request(uri, env, &block)
+      end
+
       # Issue a HEAD request for the given URI. See #get
       #
       # Example:
