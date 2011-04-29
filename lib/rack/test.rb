@@ -170,9 +170,9 @@ module Rack
         uri.path = "/#{uri.path}" unless uri.path[0] == ?/
         uri.host ||= @default_host
 
-        env["HTTP_HOST"] ||= [uri.host, uri.port].compact.join(":")
-
         env = default_env.merge(env)
+
+        env["HTTP_HOST"] ||= [uri.host, uri.port].compact.join(":")
 
         env.update("HTTPS" => "on") if URI::HTTPS === uri
         env["HTTP_X_REQUESTED_WITH"] = "XMLHttpRequest" if env[:xhr]
