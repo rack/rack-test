@@ -75,6 +75,15 @@ module Rack
         process_request(uri, env, &block)
       end
 
+      # Issue a PATCH request for the given URI. See #get
+      #
+      # Example:
+      #   patch "/"
+      def patch(uri, params = {}, env = {}, &block)
+        env = env_for(uri, env.merge(:method => "PATCH", :params => params))
+        process_request(uri, env, &block)
+      end
+
       # Issue a DELETE request for the given URI. See #get
       #
       # Example:

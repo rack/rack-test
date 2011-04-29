@@ -1,5 +1,9 @@
 == Git
 
+* Minor enhancements
+
+  * Support HTTP PATCH method (Marjan Krekoten' #33)
+
 * Bug fixes
 
   * Fix HTTP Digest authentication when the URI has query params
