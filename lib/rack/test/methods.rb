@@ -61,6 +61,7 @@ module Rack
         :get,
         :post,
         :put,
+        :patch,
         :delete,
         :head,
         :follow_redirect!,
