@@ -4,3 +4,4 @@ coverage
 VERSION
 *.rbc
 .bundle
+Gemfile.lock
