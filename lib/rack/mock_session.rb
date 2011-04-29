@@ -27,7 +27,12 @@ module Rack
     def request(uri, env)
       env["HTTP_COOKIE"] ||= cookie_jar.for(uri)
       @last_request = Rack::Request.new(env)
-      status, headers, body = @app.call(@last_request.env)
+      # Passing copy of environment here because latest Sinatra
+      # casts params to Encoding.default_external and this breaks
+      # "sends params encoded as ISO-8859-1" test (multipart_spec.rb:56)
+      #
+      # See: https://github.com/sinatra/sinatra/blob/master/lib/sinatra/base.rb#L1360
+      status, headers, body = @app.call(@last_request.env.dup)
 
       @last_response = MockResponse.new(status, headers, body, env["rack.errors"].flush)
       body.close if body.respond_to?(:close)
