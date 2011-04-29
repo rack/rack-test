@@ -62,6 +62,7 @@ module Rack
         :post,
         :put,
         :delete,
+        :options,
         :head,
         :follow_redirect!,
         :header,
