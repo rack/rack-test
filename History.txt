@@ -2,7 +2,9 @@
 
 * Bug fixes
 
+  * Add support for HTTP OPTIONS verb (Paolo "Nusco" Perrotta)
   * Call #finish on MockResponses if it's available (Aaron Patterson)
+  * Allow HTTP_HOST to be set via #header (Geoff Buesing)
 
 == 0.5.7 / 2011-01-01
 
