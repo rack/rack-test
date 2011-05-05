@@ -95,7 +95,11 @@ module Rack
             end.join
 
           else
-            primitive_part = build_primitive_part(name, value)
+            if(value.kind_of?(Array))
+                primitive_part = value.map { |v| build_primitive_part(name, v) }.join
+            else
+                primitive_part = build_primitive_part(name, value)
+            end
             Rack::Test.encoding_aware_strings? ? primitive_part.force_encoding('BINARY') : primitive_part
           end
 

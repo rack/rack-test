@@ -42,10 +42,8 @@ describe Rack::Test::Session do
     end
 
     it "sends params with arrays" do
-      pending "FIXME: should work the same with and without multipart" do
-        post "/", "photo" => uploaded_file, "foo" => ["1", "2"]
-        last_request.POST["foo"].should == ["1", "2"]
-      end
+      post "/", "photo" => uploaded_file, "foo" => ["1", "2"]
+      last_request.POST["foo"].should == ["1", "2"]
     end
 
     it "sends params with encoding sensitive values" do
