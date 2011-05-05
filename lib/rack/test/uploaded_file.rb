@@ -40,6 +40,10 @@ module Rack
         @tempfile.__send__(method_name, *args, &block)
       end
 
+      def respond_to?(method_name, include_private = false) #:nodoc:
+        @tempfile.respond_to?(method_name, include_private) || super
+      end
+
     end
 
   end
