@@ -9,6 +9,10 @@ module Rack
         "meh"
       end
 
+      options "/" do
+        [200, {}, ""]
+      end
+
       get "/" do
         "Hello, GET: #{params.inspect}"
       end

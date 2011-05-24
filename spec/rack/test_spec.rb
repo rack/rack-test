@@ -228,6 +228,13 @@ describe Rack::Test::Session do
 
       last_request.env["CONTENT_TYPE"].should == "application/json"
     end
+    
+    it "sets a Host to be sent with requests" do
+      header "Host", "www.example.ua"
+      request "/"
+
+      last_request.env["HTTP_HOST"].should == "www.example.ua"
+    end
 
     it "persists across multiple requests" do
       header "User-Agent", "Firefox"
@@ -285,6 +292,7 @@ describe Rack::Test::Session do
 
       last_response.should_not be_redirect
       last_response.body.should == "You've been redirected"
+      last_response.headers["Referer"].should eql("http://example.org/redirect")
     end
 
     it "does not include params when following the redirect" do
@@ -325,7 +333,7 @@ describe Rack::Test::Session do
   describe "#last_response" do
     it "returns the most recent response" do
       request "/"
-      last_response["Content-Type"].should == "text/html"
+      last_response["Content-Type"].should == "text/html;charset=utf-8"
     end
 
     it "raises an error if no requests have been issued" do
@@ -455,6 +463,14 @@ describe Rack::Test::Session do
 
     def verb
       "delete"
+    end
+  end
+
+  describe "#options" do
+    it_should_behave_like "any #verb methods"
+
+    def verb
+      "options"
     end
   end
 end
