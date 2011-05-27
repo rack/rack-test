@@ -5,7 +5,6 @@ describe Rack::Test::Session do
   context "cookies" do
     it "keeps a cookie jar" do
       get "/cookies/show"
-      p last_request.class
       check last_request.cookies.should == {}
 
       get "/cookies/set", "value" => "1"
