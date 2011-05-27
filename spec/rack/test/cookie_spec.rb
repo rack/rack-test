@@ -5,6 +5,7 @@ describe Rack::Test::Session do
   context "cookies" do
     it "keeps a cookie jar" do
       get "/cookies/show"
+      p last_request.class
       check last_request.cookies.should == {}
 
       get "/cookies/set", "value" => "1"
@@ -149,6 +150,12 @@ describe Rack::Test::Session do
       set_cookie "value=10"
       get "/cookies/show"
       last_request.cookies.should == { "value" => "10" }
+    end
+
+    it "allow cookies to be read" do
+      set_cookie "value=10"
+      get "/cookies/show"
+      cookies.should == [{:path=>"", :value=>"10", :expires=>nil, :secure=>false, :domain=>"example.org", :name=>"value"}]
     end
 
     it "allows an array of cookies to be set" do

@@ -26,7 +26,7 @@ module Rack
       extend Forwardable
       include Rack::Test::Utils
 
-      def_delegators :@rack_mock_session, :clear_cookies, :set_cookie, :last_response, :last_request
+      def_delegators :@rack_mock_session, :cookies, :clear_cookies, :set_cookie, :last_response, :last_request
 
       # Creates a Rack::Test::Session for a given Rack app or Rack::MockSession.
       #
