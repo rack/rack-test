@@ -54,6 +54,25 @@ describe Rack::Test::Session do
       last_request.env["SERVER_PORT"].should == "80"
     end
 
+    it "allows SERVER_PORT to be set" do
+      request "/", "SERVER_PORT" => "9000"
+      last_request.port.should == 9000
+      last_request.env["SERVER_PORT"].should == "9000"
+    end
+
+    it "honors a port set in HTTP_HOST" do
+      request "/", "HTTP_HOST" => "example.org:9000"
+      last_request.port.should == 9000
+      last_request.env["HTTP_HOST"].should == "example.org:9000"
+    end
+
+    it "honors a port set via the Host header" do
+      header "Host", "example.org:9000"
+      request "/"
+      last_request.port.should == 9000
+      last_request.env["HTTP_HOST"].should == "example.org:9000"
+    end
+
     it "defaults to example.org" do
       request "/"
       last_request.env["SERVER_NAME"].should == "example.org"
