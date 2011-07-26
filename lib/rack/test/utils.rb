@@ -89,17 +89,22 @@ module Rack
           if value.respond_to?(:original_filename)
             build_file_part(name, value)
 
-          elsif value.is_a?(Array) and value.all? { |v| v.respond_to?(:original_filename) }
-            value.map do |v|
-              build_file_part(name, v)
-            end.join
-
+          elsif value.is_a?(Array)
+            if value.all? { |v| v.respond_to?(:original_filename) }
+              value.map do |v|
+                build_file_part(name, v)
+              end.join
+            else
+              value.collect do |v|
+                build_primitive_part(name, v)
+              end.join
+            end
           else
             primitive_part = build_primitive_part(name, value)
             Rack::Test.encoding_aware_strings? ? primitive_part.force_encoding('BINARY') : primitive_part
           end
 
-        }.join + "--#{MULTIPART_BOUNDARY}--\r"
+        }.join + "--#{MULTIPART_BOUNDARY}--\r\n"
       end
 
       def build_primitive_part(parameter_name, value)
