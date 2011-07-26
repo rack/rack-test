@@ -229,6 +229,13 @@ describe Rack::Test::Session do
       last_request.env["CONTENT_TYPE"].should == "application/json"
     end
     
+    it "sets a HTTPS to be sent with requests" do
+      header "HTTPS", "on"
+      request "/"
+
+      last_request.env["HTTPS"].should == "on"
+    end
+
     it "sets a Host to be sent with requests" do
       header "Host", "www.example.ua"
       request "/"

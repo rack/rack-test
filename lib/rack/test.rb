@@ -267,7 +267,7 @@ module Rack
 
         @headers.each do |name, value|
           env_key = name.upcase.gsub("-", "_")
-          env_key = "HTTP_" + env_key unless "CONTENT_TYPE" == env_key
+          env_key = "HTTP_" + env_key unless ["CONTENT_TYPE", "HTTPS"].include? env_key
           converted_headers[env_key] = value
         end
 
