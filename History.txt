@@ -1,3 +1,10 @@
+== Git
+
+* Bug fixes
+
+  * Fix support for params with arrays in multipart forms (Joel Chippindale)
+  * Add respond_to? to Rack::Test::UploadedFile to match method_missing (Josh Nichols)
+
 == 0.6.0 / 2011-05-03
 
 * Bug fixes
