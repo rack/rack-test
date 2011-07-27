@@ -9,7 +9,7 @@ Dir[File.dirname(__FILE__) + "/support/**/*.rb"].each {|f| require f}
 require "rack/test"
 require File.dirname(__FILE__) + "/fixtures/fake_app"
 
-Rspec.configure do |config|
+RSpec.configure do |config|
   config.mock_with :rspec
   config.include Rack::Test::Methods
 
