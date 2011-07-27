@@ -153,8 +153,9 @@ module Rack
       end
 
       # Rack::Test will not follow any redirects automatically. This method
-      # will follow the redirect returned in the last response. If the last
-      # response was not a redirect, an error will be raised.
+      # will follow the redirect returned (including setting the Referer header
+      # on the new request) in the last response. If the last response was not
+      # a redirect, an error will be raised.
       def follow_redirect!
         unless last_response.redirect?
           raise Error.new("Last response was not a redirect. Cannot follow_redirect!")
