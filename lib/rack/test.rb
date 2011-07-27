@@ -173,6 +173,9 @@ module Rack
         env = default_env.merge(env)
 
         env["HTTP_HOST"] ||= [uri.host, uri.port].compact.join(":")
+        if !env["SERVER_PORT"] && (port_index = env["HTTP_HOST"].index(':'))
+          env["SERVER_PORT"] = env["HTTP_HOST"][(port_index + 1)..-1]
+        end
 
         env.update("HTTPS" => "on") if URI::HTTPS === uri
         env["HTTP_X_REQUESTED_WITH"] = "XMLHttpRequest" if env[:xhr]
