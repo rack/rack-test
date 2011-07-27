@@ -160,7 +160,7 @@ module Rack
           raise Error.new("Last response was not a redirect. Cannot follow_redirect!")
         end
 
-        get(last_response["Location"])
+        get(last_response["Location"], {}, { "HTTP_REFERER" => last_request.url })
       end
 
     private

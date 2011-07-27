@@ -228,7 +228,7 @@ describe Rack::Test::Session do
 
       last_request.env["CONTENT_TYPE"].should == "application/json"
     end
-    
+
     it "sets a Host to be sent with requests" do
       header "Host", "www.example.ua"
       request "/"
@@ -292,6 +292,7 @@ describe Rack::Test::Session do
 
       last_response.should_not be_redirect
       last_response.body.should == "You've been redirected"
+      last_request.env["HTTP_REFERER"].should eql("http://example.org/redirect")
     end
 
     it "does not include params when following the redirect" do
