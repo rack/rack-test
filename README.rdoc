@@ -1,7 +1,6 @@
 = Rack::Test
 
 - Code: http://github.com/brynary/rack-test
-- Build: http://runcoderun.com/brynary/rack-test
 
 == Description
 
