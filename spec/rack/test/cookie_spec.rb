@@ -151,6 +151,12 @@ describe Rack::Test::Session do
       last_request.cookies.should == { "value" => "10" }
     end
 
+    it "allow cookies to be read" do
+      set_cookie "value=10"
+      get "/cookies/show"
+      cookies.should == [{:path=>"", :value=>"10", :expires=>nil, :secure=>false, :domain=>"example.org", :name=>"value"}]
+    end
+
     it "allows an array of cookies to be set" do
       set_cookie ["value=10", "foo=bar"]
       get "/cookies/show"

@@ -24,6 +24,10 @@ module Rack
       cookie_jar.merge(cookie, uri)
     end
 
+    def cookies
+      @cookie_jar.to_array
+    end
+
     def request(uri, env)
       env["HTTP_COOKIE"] ||= cookie_jar.for(uri)
       @last_request = Rack::Request.new(env)

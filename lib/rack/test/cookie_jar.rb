@@ -143,6 +143,20 @@ module Rack
         hash_for(uri).values.map { |c| c.raw }.join(';')
       end
 
+      # :api: private
+      def to_array
+        @cookies.map do | cookie |
+          {
+          :name => cookie.name,
+          :value => cookie.value,
+          :path => cookie.path,
+          :domain => cookie.domain,
+          :expires => cookie.expires,
+          :secure => cookie.secure?
+          }
+        end
+      end 
+
       def to_hash
         cookies = {}
 
