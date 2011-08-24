@@ -1,3 +1,9 @@
+== Git
+
+* Bug fixes
+
+  * Fix HTTP Digest authentication when the URI has query params
+
 == 0.6.1 / 2011-07-27
 
 * Bug fixes

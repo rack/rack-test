@@ -240,7 +240,7 @@ module Rack
           "username"  => @digest_username,
           "nc"        => "00000001",
           "cnonce"    => "nonsensenonce",
-          "uri"       => last_request.path_info,
+          "uri"       => last_request.fullpath,
           "method"    => last_request.env["REQUEST_METHOD"],
         })
 

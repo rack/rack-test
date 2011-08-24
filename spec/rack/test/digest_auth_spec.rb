@@ -24,6 +24,12 @@ describe Rack::Test::Session do
       response.should be_ok
     end
 
+    it "correctly authenticates GETs with params" do
+      digest_authorize "alice", "correct-password"
+      response = get "/", "foo" => "bar"
+      response.should be_ok
+    end
+
     it "correctly authenticates POSTs" do
       digest_authorize "alice", "correct-password"
       response = post "/"
