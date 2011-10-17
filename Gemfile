@@ -2,4 +2,4 @@ source :rubygems
 
 gem 'rspec'
 gem "rack"
-gem "sinatra", '~> 1.3.0'
+gem "sinatra", '>= 1.3'
