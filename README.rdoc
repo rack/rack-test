@@ -44,6 +44,10 @@ To install the latest release as a gem:
 
   sudo gem install rack-test
 
+Or via Bundler:
+
+  gem "rack-test", require: "rack/test"
+
 == Authors
 
 - Maintained by {Bryan Helmkamp}[mailto:bryan@brynary.com]
