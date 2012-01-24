@@ -55,6 +55,17 @@ module Rack
         "Set"
       end
 
+      post "/cookies/default-path" do
+        raise if params["value"].nil?
+
+        response.set_cookie "simple", params["value"]
+        "Set"
+      end
+
+      get "/cookies/default-path" do
+        response.cookies.inspect
+      end
+
       get "/cookies/delete" do
         response.delete_cookie "value"
       end
