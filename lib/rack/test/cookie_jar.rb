@@ -13,16 +13,7 @@ module Rack
       # :api: private
       def initialize(raw, uri = nil, default_host = DEFAULT_HOST)
         @default_host = default_host
-
-        # http://tools.ietf.org/html/rfc6265#section-5.1.4
         uri ||= default_uri
-        cookie_path = uri.path
-        if cookie_path.empty? || cookie_path[0] != '/' ||
-                                 cookie_path.count('/') < 2
-          cookie_path = '/'
-        else
-          cookie_path.sub!(/\/[^\/]*\Z/, "")
-        end
 
         # separate the name / value pair from the cookie options
         @name_value_raw, options = raw.split(/[;,] */n, 2)
@@ -31,7 +22,18 @@ module Rack
         @options = parse_query(options, ';')
 
         @options["domain"]  ||= (uri.host || default_host)
-        @options["path"]    ||= cookie_path
+
+        unless @options.has_key?("path")
+          # http://tools.ietf.org/html/rfc6265#section-5.1.4
+          cookie_path = uri.path
+          if cookie_path.empty? || cookie_path[0] != '/' ||
+                                   cookie_path.count('/') < 2
+            cookie_path = '/'
+          else
+            cookie_path.sub!(/\/[^\/]*\Z/, "")
+          end
+          @options["path"] = cookie_path
+        end
       end
 
       def replaces?(other)
