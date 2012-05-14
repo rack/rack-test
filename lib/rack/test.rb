@@ -123,6 +123,15 @@ module Rack
         process_request(uri, env, &block)
       end
 
+      alias_method :http_get, :get
+      alias_method :http_post, :post
+      alias_method :http_put, :put
+      alias_method :http_patch, :patch
+      alias_method :http_delete, :delete
+      alias_method :http_options, :options
+      alias_method :http_head, :head
+      alias_method :http_request, :request
+
       # Set a header to be included on all subsequent requests through the
       # session. Use a value of nil to remove a previously configured header.
       #
