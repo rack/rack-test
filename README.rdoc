@@ -16,7 +16,7 @@ request helpers feature.
 * Set request headers to be used by all subsequent requests
 * Small footprint. Approximately 200 LOC
 
-== Example
+== Examples
 
   require "rack/test"
 
@@ -37,6 +37,25 @@ request helpers feature.
     end
 
   end
+
+
+If you want to test one app in isolation, you just return that app as shown above. But if you want to test the entire app stack, including middlewares, cascades etc. you need to parse the app defined in config.ru.
+
+    OUTER_APP = Rack::Builder.parse_file('config.ru').first
+
+    class TestApp < Test::Unit::TestCase
+      include Rack::Test::Methods
+  
+      def app
+        OUTER_APP
+      end
+      
+      def test_root
+        get '/'
+        assert last_response.ok?
+      end
+    end
+
 
 == Install
 
