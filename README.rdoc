@@ -1,4 +1,4 @@
-= Rack::Test
+= Rack::Test {<img src="https://codeclimate.com/badge.png" />}[https://codeclimate.com/github/brynary/rack-test]
 
 - Code: http://github.com/brynary/rack-test
 
