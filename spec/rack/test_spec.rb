@@ -106,6 +106,11 @@ describe Rack::Test::Session do
       last_request.GET.should == { "baz" => "2", "foo" => { "bar" => "1" }}
     end
 
+    it "does not rewrite a GET query string when :params is not supplied" do
+      request "/foo?a=1&b=2&c=3&e=4&d=5"
+      last_request.query_string.should == "a=1&b=2&c=3&e=4&d=5"
+    end
+
     it "accepts params and builds url encoded params for POST requests" do
       request "/foo", :method => :post, :params => {:foo => {:bar => "1"}}
       last_request.env["rack.input"].read.should == "foo[bar]=1"

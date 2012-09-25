@@ -115,6 +115,12 @@ module Rack
         merge("#{name}=#{Rack::Utils.escape(value)}")
       end
 
+      def delete(name)
+        @cookies.reject! do |cookie|
+          cookie.name == name
+        end
+      end
+
       def merge(raw_cookies, uri = nil)
         return unless raw_cookies
 
