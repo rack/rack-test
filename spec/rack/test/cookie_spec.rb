@@ -36,6 +36,14 @@ describe Rack::Test::Session do
       jar["value"].should == "foo;abc"
     end
 
+    it "deletes cookies directly from the CookieJar" do
+      jar = Rack::Test::CookieJar.new
+      jar["abcd"] = "1234"
+      jar["abcd"].should == "1234"
+      jar.delete("abcd")
+      jar["abcd"].should == nil
+    end
+
     it "doesn't send cookies with the wrong domain" do
       get "http://www.example.com/cookies/set", "value" => "1"
       get "http://www.other.example/cookies/show"
