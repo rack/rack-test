@@ -1,17 +1,14 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{rack-test}
-  s.version = "0.6.1"
+  s.name = "rack-test"
+  s.version = "0.6.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Bryan Helmkamp"]
-  s.date = %q{2011-07-27}
-  s.description = %q{Rack::Test is a small, simple testing API for Rack apps. It can be used on its
-own or as a reusable starting point for Web frameworks and testing libraries
-to build on. Most of its initial functionality is an extraction of Merb 1.0's
-request helpers feature.}
-  s.email = %q{bryan@brynary.com}
+  s.date = "2012-09-27"
+  s.description = "Rack::Test is a small, simple testing API for Rack apps. It can be used on its\nown or as a reusable starting point for Web frameworks and testing libraries\nto build on. Most of its initial functionality is an extraction of Merb 1.0's\nrequest helpers feature."
+  s.email = "bryan@brynary.com"
   s.extra_rdoc_files = [
     "README.rdoc",
     "MIT-LICENSE.txt"
@@ -48,11 +45,11 @@ request helpers feature.}
     "spec/support/matchers/body.rb",
     "spec/support/matchers/challenge.rb"
   ]
-  s.homepage = %q{http://github.com/brynary/rack-test}
+  s.homepage = "http://github.com/brynary/rack-test"
   s.require_paths = ["lib"]
-  s.rubyforge_project = %q{rack-test}
-  s.rubygems_version = %q{1.6.1}
-  s.summary = %q{Simple testing API built on Rack}
+  s.rubyforge_project = "rack-test"
+  s.rubygems_version = "1.8.23"
+  s.summary = "Simple testing API built on Rack"
   s.test_files = [
     "spec/fixtures/fake_app.rb",
     "spec/rack/test/cookie_spec.rb",
