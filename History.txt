@@ -3,10 +3,13 @@
 * Minor enhancements
 
   * Support HTTP PATCH method (Marjan Krekoten' #33)
+  * Preserve the exact query string when possible (Paul Grayson #63)
+  * Add a #delete method to CookieJar (Paul Grayson #63)
 
 * Bug fixes
 
   * Fix HTTP Digest authentication when the URI has query params
+  * Don't append default ports to HTTP_HOST (David Lee #57)
 
 == 0.6.1 / 2011-07-27
 
