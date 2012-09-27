@@ -34,6 +34,22 @@ describe Rack::Test::Session do
       last_request.env['HTTP_HOST'].should == "www.example.ua"
     end
 
+    it "sets HTTP_HOST with port for non-default ports" do
+      request "http://foo.com:8080"
+      last_request.env["HTTP_HOST"].should == "foo.com:8080"
+      request "https://foo.com:8443"
+      last_request.env["HTTP_HOST"].should == "foo.com:8443"
+    end
+
+    it "sets HTTP_HOST without port for default ports" do
+      request "http://foo.com"
+      last_request.env["HTTP_HOST"].should == "foo.com"
+      request "http://foo.com:80"
+      last_request.env["HTTP_HOST"].should == "foo.com"
+      request "https://foo.com:443"
+      last_request.env["HTTP_HOST"].should == "foo.com"
+    end
+
     it "defaults to GET" do
       request "/"
       last_request.env["REQUEST_METHOD"].should == "GET"
