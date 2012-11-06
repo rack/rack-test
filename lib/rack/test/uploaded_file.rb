@@ -14,6 +14,9 @@ module Rack
       # The filename, *not* including the path, of the "uploaded" file
       attr_reader :original_filename
 
+      # The tempfile
+      attr_reader :tempfile
+
       # The content type of the "uploaded" file
       attr_accessor :content_type
 
