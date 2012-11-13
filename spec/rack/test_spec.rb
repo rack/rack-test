@@ -123,8 +123,8 @@ describe Rack::Test::Session do
     end
 
     it "does not rewrite a GET query string when :params is not supplied" do
-      request "/foo?a=1&b=2&c=3&e=4&d=5"
-      last_request.query_string.should == "a=1&b=2&c=3&e=4&d=5"
+      request "/foo?a=1&b=2&c=3&e=4&d=5+%20"
+      last_request.query_string.should == "a=1&b=2&c=3&e=4&d=5+%20"
     end
 
     it "accepts params and builds url encoded params for POST requests" do
