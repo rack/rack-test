@@ -17,6 +17,8 @@ describe Rack::Test::UploadedFile do
     uploaded_file.should respond_to(:size)
     uploaded_file.should respond_to(:unlink)
     uploaded_file.should respond_to(:read)
+    uploaded_file.should respond_to(:original_filename)
+    uploaded_file.should respond_to(:tempfile) # Allows calls to params[:file].tempfile
   end
 
 end
