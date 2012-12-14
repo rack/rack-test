@@ -57,10 +57,12 @@ module Rack
             value.map do |v|
 
               if (v.is_a?(Hash))
+                nested_params = {}
                 build_multipart(v, false).each { |subkey, subvalue|
-                  flattened_params["#{k}[]#{subkey}"] ||= []
-                  flattened_params["#{k}[]#{subkey}"] << subvalue
+                  nested_params["#{k}[]#{subkey}"] = subvalue
                 }
+                flattened_params["#{k}[]"] ||= []
+                flattened_params["#{k}[]"] << nested_params
               else
                 flattened_params["#{k}[]"] = value
               end
@@ -86,21 +88,28 @@ module Rack
 
     private
       def build_parts(parameters)
+        get_parts(parameters).join + "--#{MULTIPART_BOUNDARY}--\r"
+      end
+
+      def get_parts(parameters)
         parameters.map { |name, value|
-          if value.respond_to?(:original_filename)
-            build_file_part(name, value)
-
-          elsif value.is_a?(Array) and value.all? { |v| v.respond_to?(:original_filename) }
-            value.map do |v|
-              build_file_part(name, v)
-            end.join
-
+          if name =~ /\[\]$/ && value.is_a?(Array) && value.all? {|v| v.is_a?(Hash)}
+            value.map {|v| get_parts(v).join}.join
           else
-            primitive_part = build_primitive_part(name, value)
-            Rack::Test.encoding_aware_strings? ? primitive_part.force_encoding('BINARY') : primitive_part
-          end
+            if value.respond_to?(:original_filename)
+              build_file_part(name, value)
 
-        }.join + "--#{MULTIPART_BOUNDARY}--\r"
+            elsif value.is_a?(Array) and value.all? { |v| v.respond_to?(:original_filename) }
+              value.map do |v|
+                build_file_part(name, v)
+              end.join
+
+            else
+              primitive_part = build_primitive_part(name, value)
+              Rack::Test.encoding_aware_strings? ? primitive_part.force_encoding('BINARY') : primitive_part
+            end
+          end
+        }
       end
 
       def build_primitive_part(parameter_name, value)

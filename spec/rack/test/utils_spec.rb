@@ -106,7 +106,7 @@ describe Rack::Test::Utils do
 
     it "builds nested multipart bodies with an array of hashes" do
       files = Rack::Test::UploadedFile.new(multipart_file("foo.txt"))
-      data  = build_multipart("files" => files, "foo" => [{"id" => "1"}, {"id" => "2"}])
+      data  = build_multipart("files" => files, "foo" => [{"id" => "1", "name" => 'Dave'}, {"id" => "2", "name" => 'Steve'}])
 
       options = {
         "CONTENT_TYPE" => "multipart/form-data; boundary=#{Rack::Test::MULTIPART_BOUNDARY}",
@@ -117,7 +117,7 @@ describe Rack::Test::Utils do
       params = Rack::Utils::Multipart.parse_multipart(env)
       check params["files"][:filename].should == "foo.txt"
       params["files"][:tempfile].read.should == "bar\n"
-      check params["foo"].should == [{"id" => "1"}, {"id" => "2"}]
+      check params["foo"].should == [{"id" => "1", "name" => "Dave"}, {"id" => "2", "name" => "Steve"}]
     end
 
     it "returns nil if no UploadedFiles were used" do
