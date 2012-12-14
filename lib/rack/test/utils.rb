@@ -59,7 +59,7 @@ module Rack
               if (v.is_a?(Hash))
                 nested_params = {}
                 build_multipart(v, false).each { |subkey, subvalue|
-                  nested_params["#{k}[]#{subkey}"] = subvalue
+                  nested_params[subkey] = subvalue
                 }
                 flattened_params["#{k}[]"] ||= []
                 flattened_params["#{k}[]"] << nested_params
@@ -94,7 +94,11 @@ module Rack
       def get_parts(parameters)
         parameters.map { |name, value|
           if name =~ /\[\]$/ && value.is_a?(Array) && value.all? {|v| v.is_a?(Hash)}
-            value.map {|v| get_parts(v).join}.join
+            value.map { |hash|
+              new_value = {}
+              hash.each { |k, v| new_value[name+k] = v }
+              get_parts(new_value).join
+            }.join
           else
             if value.respond_to?(:original_filename)
               build_file_part(name, value)
