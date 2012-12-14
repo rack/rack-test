@@ -58,7 +58,8 @@ module Rack
 
               if (v.is_a?(Hash))
                 build_multipart(v, false).each { |subkey, subvalue|
-                  flattened_params["#{k}[]#{subkey}"] = subvalue
+                  flattened_params["#{k}[]#{subkey}"] ||= []
+                  flattened_params["#{k}[]#{subkey}"] << subvalue
                 }
               else
                 flattened_params["#{k}[]"] = value

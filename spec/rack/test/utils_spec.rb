@@ -104,6 +104,22 @@ describe Rack::Test::Utils do
       check params["foo"].should == ["1", "2"]
     end
 
+    it "builds nested multipart bodies with an array of hashes" do
+      files = Rack::Test::UploadedFile.new(multipart_file("foo.txt"))
+      data  = build_multipart("files" => files, "foo" => [{"id" => "1"}, {"id" => "2"}])
+
+      options = {
+        "CONTENT_TYPE" => "multipart/form-data; boundary=#{Rack::Test::MULTIPART_BOUNDARY}",
+        "CONTENT_LENGTH" => data.length.to_s,
+        :input => StringIO.new(data)
+      }
+      env = Rack::MockRequest.env_for("/", options)
+      params = Rack::Utils::Multipart.parse_multipart(env)
+      check params["files"][:filename].should == "foo.txt"
+      params["files"][:tempfile].read.should == "bar\n"
+      check params["foo"].should == [{"id" => "1"}, {"id" => "2"}]
+    end
+
     it "returns nil if no UploadedFiles were used" do
       data = build_multipart("people" => [{"submit-name" => "Larry", "files" => "contents"}])
       data.should be_nil
