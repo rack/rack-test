@@ -53,7 +53,7 @@ describe Rack::Test::Session do
 
     it "sends params encoded as ISO-8859-1" do
       post "/", "photo" => uploaded_file, "foo" => "bar", "utf8" => "☃"
-      last_request.POST["foo"].should == "bar"
+      last_request.POST["foo"].should eq "bar"
 
       if Rack::Test.encoding_aware_strings?
         last_request.POST["utf8"].should == "☃"
