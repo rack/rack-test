@@ -145,7 +145,8 @@ module Rack
       # Example:
       #   basic_authorize "bryan", "secret"
       def basic_authorize(username, password)
-        encoded_login = ["#{username}:#{password}"].pack("m*")
+        require 'base64'
+        encoded_login = Base64.strict_encode64(["#{username}:#{password}"].join)
         header('Authorization', "Basic #{encoded_login}")
       end
 
