@@ -154,6 +154,16 @@ module Rack
         end
       end
 
+      # Gets the current session hash
+      def rack_session
+        @rack_session ||= {}
+      end
+
+      # Sets the current session data
+      def rack_session=(hash)
+        @rack_session = hash
+      end
+
       # Set the username and password for HTTP Basic authorization, to be
       # included in subsequent requests in the HTTP_AUTHORIZATION header.
       #
@@ -237,6 +247,8 @@ module Rack
         if env.has_key?(:cookie)
           set_cookie(env.delete(:cookie), uri)
         end
+
+        env.merge!({'rack.session' => rack_session})
 
         Rack::MockRequest.env_for(uri.to_s, env)
       end

@@ -133,6 +133,14 @@ module Rack
         "Set"
       end
 
+      get "/session" do
+        session.inspect
+      end
+
+      get "/session/set" do
+        session[params[:key].to_sym] = params[:value]
+      end
+
       post "/" do
         "Hello, POST: #{params.inspect}"
       end
