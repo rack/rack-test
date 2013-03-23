@@ -51,39 +51,11 @@ module Rack
         @default_host = @rack_mock_session.default_host
       end
 
-      def get(uri, params = {}, env = {}, &block)
-        env = env_for(uri, env.merge(:method => "GET", :params => params))
-        process_request(uri, env, &block)
-      end
-
-      def post(uri, params = {}, env = {}, &block)
-        env = env_for(uri, env.merge(:method => "POST", :params => params))
-        process_request(uri, env, &block)
-      end
-
-      def put(uri, params = {}, env = {}, &block)
-        env = env_for(uri, env.merge(:method => "PUT", :params => params))
-        process_request(uri, env, &block)
-      end
-
-      def patch(uri, params = {}, env = {}, &block)
-        env = env_for(uri, env.merge(:method => "PATCH", :params => params))
-        process_request(uri, env, &block)
-      end
-
-      def delete(uri, params = {}, env = {}, &block)
-        env = env_for(uri, env.merge(:method => "DELETE", :params => params))
-        process_request(uri, env, &block)
-      end
-
-      def options(uri, params = {}, env = {}, &block)
-        env = env_for(uri, env.merge(:method => "OPTIONS", :params => params))
-        process_request(uri, env, &block)
-      end
-
-      def head(uri, params = {}, env = {}, &block)
-        env = env_for(uri, env.merge(:method => "HEAD", :params => params))
-        process_request(uri, env, &block)
+      [:get, :post, :put, :delete, :patch, :options, :head].each do |verb|
+        define_method verb do |uri, params = {}, env = {}, &block|
+          env = env_for(uri, env.merge(:method => verb.to_s.upcase, :params => params))
+          process_request(uri, env, &block)
+        end
       end
 
       # Issue a request to the Rack app for the given URI and optional Rack
