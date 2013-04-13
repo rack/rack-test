@@ -4,8 +4,7 @@ require "rack/mock_session"
 require "rack/test/cookie_jar"
 require "rack/test/mock_digest_request"
 require "rack/test/utils"
-load '/Users/daris/Documents/uxtemple/opensource/rack-test/lib/rack/test/methods.rb'
-# require "rack/test/methods"
+require "rack/test/methods"
 require "rack/test/uploaded_file"
 
 module Rack
