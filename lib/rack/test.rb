@@ -4,7 +4,8 @@ require "rack/mock_session"
 require "rack/test/cookie_jar"
 require "rack/test/mock_digest_request"
 require "rack/test/utils"
-require "rack/test/methods"
+load '/Users/daris/Documents/uxtemple/opensource/rack-test/lib/rack/test/methods.rb'
+# require "rack/test/methods"
 require "rack/test/uploaded_file"
 
 module Rack
@@ -35,6 +36,7 @@ module Rack
       # (See README.rdoc for an example)
       def initialize(mock_session)
         @headers = {}
+        @env = {}
 
         if mock_session.is_a?(MockSession)
           @rack_mock_session = mock_session
@@ -139,6 +141,19 @@ module Rack
         end
       end
 
+      # Set an env var to be included on all subsequent requests through the
+      # session. Use a value of nil to remove a previously configured env.
+      #
+      # Example:
+      #   env "rack.session", {:csrf => 'token'}
+      def env(name, value)
+        if value.nil?
+          @env.delete(name)
+        else
+          @env[name] = value
+        end
+      end
+
       # Set the username and password for HTTP Basic authorization, to be
       # included in subsequent requests in the HTTP_AUTHORIZATION header.
       #
@@ -171,6 +186,12 @@ module Rack
         end
 
         get(last_response["Location"], {}, { "HTTP_REFERER" => last_request.url })
+      end
+
+      # Set a CSRF token so you can easily test safe services
+      def csrf(enable=true)
+        header('X-CSRF-Token', enable ? 'token' : nil)
+        env('rack.session', enable ? {:csrf => 'token'} : nil)
       end
 
     private
@@ -271,7 +292,7 @@ module Rack
       end
 
       def default_env
-        { "rack.test" => true, "REMOTE_ADDR" => "127.0.0.1" }.merge(headers_for_env)
+        { "rack.test" => true, "REMOTE_ADDR" => "127.0.0.1" }.merge(@env).merge(headers_for_env)
       end
 
       def headers_for_env

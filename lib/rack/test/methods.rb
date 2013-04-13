@@ -67,11 +67,13 @@ module Rack
         :head,
         :follow_redirect!,
         :header,
+        :env,
         :set_cookie,
         :clear_cookies,
         :authorize,
         :basic_authorize,
         :digest_authorize,
+        :csrf,
         :last_response,
         :last_request
       ]

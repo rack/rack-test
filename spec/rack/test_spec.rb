@@ -237,10 +237,10 @@ describe Rack::Test::Session do
 
   describe "#header" do
     it "sets a header to be sent with requests" do
-      header "User-Agent", "Firefox"
+      header "User-Agent", "token"
       request "/"
 
-      last_request.env["HTTP_USER_AGENT"].should == "Firefox"
+      last_request.env["HTTP_USER_AGENT"].should == "token"
     end
 
     it "sets a Content-Type to be sent with requests" do
@@ -258,15 +258,15 @@ describe Rack::Test::Session do
     end
 
     it "persists across multiple requests" do
-      header "User-Agent", "Firefox"
+      header "User-Agent", "token"
       request "/"
       request "/"
 
-      last_request.env["HTTP_USER_AGENT"].should == "Firefox"
+      last_request.env["HTTP_USER_AGENT"].should == "token"
     end
 
     it "overwrites previously set headers" do
-      header "User-Agent", "Firefox"
+      header "User-Agent", "token"
       header "User-Agent", "Safari"
       request "/"
 
@@ -274,7 +274,7 @@ describe Rack::Test::Session do
     end
 
     it "can be used to clear a header" do
-      header "User-Agent", "Firefox"
+      header "User-Agent", "token"
       header "User-Agent", nil
       request "/"
 
@@ -282,10 +282,50 @@ describe Rack::Test::Session do
     end
 
     it "is overridden by headers sent during the request" do
-      header "User-Agent", "Firefox"
+      header "User-Agent", "token"
       request "/", "HTTP_USER_AGENT" => "Safari"
 
       last_request.env["HTTP_USER_AGENT"].should == "Safari"
+    end
+  end
+
+  describe "#env" do
+    it "sets the env to be sent with requests" do
+      env "rack.session", {:csrf => 'token'}
+      request "/"
+
+      last_request.env["rack.session"].should == {:csrf => 'token'}
+    end
+
+    it "persists across multiple requests" do
+      env "rack.session", {:csrf => 'token'}
+      request "/"
+      request "/"
+
+      last_request.env["rack.session"].should == {:csrf => 'token'}
+    end
+
+    it "overwrites previously set envs" do
+      env "rack.session", {:csrf => 'token'}
+      env "rack.session", {:some => :thing}
+      request "/"
+
+      last_request.env["rack.session"].should == {:some => :thing}
+    end
+
+    it "can be used to clear a env" do
+      env "rack.session", {:csrf => 'token'}
+      env "rack.session", nil
+      request "/"
+
+      last_request.env.should_not have_key("X_CSRF_TOKEN")
+    end
+
+    it "is overridden by envs sent during the request" do
+      env "rack.session", {:csrf => 'token'}
+      request "/", "rack.session" => {:some => :thing}
+
+      last_request.env["rack.session"].should == {:some => :thing}
     end
   end
 
@@ -335,6 +375,44 @@ describe Rack::Test::Session do
       lambda {
         follow_redirect!
       }.should raise_error(Rack::Test::Error)
+    end
+  end
+
+  describe "#csrf" do
+    it "sets the HTTP_X_CSRF_TOKEN header" do
+      csrf
+      request "/"
+
+      last_request.env["HTTP_X_CSRF_TOKEN"].should == "token"
+    end
+
+    it "sets the rack.session to include CSRF token" do
+      csrf
+      request "/"
+
+      last_request.env["rack.session"].should == {:csrf => "token"}
+    end
+
+    it "includes the header & rack.session for subsequent requests" do
+      csrf
+      request "/"
+      request "/"
+
+      last_request.env["HTTP_X_CSRF_TOKEN"].should == "token"
+      last_request.env["rack.session"].should == {:csrf => "token"}
+    end
+
+    it "can be cleared out" do
+      csrf
+      request "/"
+      last_request.env["HTTP_X_CSRF_TOKEN"].should == "token"
+      last_request.env["rack.session"].should == {:csrf => "token"}
+
+      csrf(false)
+      request "/"
+
+      last_request.env.should_not have_key("HTTP_X_CSRF_TOKEN")
+      last_request.env.should_not have_key("rack.session")
     end
   end
 
