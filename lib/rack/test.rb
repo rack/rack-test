@@ -187,12 +187,6 @@ module Rack
         get(last_response["Location"], {}, { "HTTP_REFERER" => last_request.url })
       end
 
-      # Set a CSRF token so you can easily test safe services
-      def csrf(enable=true)
-        header('X-CSRF-Token', enable ? 'token' : nil)
-        env('rack.session', enable ? {:csrf => 'token'} : nil)
-      end
-
     private
 
       def env_for(path, env)

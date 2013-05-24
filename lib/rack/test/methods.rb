@@ -73,7 +73,6 @@ module Rack
         :authorize,
         :basic_authorize,
         :digest_authorize,
-        :csrf,
         :last_response,
         :last_request
       ]
