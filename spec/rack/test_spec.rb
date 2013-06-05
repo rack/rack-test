@@ -289,6 +289,46 @@ describe Rack::Test::Session do
     end
   end
 
+  describe "#env" do
+    it "sets the env to be sent with requests" do
+      env "rack.session", {:csrf => 'token'}
+      request "/"
+
+      last_request.env["rack.session"].should == {:csrf => 'token'}
+    end
+
+    it "persists across multiple requests" do
+      env "rack.session", {:csrf => 'token'}
+      request "/"
+      request "/"
+
+      last_request.env["rack.session"].should == {:csrf => 'token'}
+    end
+
+    it "overwrites previously set envs" do
+      env "rack.session", {:csrf => 'token'}
+      env "rack.session", {:some => :thing}
+      request "/"
+
+      last_request.env["rack.session"].should == {:some => :thing}
+    end
+
+    it "can be used to clear a env" do
+      env "rack.session", {:csrf => 'token'}
+      env "rack.session", nil
+      request "/"
+
+      last_request.env.should_not have_key("X_CSRF_TOKEN")
+    end
+
+    it "is overridden by envs sent during the request" do
+      env "rack.session", {:csrf => 'token'}
+      request "/", "rack.session" => {:some => :thing}
+
+      last_request.env["rack.session"].should == {:some => :thing}
+    end
+  end
+
   describe "#authorize" do
     it "sets the HTTP_AUTHORIZATION header" do
       authorize "bryan", "secret"

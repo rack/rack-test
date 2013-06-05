@@ -35,6 +35,7 @@ module Rack
       # (See README.rdoc for an example)
       def initialize(mock_session)
         @headers = {}
+        @env = {}
 
         if mock_session.is_a?(MockSession)
           @rack_mock_session = mock_session
@@ -136,6 +137,19 @@ module Rack
           @headers.delete(name)
         else
           @headers[name] = value
+        end
+      end
+
+      # Set an env var to be included on all subsequent requests through the
+      # session. Use a value of nil to remove a previously configured env.
+      #
+      # Example:
+      #   env "rack.session", {:csrf => 'token'}
+      def env(name, value)
+        if value.nil?
+          @env.delete(name)
+        else
+          @env[name] = value
         end
       end
 
@@ -271,7 +285,7 @@ module Rack
       end
 
       def default_env
-        { "rack.test" => true, "REMOTE_ADDR" => "127.0.0.1" }.merge(headers_for_env)
+        { "rack.test" => true, "REMOTE_ADDR" => "127.0.0.1" }.merge(@env).merge(headers_for_env)
       end
 
       def headers_for_env
