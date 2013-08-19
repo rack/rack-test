@@ -15,7 +15,7 @@ describe Rack::Test::Session do
     it "doesn't send expired cookies" do
       get "/cookies/set", "value" => "1"
       now = Time.now
-      Time.stub!(:now => now + 60)
+      Time.stub(:now => now + 60)
       get "/cookies/show"
       last_request.cookies.should == {}
     end
