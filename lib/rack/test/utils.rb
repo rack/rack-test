@@ -93,7 +93,7 @@ module Rack
 
       def get_parts(parameters)
         parameters.map { |name, value|
-          if name =~ /\[\]$/ && value.is_a?(Array) && value.all? {|v| v.is_a?(Hash)}
+          if name =~ /\[\]\Z/ && value.is_a?(Array) && value.all? {|v| v.is_a?(Hash)}
             value.map { |hash|
               new_value = {}
               hash.each { |k, v| new_value[name+k] = v }
