@@ -61,7 +61,7 @@ If you want to test one app in isolation, you just return that app as shown abov
 
 To install the latest release as a gem:
 
-  sudo gem install rack-test
+  gem install rack-test
 
 Or via Bundler:
 
