@@ -104,6 +104,77 @@ describe Rack::Test::Utils do
       check params["foo"].should == ["1", "2"]
     end
 
+    it "builds nested multipart bodies with an array of hashes" do
+      files = Rack::Test::UploadedFile.new(multipart_file("foo.txt"))
+      data  = build_multipart("files" => files, "foo" => [{"id" => "1", "name" => 'Dave'}, {"id" => "2", "name" => 'Steve'}])
+
+      options = {
+        "CONTENT_TYPE" => "multipart/form-data; boundary=#{Rack::Test::MULTIPART_BOUNDARY}",
+        "CONTENT_LENGTH" => data.length.to_s,
+        :input => StringIO.new(data)
+      }
+      env = Rack::MockRequest.env_for("/", options)
+      params = Rack::Utils::Multipart.parse_multipart(env)
+      check params["files"][:filename].should == "foo.txt"
+      params["files"][:tempfile].read.should == "bar\n"
+      check params["foo"].should == [{"id" => "1", "name" => "Dave"}, {"id" => "2", "name" => "Steve"}]
+    end
+
+    it "builds nested multipart bodies with arbitrarily nested array of hashes" do
+      files = Rack::Test::UploadedFile.new(multipart_file("foo.txt"))
+      data  = build_multipart("files" => files, "foo" => {"bar" => [{"id" => "1", "name" => 'Dave'},
+                                                                    {"id" => "2", "name" => 'Steve', "qux" => [{"id" => '3', "name" => 'mike'},
+                                                                                                               {"id" => '4', "name" => 'Joan'}]}]})
+
+      options = {
+        "CONTENT_TYPE" => "multipart/form-data; boundary=#{Rack::Test::MULTIPART_BOUNDARY}",
+        "CONTENT_LENGTH" => data.length.to_s,
+        :input => StringIO.new(data)
+      }
+      env = Rack::MockRequest.env_for("/", options)
+      params = Rack::Utils::Multipart.parse_multipart(env)
+      check params["files"][:filename].should == "foo.txt"
+      params["files"][:tempfile].read.should == "bar\n"
+      check params["foo"].should == {"bar" => [{"id" => "1", "name" => "Dave"},
+                                               {"id" => "2", "name" => "Steve", "qux" => [{"id" => '3', "name" => 'mike'},
+                                                                                          {"id" => '4', "name" => 'Joan'}]}]}
+    end
+
+    it 'does not break with params that look nested, but are not' do
+      files = Rack::Test::UploadedFile.new(multipart_file("foo.txt"))
+      data  = build_multipart("foo[]" => "1", "bar[]" => {"qux" => "2"}, "files[]" => files)
+
+      options = {
+        "CONTENT_TYPE" => "multipart/form-data; boundary=#{Rack::Test::MULTIPART_BOUNDARY}",
+        "CONTENT_LENGTH" => data.length.to_s,
+        :input => StringIO.new(data)
+      }
+      env = Rack::MockRequest.env_for("/", options)
+      params = Rack::Utils::Multipart.parse_multipart(env)
+      check params["files"][0][:filename].should == "foo.txt"
+      params["files"][0][:tempfile].read.should == "bar\n"
+      check params["foo"][0].should == "1"
+      check params["bar"][0].should == {"qux" => "2"}
+    end
+
+    it 'allows for nested files' do
+      files = Rack::Test::UploadedFile.new(multipart_file("foo.txt"))
+      data  = build_multipart("foo" => [{"id" => "1", "data" => files},
+                                        {"id" => "2", "data" => ["3", "4"]}])
+
+      options = {
+        "CONTENT_TYPE" => "multipart/form-data; boundary=#{Rack::Test::MULTIPART_BOUNDARY}",
+        "CONTENT_LENGTH" => data.length.to_s,
+        :input => StringIO.new(data)
+      }
+      env = Rack::MockRequest.env_for("/", options)
+      params = Rack::Utils::Multipart.parse_multipart(env)
+      check params["foo"][0]["id"].should == "1"
+      check params["foo"][0]["data"][:filename].should == "foo.txt"
+      params["foo"][0]["data"][:tempfile].read.should == "bar\n"
+      check params["foo"][1].should == {"id" => "2", "data" => ["3", "4"]}
+    end
+
     it "returns nil if no UploadedFiles were used" do
       data = build_multipart("people" => [{"submit-name" => "Larry", "files" => "contents"}])
       data.should be_nil
