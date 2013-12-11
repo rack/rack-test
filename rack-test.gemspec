@@ -9,6 +9,7 @@ Gem::Specification.new do |s|
   s.date = "2012-09-27"
   s.description = "Rack::Test is a small, simple testing API for Rack apps. It can be used on its\nown or as a reusable starting point for Web frameworks and testing libraries\nto build on. Most of its initial functionality is an extraction of Merb 1.0's\nrequest helpers feature."
   s.email = "bryan@brynary.com"
+  s.license = "MIT"
   s.extra_rdoc_files = [
     "README.rdoc",
     "MIT-LICENSE.txt"
