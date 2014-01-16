@@ -50,7 +50,7 @@ module Rack
 
       # :api: private
       def path
-        @options["path"].strip || "/"
+        ([*@options["path"]].first.split(',').first || "/").strip
       end
 
       # :api: private
