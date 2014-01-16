@@ -28,6 +28,31 @@ describe Rack::Test::Session do
       expect(last_request.cookies).to eq({})
     end
 
+    it 'uses the first "path" when many paths is defined when given many paths' do
+      cookie_string = [
+        '/',
+        'csrf_id=ABC123',
+        'path=/, _github_ses=ABC123',
+        'path=/',
+        'expires=Wed, 01 Jan 2020 08:00:00 GMT',
+        'HttpOnly'
+      ].join('; ')
+      cookie = Rack::Test::Cookie.new(cookie_string)
+      expect(cookie.path).to eq('/')
+    end
+
+    it 'uses the first path when many paths is defined' do
+      cookie_string = [
+        '/',
+        'csrf_id=ABC123',
+        'path=/',
+        'expires=Wed, 01 Jan 2020 08:00:00 GMT',
+        'HttpOnly'
+      ].join('; ')
+      cookie = Rack::Test::Cookie.new(cookie_string)
+      expect(cookie.path).to eq('/')
+    end
+
     it 'escapes cookie values' do
       jar = Rack::Test::CookieJar.new
       jar['value'] = 'foo;abc'
@@ -45,7 +70,7 @@ describe Rack::Test::Session do
     it 'allow symbol access' do
       jar = Rack::Test::CookieJar.new
       jar['value'] = 'foo;abc'
-      jar[:value].should == 'foo;abc'
+      expect(jar[:value]).to eq('foo;abc')
     end
 
     it "doesn't send cookies with the wrong domain" do

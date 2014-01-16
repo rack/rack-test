@@ -129,7 +129,7 @@ describe Rack::Test::Session do
 
     it 'does not rewrite a GET query string when :params is empty' do
       request '/foo?a=1&b=2&c=3&e=4&d=5', params: {}
-      last_request.query_string.should == 'a=1&b=2&c=3&e=4&d=5'
+      expect(last_request.query_string).to eq('a=1&b=2&c=3&e=4&d=5')
     end
 
     it 'does not overwrite multiple query string keys' do
@@ -391,9 +391,9 @@ describe Rack::Test::Session do
       it 'keeps the original method' do
         post '/redirect?status=307', foo: 'bar'
         follow_redirect!
-        last_response.body.should include 'post'
-        last_response.body.should include 'foo'
-        last_response.body.should include 'bar'
+        expect(last_response.body).to include('post')
+        expect(last_response.body).to include('foo')
+        expect(last_response.body).to include('bar')
       end
     end
   end
