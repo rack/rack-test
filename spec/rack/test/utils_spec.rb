@@ -81,7 +81,7 @@ describe Rack::Test::Utils do
       check params["submit-name"].should == "Larry"
 
       check params["files"][0][:filename].should == "foo.txt"
-      params["files"][0][:tempfile].read.should == "bar\n"
+      params["files"][0][:tempfile].read.should eq "bar\n"
 
       check params["files"][1][:filename].should == "bar.txt"
       params["files"][1][:tempfile].read.should == "baz\n"
@@ -100,7 +100,7 @@ describe Rack::Test::Utils do
       params = Rack::Utils::Multipart.parse_multipart(env)
       check params["people"][0]["submit-name"].should == "Larry"
       check params["people"][0]["files"][:filename].should == "foo.txt"
-      params["people"][0]["files"][:tempfile].read.should == "bar\n"
+      params["people"][0]["files"][:tempfile].read.should eq "bar\n"
       check params["foo"].should == ["1", "2"]
     end
 

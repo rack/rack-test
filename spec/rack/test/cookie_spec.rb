@@ -15,7 +15,7 @@ describe Rack::Test::Session do
     it "doesn't send expired cookies" do
       get "/cookies/set", "value" => "1"
       now = Time.now
-      Time.stub!(:now => now + 60)
+      Time.stub(:now => now + 60)
       get "/cookies/show"
       last_request.cookies.should == {}
     end
@@ -39,7 +39,7 @@ describe Rack::Test::Session do
     it "deletes cookies directly from the CookieJar" do
       jar = Rack::Test::CookieJar.new
       jar["abcd"] = "1234"
-      jar["abcd"].should == "1234"
+      jar["abcd"].should eq "1234"
       jar.delete("abcd")
       jar["abcd"].should == nil
     end
@@ -130,7 +130,7 @@ describe Rack::Test::Session do
       check last_request.cookies.should == {}
 
       get "https://example.com/cookies/show"
-      last_request.cookies.should == { "secure-cookie" => "set" }
+      last_request.cookies.should eq({ "secure-cookie" => "set" })
       rack_mock_session.cookie_jar['secure-cookie'].should == 'set'
     end
 
@@ -150,7 +150,7 @@ describe Rack::Test::Session do
     it "keeps one cookie jar for domain and its subdomains" do
       get "http://example.org/cookies/subdomain"
       get "http://example.org/cookies/subdomain"
-      last_request.cookies.should == { "count" => "1" }
+      last_request.cookies.should eq({ "count" => "1" })
 
       get "http://foo.example.org/cookies/subdomain"
       last_request.cookies.should == { "count" => "2" }
