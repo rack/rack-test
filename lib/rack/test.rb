@@ -18,10 +18,16 @@ module Rack
     class Error < StandardError; end
 
     # This class represents a series of requests issued to a Rack app, sharing
-    # a single cookie jar
+    # a single cookie jar.
     #
     # Rack::Test::Session's methods are most often called through Rack::Test::Methods,
     # which will automatically build a session when it's first used.
+    #
+    # This class mocks all the HTTP verbs, so you can just use (for example):
+    #   get "/"
+    #   patch "/"
+    #
+    # See #request for details.
     class Session
       extend Forwardable
       include Rack::Test::Utils
@@ -46,70 +52,11 @@ module Rack
         @default_host = @rack_mock_session.default_host
       end
 
-      # Issue a GET request for the given URI with the given params and Rack
-      # environment. Stores the issues request object in #last_request and
-      # the app's response in #last_response. Yield #last_response to a block
-      # if given.
-      #
-      # Example:
-      #   get "/"
-      def get(uri, params = {}, env = {}, &block)
-        env = env_for(uri, env.merge(:method => "GET", :params => params))
-        process_request(uri, env, &block)
-      end
-
-      # Issue a POST request for the given URI. See #get
-      #
-      # Example:
-      #   post "/signup", "name" => "Bryan"
-      def post(uri, params = {}, env = {}, &block)
-        env = env_for(uri, env.merge(:method => "POST", :params => params))
-        process_request(uri, env, &block)
-      end
-
-      # Issue a PUT request for the given URI. See #get
-      #
-      # Example:
-      #   put "/"
-      def put(uri, params = {}, env = {}, &block)
-        env = env_for(uri, env.merge(:method => "PUT", :params => params))
-        process_request(uri, env, &block)
-      end
-
-      # Issue a PATCH request for the given URI. See #get
-      #
-      # Example:
-      #   patch "/"
-      def patch(uri, params = {}, env = {}, &block)
-        env = env_for(uri, env.merge(:method => "PATCH", :params => params))
-        process_request(uri, env, &block)
-      end
-
-      # Issue a DELETE request for the given URI. See #get
-      #
-      # Example:
-      #   delete "/"
-      def delete(uri, params = {}, env = {}, &block)
-        env = env_for(uri, env.merge(:method => "DELETE", :params => params))
-        process_request(uri, env, &block)
-      end
-
-      # Issue an OPTIONS request for the given URI. See #get
-      #
-      # Example:
-      #   options "/"
-      def options(uri, params = {}, env = {}, &block)
-        env = env_for(uri, env.merge(:method => "OPTIONS", :params => params))
-        process_request(uri, env, &block)
-      end
-
-      # Issue a HEAD request for the given URI. See #get
-      #
-      # Example:
-      #   head "/"
-      def head(uri, params = {}, env = {}, &block)
-        env = env_for(uri, env.merge(:method => "HEAD", :params => params))
-        process_request(uri, env, &block)
+      [:get, :post, :put, :delete, :patch, :options, :head].each do |verb|
+        define_method verb do |uri, params = {}, env = {}, &block|
+          env = env_for(uri, env.merge(:method => verb.to_s.upcase, :params => params))
+          process_request(uri, env, &block)
+        end
       end
 
       # Issue a request to the Rack app for the given URI and optional Rack
