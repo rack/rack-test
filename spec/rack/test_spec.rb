@@ -289,6 +289,14 @@ describe Rack::Test::Session do
     end
   end
 
+  describe "#headers" do
+    it "returns all headers that were set" do
+      header "User-Agent", "Firefox"
+      request "/"
+      headers.should == {"User-Agent" => "Firefox"}
+    end
+  end
+
   describe "#env" do
     it "sets the env to be sent with requests" do
       env "rack.session", {:csrf => 'token'}
