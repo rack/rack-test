@@ -63,7 +63,7 @@ module Rack
       end
 
       get "/cookies/default-path/" do
-        response.cookies.inspect
+        request.cookies.inspect
       end
 
       get "/cookies/delete" do
