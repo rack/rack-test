@@ -469,6 +469,31 @@ describe Rack::Test::Session do
     def verb
       "head"
     end
+
+    it "uses the provided params hash" do
+      head "/", :foo => "bar"
+      last_request.GET.should == { "foo" => "bar" }
+    end
+
+    it "sends params with parens in names" do
+      head "/", "foo(1i)" => "bar"
+      last_request.GET["foo(1i)"].should == "bar"
+    end
+
+    it "supports params with encoding sensitive names" do
+      head "/", "foo bar" => "baz"
+      last_request.GET["foo bar"].should == "baz"
+    end
+
+    it "supports params with nested encoding sensitive names" do
+      head "/", "boo" => {"foo bar" => "baz"}
+      last_request.GET.should == {"boo" => {"foo bar" => "baz"}}
+    end
+
+    it "accepts params in the path" do
+      head "/?foo=bar"
+      last_request.GET.should == { "foo" => "bar" }
+    end
   end
 
   describe "#post" do
