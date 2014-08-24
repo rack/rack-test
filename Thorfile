@@ -95,7 +95,7 @@ class Default < Thor
     sh "gem install --local pkg/#{read_gemspec.file_name}"
   end
 
-  desc "release", "Release the current branch to GitHub and Gemcutter"
+  desc "release", "Release the current branch to GitHub and Rubygems"
   def release
     gemspec
     build
@@ -114,7 +114,7 @@ class Release < Thor
     sh "git push origin #{release_tag}"
   end
 
-  desc "gem", "Push the gem to Gemcutter"
+  desc "gem", "Push the gem to Rubygems"
   def gem
     sh "gem push pkg/#{read_gemspec.file_name}"
   end
