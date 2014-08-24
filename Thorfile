@@ -29,6 +29,12 @@ request helpers feature.
       s.extra_rdoc_files = %w[README.rdoc MIT-LICENSE.txt]
 
       s.add_dependency "rack", ">= 1.0"
+      s.add_development_dependency "rspec", "< 3.0"
+      s.add_development_dependency "rake", "~> 10.3"
+      s.add_development_dependency "sinatra", "~> 1.4"
+      s.add_development_dependency "thor", "~> 0.19"
+      s.add_development_dependency "git", "~> 1.2"
+      s.add_development_dependency "codeclimate-test-reporter", "~> 0.4"
     end
   end
 
