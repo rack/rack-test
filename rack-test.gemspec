@@ -47,6 +47,7 @@ Gem::Specification.new do |s|
     "spec/support/matchers/challenge.rb"
   ]
   s.homepage = "http://github.com/brynary/rack-test"
+  s.licenses = ["MIT"]
   s.rubygems_version = "2.2.2"
   s.summary = "Simple testing API built on Rack"
   s.test_files = [

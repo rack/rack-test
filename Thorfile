@@ -18,6 +18,8 @@ to build on. Most of its initial functionality is an extraction of Merb 1.0's
 request helpers feature.
       EOS
 
+      s.license = "MIT"
+
       require "git"
       repo = Git.open(".")
 
