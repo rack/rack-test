@@ -17,7 +17,6 @@ own or as a reusable starting point for Web frameworks and testing libraries
 to build on. Most of its initial functionality is an extraction of Merb 1.0's
 request helpers feature.
       EOS
-      s.rubyforge_project = "rack-test"
 
       require "git"
       repo = Git.open(".")
