@@ -1,4 +1,4 @@
-= Rack::Test {<img src="https://codeclimate.com/github/brynary/rack-test.png" />}[https://codeclimate.com/github/brynary/rack-test] {<img src="https://codeclimate.com/github/brynary/rack-test/coverage.png" />}[https://codeclimate.com/github/brynary/rack-test]
+= Rack::Test {<img src="https://codeclimate.com/github/brynary/rack-test.png" />}[https://codeclimate.com/github/brynary/rack-test] {<img src="https://codeclimate.com/github/brynary/rack-test/coverage.png" />}[https://codeclimate.com/github/brynary/rack-test] {<img src="https://travis-ci.org/brynary/rack-test.svg?branch=master" />}[https://travis-ci.org/brynary/rack-test]
 
 - Code: http://github.com/brynary/rack-test
 
