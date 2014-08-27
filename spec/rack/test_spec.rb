@@ -432,67 +432,19 @@ describe Rack::Test::Session do
 
   describe "#get" do
     it_should_behave_like "any #verb methods"
+    it_should_behave_like "#verb methods with query params"
 
     def verb
       "get"
-    end
-
-    it "uses the provided params hash" do
-      get "/", :foo => "bar"
-      last_request.GET.should == { "foo" => "bar" }
-    end
-
-    it "sends params with parens in names" do
-      get "/", "foo(1i)" => "bar"
-      last_request.GET["foo(1i)"].should == "bar"
-    end
-
-    it "supports params with encoding sensitive names" do
-      get "/", "foo bar" => "baz"
-      last_request.GET["foo bar"].should == "baz"
-    end
-
-    it "supports params with nested encoding sensitive names" do
-      get "/", "boo" => {"foo bar" => "baz"}
-      last_request.GET.should == {"boo" => {"foo bar" => "baz"}}
-    end
-
-    it "accepts params in the path" do
-      get "/?foo=bar"
-      last_request.GET.should == { "foo" => "bar" }
     end
   end
 
   describe "#head" do
     it_should_behave_like "any #verb methods"
+    it_should_behave_like "#verb methods with query params"
 
     def verb
       "head"
-    end
-
-    it "uses the provided params hash" do
-      head "/", :foo => "bar"
-      last_request.GET.should == { "foo" => "bar" }
-    end
-
-    it "sends params with parens in names" do
-      head "/", "foo(1i)" => "bar"
-      last_request.GET["foo(1i)"].should == "bar"
-    end
-
-    it "supports params with encoding sensitive names" do
-      head "/", "foo bar" => "baz"
-      last_request.GET["foo bar"].should == "baz"
-    end
-
-    it "supports params with nested encoding sensitive names" do
-      head "/", "boo" => {"foo bar" => "baz"}
-      last_request.GET.should == {"boo" => {"foo bar" => "baz"}}
-    end
-
-    it "accepts params in the path" do
-      head "/?foo=bar"
-      last_request.GET.should == { "foo" => "bar" }
     end
   end
 
