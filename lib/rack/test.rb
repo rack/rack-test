@@ -114,6 +114,7 @@ module Rack
       # Example:
       #   request "/"
       def request(uri, env = {}, &block)
+        uri = parse_uri(uri, env)
         env = env_for(uri, env)
         process_request(uri, env, &block)
       end
@@ -123,6 +124,7 @@ module Rack
       # Example:
       #   custom_request "LINK", "/"
       def custom_request(verb, uri, params = {}, env = {}, &block)
+        uri = parse_uri(uri, env)
         env = env_for(uri, env.merge(method: verb.to_s.upcase, params: params))
         process_request(uri, env, &block)
       end
@@ -195,11 +197,15 @@ module Rack
 
       private
 
-      def env_for(path, env)
-        uri = URI.parse(path)
-        uri.path = "/#{uri.path}" unless uri.path[0] == '/'
-        uri.host ||= @default_host
+      def parse_uri(path, env)
+        URI.parse(path).tap do |uri|
+          uri.path = "/#{uri.path}" unless uri.path[0] == '/'
+          uri.host ||= @default_host
+          uri.scheme ||= 'https' if env['HTTPS'] == 'on'
+        end
+      end
 
+      def env_for(uri, env)
         env = default_env.merge(env)
 
         env['HTTP_HOST'] ||= [uri.host, (uri.port if uri.port != uri.default_port)].compact.join(':')
@@ -242,10 +248,6 @@ module Rack
       end
 
       def process_request(uri, env)
-        uri = URI.parse(uri)
-        uri.host ||= @default_host
-        uri.scheme ||= 'https' if env['HTTPS'] == 'on'
-
         @rack_mock_session.request(uri, env)
 
         if retry_with_digest_auth?(env)
