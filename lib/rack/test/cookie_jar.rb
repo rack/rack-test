@@ -91,7 +91,7 @@ module Rack
     protected
 
       def default_uri
-        URI.parse("//" + @default_host + "/")
+        Rack::Test.parse_uri_rfc2396("//" + @default_host + "/")
       end
 
     end

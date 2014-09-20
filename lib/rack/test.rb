@@ -190,7 +190,7 @@ module Rack
     private
 
       def env_for(path, env)
-        uri = URI.parse(path)
+        uri = Rack::Test.parse_uri_rfc2396(path)
         uri.path = "/#{uri.path}" unless uri.path[0] == ?/
         uri.host ||= @default_host
 
@@ -238,7 +238,7 @@ module Rack
       end
 
       def process_request(uri, env)
-        uri = URI.parse(uri)
+        uri = Rack::Test.parse_uri_rfc2396(uri)
         uri.host ||= @default_host
 
         @rack_mock_session.request(uri, env)
@@ -312,6 +312,11 @@ module Rack
 
     def self.encoding_aware_strings?
       defined?(Encoding) && "".respond_to?(:encode)
+    end
+
+    def self.parse_uri_rfc2396(uri)
+      @parser ||= defined?(URI::RFC2396_Parser) ? URI::RFC2396_Parser.new : URI
+      @parser.parse(uri)
     end
 
   end
