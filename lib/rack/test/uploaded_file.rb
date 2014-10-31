@@ -31,6 +31,8 @@ module Rack
         @tempfile.binmode if binary
 
         FileUtils.copy_file(path, @tempfile.path)
+
+        @tempfile.close
       end
 
       def path
