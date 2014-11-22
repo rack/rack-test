@@ -21,8 +21,19 @@ module Rack
         redirect "/redirected"
       end
 
-      get "/redirected" do
-        "You've been redirected"
+      post "/redirect" do
+        if params["status"]
+          redirect to("/redirected"), Integer(params["status"])
+        else
+          redirect "/redirected"
+        end
+      end
+
+      [:get, :put, :post, :delete].each do |meth|
+        send(meth, "/redirected") do
+          additional_info = (meth == :get) ? "" : " using #{meth} with #{params}"
+          "You've been redirected" + additional_info
+        end
       end
 
       get "/void" do
