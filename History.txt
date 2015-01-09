@@ -1,3 +1,16 @@
+== master
+
+* Minor enhancements
+
+  * Expose an env helper for persistently configuring the env as needed
+    (Darío Javier Cravero #80)
+  * Expose the tempfile of UploadedFile (Sytse Sijbrandij #67)
+
+* Bug fixes
+
+  * Improve support for arrays of hashes in multipart forms (Murray Steele #69)
+  * Improve test for query strings (Paul Grayson #66)
+
 == 0.6.2 / 2012-09-27
 
 * Minor enhancements
