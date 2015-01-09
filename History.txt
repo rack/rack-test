@@ -1,4 +1,4 @@
-== master
+== 0.6.3 / 2015-01-09
 
 * Minor enhancements
 
