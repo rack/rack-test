@@ -6,6 +6,7 @@ require "rack/test/mock_digest_request"
 require "rack/test/utils"
 require "rack/test/methods"
 require "rack/test/uploaded_file"
+require "rack/test/env_builder"
 
 module Rack
   module Test
@@ -24,7 +25,6 @@ module Rack
     # which will automatically build a session when it's first used.
     class Session
       extend Forwardable
-      include Rack::Test::Utils
 
       def_delegators :@rack_mock_session, :clear_cookies, :set_cookie, :last_response, :last_request
 
@@ -193,48 +193,7 @@ module Rack
         uri = URI.parse(path)
         uri.path = "/#{uri.path}" unless uri.path[0] == ?/
         uri.host ||= @default_host
-
-        env = default_env.merge(env)
-
-        env["HTTP_HOST"] ||= [uri.host, (uri.port if uri.port != uri.default_port)].compact.join(":")
-
-        env.update("HTTPS" => "on") if URI::HTTPS === uri
-        env["HTTP_X_REQUESTED_WITH"] = "XMLHttpRequest" if env[:xhr]
-
-        # TODO: Remove this after Rack 1.1 has been released.
-        # Stringifying and upcasing methods has be commit upstream
-        env["REQUEST_METHOD"] ||= env[:method] ? env[:method].to_s.upcase : "GET"
-
-        if env["REQUEST_METHOD"] == "GET"
-          # merge :params with the query string
-          if params = env[:params]
-            params = parse_nested_query(params) if params.is_a?(String)
-            params.update(parse_nested_query(uri.query))
-            uri.query = build_nested_query(params)
-          end
-        elsif !env.has_key?(:input)
-          env["CONTENT_TYPE"] ||= "application/x-www-form-urlencoded"
-
-          if env[:params].is_a?(Hash)
-            if data = build_multipart(env[:params])
-              env[:input] = data
-              env["CONTENT_LENGTH"] ||= data.length.to_s
-              env["CONTENT_TYPE"] = "multipart/form-data; boundary=#{MULTIPART_BOUNDARY}"
-            else
-              env[:input] = params_to_string(env[:params])
-            end
-          else
-            env[:input] = env[:params]
-          end
-        end
-
-        env.delete(:params)
-
-        if env.has_key?(:cookie)
-          set_cookie(env.delete(:cookie), uri)
-        end
-
-        Rack::MockRequest.env_for(uri.to_s, env)
+        Rack::Test::EnvBuilder.new(default_env.merge(env), uri).hash(@rack_mock_session)
       end
 
       def process_request(uri, env)
@@ -298,14 +257,6 @@ module Rack
         end
 
         converted_headers
-      end
-
-      def params_to_string(params)
-        case params
-        when Hash then build_nested_query(params)
-        when nil  then ""
-        else params
-        end
       end
 
     end
