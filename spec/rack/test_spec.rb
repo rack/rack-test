@@ -127,6 +127,11 @@ describe Rack::Test::Session do
       last_request.query_string.should == "a=1&b=2&c=3&e=4&d=5+%20"
     end
 
+    it "does not overwrite multiple query string keys" do
+      request "/foo?a=1&a=2", :params => { :bar => 1 }
+      last_request.query_string.should == "a=1&a=2&bar=1"
+    end
+
     it "accepts params and builds url encoded params for POST requests" do
       request "/foo", :method => :post, :params => {:foo => {:bar => "1"}}
       last_request.env["rack.input"].read.should == "foo[bar]=1"
