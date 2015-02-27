@@ -21,4 +21,9 @@ describe Rack::Test::UploadedFile do
     uploaded_file.should respond_to(:tempfile) # Allows calls to params[:file].tempfile
   end
 
+  it "keeps the same file extension" do
+    uploaded_file = Rack::Test::UploadedFile.new(test_file_path)
+
+    File::extname(uploaded_file.tempfile).should == ".txt"
+  end
 end
