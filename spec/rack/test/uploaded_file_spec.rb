@@ -21,4 +21,13 @@ describe Rack::Test::UploadedFile do
     uploaded_file.should respond_to(:tempfile) # Allows calls to params[:file].tempfile
   end
 
+  it 'closes the tempfile in initialize' do
+    temp = Tempfile.new('test')
+    tempfile = mock('Tempfile')
+    tempfile.should_receive(:path).and_return(temp.path)
+    tempfile.should_receive(:close)
+    Tempfile.stub(:new).and_return(tempfile)
+
+    Rack::Test::UploadedFile.new(test_file_path)
+  end
 end
