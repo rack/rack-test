@@ -48,6 +48,10 @@ describe Rack::Test::Utils do
     it "converts arrays of hashes" do
       build_nested_query(:a => [{ :b => 2}, { :c => 3}]).should == "a[][b]=2&a[][c]=3"
     end
+
+    it "converts empty arrays" do
+      build_nested_query(:a => []).should == "a=%5B%5D"
+    end
   end
 
   describe "build_multipart" do
