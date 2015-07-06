@@ -29,6 +29,18 @@ module Rack
         [200, {}, ""]
       end
 
+      get "/cookies-set-default-path" do
+        raise if params["value"].nil?
+
+        response.set_cookie "default", :value => params["value"]
+      end
+
+      get "/cookies-set-forced-path" do
+        raise if params["value"].nil?
+
+        response.set_cookie "default", :value => params["value"], :path => '/'
+      end
+
       get "/cookies/show" do
         request.cookies.inspect
       end
@@ -60,10 +72,6 @@ module Rack
 
         response.set_cookie "simple", params["value"]
         "Set"
-      end
-
-      get "/cookies/default-path" do
-        response.cookies.inspect
       end
 
       get "/cookies/delete" do

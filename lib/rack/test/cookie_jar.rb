@@ -22,7 +22,16 @@ module Rack
         @options = parse_query(options, ';')
 
         @options["domain"]  ||= (uri.host || default_host)
-        @options["path"]    ||= uri.path.sub(/\/[^\/]*\Z/, "")
+
+        unless @options.has_key?("path")
+          # http://tools.ietf.org/html/rfc6265#section-5.1.4
+          if uri.path.empty? || uri.path[0] != '/' || uri.path.count('/') < 2
+            @options["path"] = '/'
+          else
+            # the uri-path from the first character up to, but not including, the right-most %x2F ("/")
+            @options["path"] = uri.path.sub(/\/[^\/]*\Z/, "")
+          end
+        end
       end
 
       def replaces?(other)
