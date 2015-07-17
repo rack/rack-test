@@ -36,23 +36,23 @@ describe Rack::Test::Session do
 
     it "sets HTTP_HOST with port for non-default ports" do
       request "http://foo.com:8080"
-      last_request.env["HTTP_HOST"].should == "foo.com:8080"
+      last_request.env["HTTP_HOST"].should eq "foo.com:8080"
       request "https://foo.com:8443"
       last_request.env["HTTP_HOST"].should == "foo.com:8443"
     end
 
     it "sets HTTP_HOST without port for default ports" do
       request "http://foo.com"
-      last_request.env["HTTP_HOST"].should == "foo.com"
+      last_request.env["HTTP_HOST"].should eq "foo.com"
       request "http://foo.com:80"
-      last_request.env["HTTP_HOST"].should == "foo.com"
+      last_request.env["HTTP_HOST"].should eq "foo.com"
       request "https://foo.com:443"
-      last_request.env["HTTP_HOST"].should == "foo.com"
+      last_request.env["HTTP_HOST"].should eq "foo.com"
     end
 
     it "defaults to GET" do
       request "/"
-      last_request.env["REQUEST_METHOD"].should == "GET"
+      last_request.env["REQUEST_METHOD"].should eq "GET"
     end
 
     it "defaults the REMOTE_ADDR to 127.0.0.1" do
@@ -234,7 +234,7 @@ describe Rack::Test::Session do
     context "for a XHR" do
       it "sends XMLHttpRequest for the X-Requested-With header" do
         request "/", :xhr => true
-        last_request.env["HTTP_X_REQUESTED_WITH"].should == "XMLHttpRequest"
+        last_request.env["HTTP_X_REQUESTED_WITH"].should eq "XMLHttpRequest"
         last_request.should be_xhr
       end
     end
@@ -357,7 +357,7 @@ describe Rack::Test::Session do
       follow_redirect!
 
       last_response.should_not be_redirect
-      last_response.body.should == "You've been redirected"
+      last_response.body.should eq "You've been redirected"
       last_request.env["HTTP_REFERER"].should eql("http://example.org/redirect")
     end
 
