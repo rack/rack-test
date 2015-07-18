@@ -21,13 +21,11 @@ describe Rack::Test::Session do
     end
 
     it "cookie path defaults to the uri of the document that was requested" do
-      pending "See issue rack-test github issue #50" do
-        post "/cookies/default-path", "value" => "cookie"
-        get "/cookies/default-path"
-        check last_request.cookies.should == { "simple"=>"cookie" }
-        get "/cookies/show"
-        check last_request.cookies.should == { }
-      end
+      post "/cookies/default-path/", "value" => "cookie"
+      get "/cookies/default-path/"
+      check last_request.cookies.should == { "simple"=>"cookie" }
+      get "/cookies/show"
+      check last_request.cookies.should == { }
     end
 
     it "escapes cookie values" do
