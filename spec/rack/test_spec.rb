@@ -435,6 +435,49 @@ describe Rack::Test::Session do
     end
   end
 
+  shared_examples_for "any #verb methods" do
+    it "requests the URL using VERB" do
+      public_send(verb, "/")
+
+      check last_request.env["REQUEST_METHOD"].should == verb.upcase
+      last_response.should be_ok
+    end
+
+    it "uses the provided env" do
+      public_send(verb, "/", {}, { "HTTP_USER_AGENT" => "Rack::Test" })
+      last_request.env["HTTP_USER_AGENT"].should == "Rack::Test"
+    end
+
+    it "yields the response to a given block" do
+      yielded = false
+
+      public_send(verb, "/") do |response|
+        response.should be_ok
+        yielded = true
+      end
+
+      yielded.should be_true
+    end
+
+    it "sets the HTTP_HOST header with port" do
+      public_send(verb, "http://example.org:8080/uri")
+      last_request.env["HTTP_HOST"].should == "example.org:8080"
+    end
+
+    it "sets the HTTP_HOST header without port" do
+      public_send(verb, "/uri")
+      last_request.env["HTTP_HOST"].should == "example.org"
+    end
+
+    context "for a XHR" do
+      it "sends XMLHttpRequest for the X-Requested-With header" do
+        public_send(verb, "/", {}, { :xhr => true })
+        last_request.env["HTTP_X_REQUESTED_WITH"].should == "XMLHttpRequest"
+        last_request.should be_xhr
+      end
+    end
+  end
+
   describe "#get" do
     it_should_behave_like "any #verb methods"
 
@@ -550,6 +593,49 @@ describe Rack::Test::Session do
 
     def verb
       "options"
+    end
+  end
+
+  describe "#custom_request" do
+    it "requests the URL using the given" do
+      custom_request("link", "/")
+
+      check last_request.env["REQUEST_METHOD"].should == "LINK"
+      last_response.should be_ok
+    end
+
+    it "uses the provided env" do
+      custom_request("link", "/", {}, { "HTTP_USER_AGENT" => "Rack::Test" })
+      last_request.env["HTTP_USER_AGENT"].should == "Rack::Test"
+    end
+
+    it "yields the response to a given block" do
+      yielded = false
+
+      custom_request("link", "/") do |response|
+        response.should be_ok
+        yielded = true
+      end
+
+      yielded.should be_true
+    end
+
+    it "sets the HTTP_HOST header with port" do
+      custom_request("link", "http://example.org:8080/uri")
+      last_request.env["HTTP_HOST"].should == "example.org:8080"
+    end
+
+    it "sets the HTTP_HOST header without port" do
+      custom_request("link", "/uri")
+      last_request.env["HTTP_HOST"].should == "example.org"
+    end
+
+    context "for a XHR" do
+      it "sends XMLHttpRequest for the X-Requested-With header" do
+        custom_request("link", "/", {}, { :xhr => true })
+        last_request.env["HTTP_X_REQUESTED_WITH"].should == "XMLHttpRequest"
+        last_request.should be_xhr
+      end
     end
   end
 end

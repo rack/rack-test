@@ -54,8 +54,7 @@ module Rack
       # Example:
       #   get "/"
       def get(uri, params = {}, env = {}, &block)
-        env = env_for(uri, env.merge(:method => "GET", :params => params))
-        process_request(uri, env, &block)
+        custom_request("GET", uri, params, env, &block)
       end
 
       # Issue a POST request for the given URI. See #get
@@ -63,8 +62,7 @@ module Rack
       # Example:
       #   post "/signup", "name" => "Bryan"
       def post(uri, params = {}, env = {}, &block)
-        env = env_for(uri, env.merge(:method => "POST", :params => params))
-        process_request(uri, env, &block)
+        custom_request("POST", uri, params, env, &block)
       end
 
       # Issue a PUT request for the given URI. See #get
@@ -72,8 +70,7 @@ module Rack
       # Example:
       #   put "/"
       def put(uri, params = {}, env = {}, &block)
-        env = env_for(uri, env.merge(:method => "PUT", :params => params))
-        process_request(uri, env, &block)
+        custom_request("PUT", uri, params, env, &block)
       end
 
       # Issue a PATCH request for the given URI. See #get
@@ -81,8 +78,7 @@ module Rack
       # Example:
       #   patch "/"
       def patch(uri, params = {}, env = {}, &block)
-        env = env_for(uri, env.merge(:method => "PATCH", :params => params))
-        process_request(uri, env, &block)
+        custom_request("PATCH", uri, params, env, &block)
       end
 
       # Issue a DELETE request for the given URI. See #get
@@ -90,8 +86,7 @@ module Rack
       # Example:
       #   delete "/"
       def delete(uri, params = {}, env = {}, &block)
-        env = env_for(uri, env.merge(:method => "DELETE", :params => params))
-        process_request(uri, env, &block)
+        custom_request("DELETE", uri, params, env, &block)
       end
 
       # Issue an OPTIONS request for the given URI. See #get
@@ -99,8 +94,7 @@ module Rack
       # Example:
       #   options "/"
       def options(uri, params = {}, env = {}, &block)
-        env = env_for(uri, env.merge(:method => "OPTIONS", :params => params))
-        process_request(uri, env, &block)
+        custom_request("OPTIONS", uri, params, env, &block)
       end
 
       # Issue a HEAD request for the given URI. See #get
@@ -108,8 +102,7 @@ module Rack
       # Example:
       #   head "/"
       def head(uri, params = {}, env = {}, &block)
-        env = env_for(uri, env.merge(:method => "HEAD", :params => params))
-        process_request(uri, env, &block)
+        custom_request("HEAD", uri, params, env, &block)
       end
 
       # Issue a request to the Rack app for the given URI and optional Rack
@@ -120,7 +113,18 @@ module Rack
       # Example:
       #   request "/"
       def request(uri, env = {}, &block)
+        uri = parse_uri(uri)
         env = env_for(uri, env)
+        process_request(uri, env, &block)
+      end
+
+      # Issue a request using the given verb for the given URI. See #get
+      #
+      # Example:
+      #   custom_request "LINK", "/"
+      def custom_request(verb, uri, params = {}, env = {}, &block)
+        uri = parse_uri(uri)
+        env = env_for(uri, env.merge(:method => verb.to_s.upcase, :params => params))
         process_request(uri, env, &block)
       end
 
@@ -189,11 +193,14 @@ module Rack
 
     private
 
-      def env_for(path, env)
-        uri = URI.parse(path)
-        uri.path = "/#{uri.path}" unless uri.path[0] == ?/
-        uri.host ||= @default_host
+      def parse_uri(path)
+        URI.parse(path).tap do |uri|
+          uri.path = "/#{uri.path}" unless uri.path[0] == ?/
+          uri.host ||= @default_host
+        end
+      end
 
+      def env_for(uri, env)
         env = default_env.merge(env)
 
         env["HTTP_HOST"] ||= [uri.host, (uri.port if uri.port != uri.default_port)].compact.join(":")
@@ -238,9 +245,6 @@ module Rack
       end
 
       def process_request(uri, env)
-        uri = URI.parse(uri)
-        uri.host ||= @default_host
-
         @rack_mock_session.request(uri, env)
 
         if retry_with_digest_auth?(env)

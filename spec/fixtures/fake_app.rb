@@ -137,6 +137,10 @@ module Rack
       delete "/" do
         "Hello, DELETE: #{params.inspect}"
       end
+
+      link "/" do
+        "Hello, LINK: #{params.inspect}"
+      end
     end
 
   end

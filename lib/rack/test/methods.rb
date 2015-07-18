@@ -65,6 +65,7 @@ module Rack
         :delete,
         :options,
         :head,
+        :custom_request,
         :follow_redirect!,
         :header,
         :env,
