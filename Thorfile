@@ -17,7 +17,8 @@ own or as a reusable starting point for Web frameworks and testing libraries
 to build on. Most of its initial functionality is an extraction of Merb 1.0's
 request helpers feature.
       EOS
-      s.rubyforge_project = "rack-test"
+
+      s.license = "MIT"
 
       require "git"
       repo = Git.open(".")
@@ -29,6 +30,12 @@ request helpers feature.
       s.extra_rdoc_files = %w[README.rdoc MIT-LICENSE.txt]
 
       s.add_dependency "rack", ">= 1.0"
+      s.add_development_dependency "rspec", "< 3.0"
+      s.add_development_dependency "rake", "~> 10.3"
+      s.add_development_dependency "sinatra", "~> 1.4"
+      s.add_development_dependency "thor", "~> 0.19"
+      s.add_development_dependency "git", "~> 1.2"
+      s.add_development_dependency "codeclimate-test-reporter", "~> 0.4"
     end
   end
 
@@ -88,7 +95,7 @@ class Default < Thor
     sh "gem install --local pkg/#{read_gemspec.file_name}"
   end
 
-  desc "release", "Release the current branch to GitHub and Gemcutter"
+  desc "release", "Release the current branch to GitHub and Rubygems"
   def release
     gemspec
     build
@@ -107,7 +114,7 @@ class Release < Thor
     sh "git push origin #{release_tag}"
   end
 
-  desc "gem", "Push the gem to Gemcutter"
+  desc "gem", "Push the gem to Rubygems"
   def gem
     sh "gem push pkg/#{read_gemspec.file_name}"
   end

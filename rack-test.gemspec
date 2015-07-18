@@ -1,10 +1,12 @@
 # -*- encoding: utf-8 -*-
+# stub: rack-test 0.6.2 ruby lib
 
 Gem::Specification.new do |s|
   s.name = "rack-test"
   s.version = "0.6.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
+  s.require_paths = ["lib"]
   s.authors = ["Bryan Helmkamp"]
   s.date = "2015-01-09"
   s.description = "Rack::Test is a small, simple testing API for Rack apps. It can be used on its\nown or as a reusable starting point for Web frameworks and testing libraries\nto build on. Most of its initial functionality is an extraction of Merb 1.0's\nrequest helpers feature."
@@ -17,7 +19,6 @@ Gem::Specification.new do |s|
     ".document",
     ".gitignore",
     "Gemfile",
-    "Gemfile.lock",
     "History.txt",
     "MIT-LICENSE.txt",
     "README.rdoc",
@@ -46,9 +47,8 @@ Gem::Specification.new do |s|
     "spec/support/matchers/challenge.rb"
   ]
   s.homepage = "http://github.com/brynary/rack-test"
-  s.require_paths = ["lib"]
-  s.rubyforge_project = "rack-test"
-  s.rubygems_version = "1.8.23"
+  s.licenses = ["MIT"]
+  s.rubygems_version = "2.2.2"
   s.summary = "Simple testing API built on Rack"
   s.test_files = [
     "spec/fixtures/fake_app.rb",
@@ -64,14 +64,32 @@ Gem::Specification.new do |s|
   ]
 
   if s.respond_to? :specification_version then
-    s.specification_version = 3
+    s.specification_version = 4
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<rack>, [">= 1.0"])
+      s.add_development_dependency(%q<rspec>, ["< 3.0"])
+      s.add_development_dependency(%q<rake>, ["~> 10.3"])
+      s.add_development_dependency(%q<sinatra>, ["~> 1.4"])
+      s.add_development_dependency(%q<thor>, ["~> 0.19"])
+      s.add_development_dependency(%q<git>, ["~> 1.2"])
+      s.add_development_dependency(%q<codeclimate-test-reporter>, ["~> 0.4"])
     else
       s.add_dependency(%q<rack>, [">= 1.0"])
+      s.add_dependency(%q<rspec>, ["< 3.0"])
+      s.add_dependency(%q<rake>, ["~> 10.3"])
+      s.add_dependency(%q<sinatra>, ["~> 1.4"])
+      s.add_dependency(%q<thor>, ["~> 0.19"])
+      s.add_dependency(%q<git>, ["~> 1.2"])
+      s.add_dependency(%q<codeclimate-test-reporter>, ["~> 0.4"])
     end
   else
     s.add_dependency(%q<rack>, [">= 1.0"])
+    s.add_dependency(%q<rspec>, ["< 3.0"])
+    s.add_dependency(%q<rake>, ["~> 10.3"])
+    s.add_dependency(%q<sinatra>, ["~> 1.4"])
+    s.add_dependency(%q<thor>, ["~> 0.19"])
+    s.add_dependency(%q<git>, ["~> 1.2"])
+    s.add_dependency(%q<codeclimate-test-reporter>, ["~> 0.4"])
   end
 end
