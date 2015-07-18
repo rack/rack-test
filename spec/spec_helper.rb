@@ -67,3 +67,30 @@ shared_examples_for "any #verb methods" do
     end
   end
 end
+
+shared_examples_for "#verb methods with query params" do
+  it "uses the provided params hash" do
+    send(verb, "/", :foo => "bar")
+    last_request.GET.should == { "foo" => "bar" }
+  end
+
+  it "sends params with parens in names" do
+    send(verb, "/", "foo(1i)" => "bar")
+    last_request.GET["foo(1i)"].should == "bar"
+  end
+
+  it "supports params with encoding sensitive names" do
+    send(verb, "/", "foo bar" => "baz")
+    last_request.GET["foo bar"].should == "baz"
+  end
+
+  it "supports params with nested encoding sensitive names" do
+    send(verb, "/", "boo" => {"foo bar" => "baz"})
+    last_request.GET.should == {"boo" => {"foo bar" => "baz"}}
+  end
+
+  it "accepts params in the path" do
+    send(verb, "/?foo=bar")
+    last_request.GET.should == { "foo" => "bar" }
+  end
+end

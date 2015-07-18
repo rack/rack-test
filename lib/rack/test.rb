@@ -205,7 +205,7 @@ module Rack
         # Stringifying and upcasing methods has be commit upstream
         env["REQUEST_METHOD"] ||= env[:method] ? env[:method].to_s.upcase : "GET"
 
-        if env["REQUEST_METHOD"] == "GET"
+        if ["GET", "HEAD"].include? env["REQUEST_METHOD"]
           # merge :params with the query string
           if params = env[:params]
             params = parse_nested_query(params) if params.is_a?(String)
