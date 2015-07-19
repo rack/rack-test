@@ -36,6 +36,7 @@ module Rack
       def initialize(mock_session)
         @headers = {}
         @env = {}
+        @digest_username = nil
 
         if mock_session.is_a?(MockSession)
           @rack_mock_session = mock_session
