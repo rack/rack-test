@@ -540,6 +540,12 @@ describe Rack::Test::Session do
   describe "#delete" do
     it_should_behave_like "any #verb methods"
 
+    it "does not set a content type" do
+      delete "/"
+
+      last_request.env['CONTENT_TYPE'].should be_nil
+    end
+
     def verb
       "delete"
     end
