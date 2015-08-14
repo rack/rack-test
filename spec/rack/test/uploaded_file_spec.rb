@@ -8,22 +8,22 @@ describe Rack::Test::UploadedFile do
   it "responds to things that Tempfile responds to" do
     uploaded_file = Rack::Test::UploadedFile.new(test_file_path)
 
-    uploaded_file.should respond_to(:close)
-    uploaded_file.should respond_to(:close!)
-    uploaded_file.should respond_to(:delete)
-    uploaded_file.should respond_to(:length)
-    uploaded_file.should respond_to(:open)
-    uploaded_file.should respond_to(:path)
-    uploaded_file.should respond_to(:size)
-    uploaded_file.should respond_to(:unlink)
-    uploaded_file.should respond_to(:read)
-    uploaded_file.should respond_to(:original_filename)
-    uploaded_file.should respond_to(:tempfile) # Allows calls to params[:file].tempfile
+    expect(uploaded_file).to respond_to(:close)
+    expect(uploaded_file).to respond_to(:close!)
+    expect(uploaded_file).to respond_to(:delete)
+    expect(uploaded_file).to respond_to(:length)
+    expect(uploaded_file).to respond_to(:open)
+    expect(uploaded_file).to respond_to(:path)
+    expect(uploaded_file).to respond_to(:size)
+    expect(uploaded_file).to respond_to(:unlink)
+    expect(uploaded_file).to respond_to(:read)
+    expect(uploaded_file).to respond_to(:original_filename)
+    expect(uploaded_file).to respond_to(:tempfile) # Allows calls to params[:file].tempfile
   end
 
   it "creates Tempfiles with original file's extension" do
     uploaded_file = Rack::Test::UploadedFile.new(test_file_path)
 
-    File.extname(uploaded_file.path).should eq(".txt")
+    expect(File.extname(uploaded_file.path)).to eq(".txt")
   end
 end

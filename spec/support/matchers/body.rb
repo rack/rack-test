@@ -1,6 +1,6 @@
 RSpec::Matchers.define :have_body do |expected|
   match do |response|
-    response.body.should == expected
+    expect(response.body).to eq(expected)
   end
 
   description do
