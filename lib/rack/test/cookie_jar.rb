@@ -48,6 +48,10 @@ module Rack
         @options.has_key?("secure")
       end
 
+      def http_only?
+        @options.has_key?('HttpOnly')
+      end
+
       # :api: private
       def path
         @options["path"].strip || "/"
@@ -87,6 +91,14 @@ module Rack
         # Orders the cookies from least specific to most
         [name, path, domain.reverse] <=> [other.name, other.path, other.domain.reverse]
       end
+      def to_h
+        @options.merge(
+          'value'    => @value,
+          'HttpOnly' => http_only?,
+          'secure'   => secure?,
+        )
+      end
+      alias_method :to_hash, :to_h
 
     protected
 
@@ -113,6 +125,10 @@ module Rack
 
       def []=(name, value)
         merge("#{name}=#{Rack::Utils.escape(value)}")
+      end
+
+      def get_cookie(name)
+        hash_for(nil).fetch(name,nil)
       end
 
       def delete(name)
