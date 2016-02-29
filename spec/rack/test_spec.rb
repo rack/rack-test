@@ -543,6 +543,12 @@ describe Rack::Test::Session do
     def verb
       "delete"
     end
+
+     it "does not set a content type" do
+       delete "/"
+   
+       expect(last_request.env['CONTENT_TYPE']).to be_nil
+     end
   end
 
   describe "#options" do
