@@ -4,142 +4,142 @@ describe Rack::Test::Session do
   describe "initialization" do
     it "supports being initialized with a Rack::MockSession app" do
       session = Rack::Test::Session.new(Rack::MockSession.new(app))
-      session.request("/").should be_ok
+      expect(session.request("/")).to be_ok
     end
 
     it "supports being initialized with an app" do
       session = Rack::Test::Session.new(app)
-      session.request("/").should be_ok
+      expect(session.request("/")).to be_ok
     end
   end
 
   describe "#request" do
     it "requests the URI using GET by default" do
       request "/"
-      last_request.should be_get
-      last_response.should be_ok
+      expect(last_request).to be_get
+      expect(last_response).to be_ok
     end
 
     it "returns a response" do
-      request("/").should be_ok
+      expect(request("/")).to be_ok
     end
 
     it "uses the provided env" do
       request "/", "X-Foo" => "bar"
-      last_request.env["X-Foo"].should == "bar"
+      expect(last_request.env["X-Foo"]).to eq("bar")
     end
 
     it "allows HTTP_HOST to be set" do
       request "/", "HTTP_HOST" => "www.example.ua"
-      last_request.env['HTTP_HOST'].should == "www.example.ua"
+      expect(last_request.env['HTTP_HOST']).to eq("www.example.ua")
     end
 
     it "sets HTTP_HOST with port for non-default ports" do
       request "http://foo.com:8080"
-      last_request.env["HTTP_HOST"].should == "foo.com:8080"
+      expect(last_request.env["HTTP_HOST"]).to eq("foo.com:8080")
       request "https://foo.com:8443"
-      last_request.env["HTTP_HOST"].should == "foo.com:8443"
+      expect(last_request.env["HTTP_HOST"]).to eq("foo.com:8443")
     end
 
     it "sets HTTP_HOST without port for default ports" do
       request "http://foo.com"
-      last_request.env["HTTP_HOST"].should == "foo.com"
+      expect(last_request.env["HTTP_HOST"]).to eq("foo.com")
       request "http://foo.com:80"
-      last_request.env["HTTP_HOST"].should == "foo.com"
+      expect(last_request.env["HTTP_HOST"]).to eq("foo.com")
       request "https://foo.com:443"
-      last_request.env["HTTP_HOST"].should == "foo.com"
+      expect(last_request.env["HTTP_HOST"]).to eq("foo.com")
     end
 
     it "defaults to GET" do
       request "/"
-      last_request.env["REQUEST_METHOD"].should == "GET"
+      expect(last_request.env["REQUEST_METHOD"]).to eq("GET")
     end
 
     it "defaults the REMOTE_ADDR to 127.0.0.1" do
       request "/"
-      last_request.env["REMOTE_ADDR"].should == "127.0.0.1"
+      expect(last_request.env["REMOTE_ADDR"]).to eq("127.0.0.1")
     end
 
     it "sets rack.test to true in the env" do
       request "/"
-      last_request.env["rack.test"].should == true
+      expect(last_request.env["rack.test"]).to eq(true)
     end
 
     it "defaults to port 80" do
       request "/"
-      last_request.env["SERVER_PORT"].should == "80"
+      expect(last_request.env["SERVER_PORT"]).to eq("80")
     end
 
     it "defaults to example.org" do
       request "/"
-      last_request.env["SERVER_NAME"].should == "example.org"
+      expect(last_request.env["SERVER_NAME"]).to eq("example.org")
     end
 
     it "yields the response to a given block" do
       request "/" do |response|
-        response.should be_ok
+        expect(response).to be_ok
       end
     end
 
     it "supports sending :params" do
       request "/", :params => { "foo" => "bar" }
-      last_request.GET["foo"].should == "bar"
+      expect(last_request.GET["foo"]).to eq("bar")
     end
 
     it "doesn't follow redirects by default" do
       request "/redirect"
-      last_response.should be_redirect
-      last_response.body.should be_empty
+      expect(last_response).to be_redirect
+      expect(last_response.body).to be_empty
     end
 
     it "allows passing :input in for POSTs" do
       request "/", :method => :post, :input => "foo"
-      last_request.env["rack.input"].read.should == "foo"
+      expect(last_request.env["rack.input"].read).to eq("foo")
     end
 
     it "converts method names to a uppercase strings" do
       request "/", :method => :put
-      last_request.env["REQUEST_METHOD"].should == "PUT"
+      expect(last_request.env["REQUEST_METHOD"]).to eq("PUT")
     end
 
     it "prepends a slash to the URI path" do
       request "foo"
-      last_request.env["PATH_INFO"].should == "/foo"
+      expect(last_request.env["PATH_INFO"]).to eq("/foo")
     end
 
     it "accepts params and builds query strings for GET requests" do
       request "/foo?baz=2", :params => {:foo => {:bar => "1"}}
-      last_request.GET.should == { "baz" => "2", "foo" => { "bar" => "1" }}
+      expect(last_request.GET).to eq({ "baz" => "2", "foo" => { "bar" => "1" }})
     end
 
     it "parses query strings with repeated variable names correctly" do
       request "/foo?bar=2&bar=3"
-      last_request.GET.should == { "bar" => "3" }
+      expect(last_request.GET).to eq({ "bar" => "3" })
     end
 
     it "accepts raw input in params for GET requests" do
       request "/foo?baz=2", :params => "foo[bar]=1"
-      last_request.GET.should == { "baz" => "2", "foo" => { "bar" => "1" }}
+      expect(last_request.GET).to eq({ "baz" => "2", "foo" => { "bar" => "1" }})
     end
 
     it "does not rewrite a GET query string when :params is not supplied" do
       request "/foo?a=1&b=2&c=3&e=4&d=5+%20"
-      last_request.query_string.should == "a=1&b=2&c=3&e=4&d=5+%20"
+      expect(last_request.query_string).to eq("a=1&b=2&c=3&e=4&d=5+%20")
     end
 
     it "does not overwrite multiple query string keys" do
       request "/foo?a=1&a=2", :params => { :bar => 1 }
-      last_request.query_string.should == "a=1&a=2&bar=1"
+      expect(last_request.query_string).to eq("a=1&a=2&bar=1")
     end
 
     it "accepts params and builds url encoded params for POST requests" do
       request "/foo", :method => :post, :params => {:foo => {:bar => "1"}}
-      last_request.env["rack.input"].read.should == "foo[bar]=1"
+      expect(last_request.env["rack.input"].read).to eq("foo[bar]=1")
     end
 
     it "accepts raw input in params for POST requests" do
       request "/foo", :method => :post, :params => "foo[bar]=1"
-      last_request.env["rack.input"].read.should == "foo[bar]=1"
+      expect(last_request.env["rack.input"].read).to eq("foo[bar]=1")
     end
 
     context "when the response body responds_to?(:close)" do
@@ -160,7 +160,7 @@ describe Rack::Test::Session do
 
       it "closes response's body" do
         body = CloseableBody.new
-        body.should_receive(:close)
+        expect(body).to receive(:close)
 
         app = lambda do |env|
           [200, {"Content-Type" => "text/html", "Content-Length" => "13"}, body]
@@ -177,65 +177,65 @@ describe Rack::Test::Session do
 
         session = Rack::Test::Session.new(Rack::MockSession.new(app))
         session.request("/")
-        session.last_response.body.should == "Hello, World!"
+        expect(session.last_response.body).to eq("Hello, World!")
       end
     end
 
     context "when input is given" do
       it "sends the input" do
         request "/", :method => "POST", :input => "foo"
-        last_request.env["rack.input"].read.should == "foo"
+        expect(last_request.env["rack.input"].read).to eq("foo")
       end
 
       it "does not send a multipart request" do
         request "/", :method => "POST", :input => "foo"
-        last_request.env["CONTENT_TYPE"].should_not == "application/x-www-form-urlencoded"
+        expect(last_request.env["CONTENT_TYPE"]).not_to eq("application/x-www-form-urlencoded")
       end
     end
 
     context "for a POST specified with :method" do
       it "uses application/x-www-form-urlencoded as the CONTENT_TYPE" do
         request "/", :method => "POST"
-        last_request.env["CONTENT_TYPE"].should == "application/x-www-form-urlencoded"
+        expect(last_request.env["CONTENT_TYPE"]).to eq("application/x-www-form-urlencoded")
       end
     end
 
     context "for a POST specified with REQUEST_METHOD" do
       it "uses application/x-www-form-urlencoded as the CONTENT_TYPE" do
         request "/", "REQUEST_METHOD" => "POST"
-        last_request.env["CONTENT_TYPE"].should == "application/x-www-form-urlencoded"
+        expect(last_request.env["CONTENT_TYPE"]).to eq("application/x-www-form-urlencoded")
       end
     end
 
     context "when CONTENT_TYPE is specified in the env" do
       it "does not overwrite the CONTENT_TYPE" do
         request "/", "CONTENT_TYPE" => "application/xml"
-        last_request.env["CONTENT_TYPE"].should == "application/xml"
+        expect(last_request.env["CONTENT_TYPE"]).to eq("application/xml")
       end
     end
 
     context "when the URL is https://" do
       it "sets rack.url_scheme to https" do
         get "https://example.org/"
-        last_request.env["rack.url_scheme"].should == "https"
+        expect(last_request.env["rack.url_scheme"]).to eq("https")
       end
 
       it "sets SERVER_PORT to 443" do
         get "https://example.org/"
-        last_request.env["SERVER_PORT"].should == "443"
+        expect(last_request.env["SERVER_PORT"]).to eq("443")
       end
 
       it "sets HTTPS to on" do
         get "https://example.org/"
-        last_request.env["HTTPS"].should == "on"
+        expect(last_request.env["HTTPS"]).to eq("on")
       end
     end
 
     context "for a XHR" do
       it "sends XMLHttpRequest for the X-Requested-With header" do
         request "/", :xhr => true
-        last_request.env["HTTP_X_REQUESTED_WITH"].should == "XMLHttpRequest"
-        last_request.should be_xhr
+        expect(last_request.env["HTTP_X_REQUESTED_WITH"]).to eq("XMLHttpRequest")
+        expect(last_request).to be_xhr
       end
     end
   end
@@ -245,21 +245,21 @@ describe Rack::Test::Session do
       header "User-Agent", "Firefox"
       request "/"
 
-      last_request.env["HTTP_USER_AGENT"].should == "Firefox"
+      expect(last_request.env["HTTP_USER_AGENT"]).to eq("Firefox")
     end
 
     it "sets a Content-Type to be sent with requests" do
       header "Content-Type", "application/json"
       request "/"
 
-      last_request.env["CONTENT_TYPE"].should == "application/json"
+      expect(last_request.env["CONTENT_TYPE"]).to eq("application/json")
     end
 
     it "sets a Host to be sent with requests" do
       header "Host", "www.example.ua"
       request "/"
 
-      last_request.env["HTTP_HOST"].should == "www.example.ua"
+      expect(last_request.env["HTTP_HOST"]).to eq("www.example.ua")
     end
 
     it "persists across multiple requests" do
@@ -267,7 +267,7 @@ describe Rack::Test::Session do
       request "/"
       request "/"
 
-      last_request.env["HTTP_USER_AGENT"].should == "Firefox"
+      expect(last_request.env["HTTP_USER_AGENT"]).to eq("Firefox")
     end
 
     it "overwrites previously set headers" do
@@ -275,7 +275,7 @@ describe Rack::Test::Session do
       header "User-Agent", "Safari"
       request "/"
 
-      last_request.env["HTTP_USER_AGENT"].should == "Safari"
+      expect(last_request.env["HTTP_USER_AGENT"]).to eq("Safari")
     end
 
     it "can be used to clear a header" do
@@ -283,14 +283,14 @@ describe Rack::Test::Session do
       header "User-Agent", nil
       request "/"
 
-      last_request.env.should_not have_key("HTTP_USER_AGENT")
+      expect(last_request.env).not_to have_key("HTTP_USER_AGENT")
     end
 
     it "is overridden by headers sent during the request" do
       header "User-Agent", "Firefox"
       request "/", "HTTP_USER_AGENT" => "Safari"
 
-      last_request.env["HTTP_USER_AGENT"].should == "Safari"
+      expect(last_request.env["HTTP_USER_AGENT"]).to eq("Safari")
     end
   end
 
@@ -299,7 +299,7 @@ describe Rack::Test::Session do
       env "rack.session", {:csrf => 'token'}
       request "/"
 
-      last_request.env["rack.session"].should == {:csrf => 'token'}
+      expect(last_request.env["rack.session"]).to eq({:csrf => 'token'})
     end
 
     it "persists across multiple requests" do
@@ -307,7 +307,7 @@ describe Rack::Test::Session do
       request "/"
       request "/"
 
-      last_request.env["rack.session"].should == {:csrf => 'token'}
+      expect(last_request.env["rack.session"]).to eq({:csrf => 'token'})
     end
 
     it "overwrites previously set envs" do
@@ -315,7 +315,7 @@ describe Rack::Test::Session do
       env "rack.session", {:some => :thing}
       request "/"
 
-      last_request.env["rack.session"].should == {:some => :thing}
+      expect(last_request.env["rack.session"]).to eq({:some => :thing})
     end
 
     it "can be used to clear a env" do
@@ -323,14 +323,14 @@ describe Rack::Test::Session do
       env "rack.session", nil
       request "/"
 
-      last_request.env.should_not have_key("X_CSRF_TOKEN")
+      expect(last_request.env).not_to have_key("X_CSRF_TOKEN")
     end
 
     it "is overridden by envs sent during the request" do
       env "rack.session", {:csrf => 'token'}
       request "/", "rack.session" => {:some => :thing}
 
-      last_request.env["rack.session"].should == {:some => :thing}
+      expect(last_request.env["rack.session"]).to eq({:some => :thing})
     end
   end
 
@@ -339,7 +339,7 @@ describe Rack::Test::Session do
       authorize "bryan", "secret"
       request "/"
 
-      last_request.env["HTTP_AUTHORIZATION"].should == "Basic YnJ5YW46c2VjcmV0\n"
+      expect(last_request.env["HTTP_AUTHORIZATION"]).to eq("Basic YnJ5YW46c2VjcmV0\n")
     end
 
     it "includes the header for subsequent requests" do
@@ -347,7 +347,7 @@ describe Rack::Test::Session do
       request "/"
       request "/"
 
-      last_request.env["HTTP_AUTHORIZATION"].should == "Basic YnJ5YW46c2VjcmV0\n"
+      expect(last_request.env["HTTP_AUTHORIZATION"]).to eq("Basic YnJ5YW46c2VjcmV0\n")
     end
   end
 
@@ -356,56 +356,56 @@ describe Rack::Test::Session do
       get "/redirect"
       follow_redirect!
 
-      last_response.should_not be_redirect
-      last_response.body.should == "You've been redirected"
-      last_request.env["HTTP_REFERER"].should eql("http://example.org/redirect")
+      expect(last_response).not_to be_redirect
+      expect(last_response.body).to eq("You've been redirected")
+      expect(last_request.env["HTTP_REFERER"]).to eql("http://example.org/redirect")
     end
 
     it "does not include params when following the redirect" do
       get "/redirect", { "foo" => "bar" }
       follow_redirect!
 
-      last_request.GET.should == {}
+      expect(last_request.GET).to eq({})
     end
 
     it "raises an error if the last_response is not set" do
-      lambda {
+      expect {
         follow_redirect!
-      }.should raise_error(Rack::Test::Error)
+      }.to raise_error(Rack::Test::Error)
     end
 
     it "raises an error if the last_response is not a redirect" do
       get "/"
 
-      lambda {
+      expect {
         follow_redirect!
-      }.should raise_error(Rack::Test::Error)
+      }.to raise_error(Rack::Test::Error)
     end
   end
 
   describe "#last_request" do
     it "returns the most recent request" do
       request "/"
-      last_request.env["PATH_INFO"].should == "/"
+      expect(last_request.env["PATH_INFO"]).to eq("/")
     end
 
     it "raises an error if no requests have been issued" do
-      lambda {
+      expect {
         last_request
-      }.should raise_error(Rack::Test::Error)
+      }.to raise_error(Rack::Test::Error)
     end
   end
 
   describe "#last_response" do
     it "returns the most recent response" do
       request "/"
-      last_response["Content-Type"].should == "text/html;charset=utf-8"
+      expect(last_response["Content-Type"]).to eq("text/html;charset=utf-8")
     end
 
-    it "raises an error if no requests have been issued" do
-      lambda {
+    it "raises an error if no requests have been issued",focus: true do
+      expect {
         last_response
-      }.should raise_error
+      }.to raise_error(Rack::Test::Error)
     end
   end
 
@@ -418,7 +418,7 @@ describe Rack::Test::Session do
       end
 
       get "/"
-      ran.should == true
+      expect(ran).to eq(true)
     end
 
     it "runs multiple callbacks" do
@@ -431,7 +431,7 @@ describe Rack::Test::Session do
       end
 
       get "/"
-      count.should == 2
+      expect(count).to eq(2)
     end
   end
 
@@ -444,27 +444,27 @@ describe Rack::Test::Session do
 
     it "uses the provided params hash" do
       get "/", :foo => "bar"
-      last_request.GET.should == { "foo" => "bar" }
+      expect(last_request.GET).to eq({ "foo" => "bar" })
     end
 
     it "sends params with parens in names" do
       get "/", "foo(1i)" => "bar"
-      last_request.GET["foo(1i)"].should == "bar"
+      expect(last_request.GET["foo(1i)"]).to eq("bar")
     end
 
     it "supports params with encoding sensitive names" do
       get "/", "foo bar" => "baz"
-      last_request.GET["foo bar"].should == "baz"
+      expect(last_request.GET["foo bar"]).to eq("baz")
     end
 
     it "supports params with nested encoding sensitive names" do
       get "/", "boo" => {"foo bar" => "baz"}
-      last_request.GET.should == {"boo" => {"foo bar" => "baz"}}
+      expect(last_request.GET).to eq({"boo" => {"foo bar" => "baz"}})
     end
 
     it "accepts params in the path" do
       get "/?foo=bar"
-      last_request.GET.should == { "foo" => "bar" }
+      expect(last_request.GET).to eq({ "foo" => "bar" })
     end
   end
 
@@ -485,28 +485,28 @@ describe Rack::Test::Session do
 
     it "uses the provided params hash" do
       post "/", :foo => "bar"
-      last_request.POST.should == { "foo" => "bar" }
+      expect(last_request.POST).to eq({ "foo" => "bar" })
     end
 
     it "supports params with encoding sensitive names" do
       post "/", "foo bar" => "baz"
-      last_request.POST["foo bar"].should == "baz"
+      expect(last_request.POST["foo bar"]).to eq("baz")
     end
 
     it "uses application/x-www-form-urlencoded as the CONTENT_TYPE" do
       post "/"
-      last_request.env["CONTENT_TYPE"].should == "application/x-www-form-urlencoded"
+      expect(last_request.env["CONTENT_TYPE"]).to eq("application/x-www-form-urlencoded")
     end
 
     it "accepts a body" do
       post "/", "Lobsterlicious!"
-      last_request.body.read.should == "Lobsterlicious!"
+      expect(last_request.body.read).to eq("Lobsterlicious!")
     end
 
     context "when CONTENT_TYPE is specified in the env" do
       it "does not overwrite the CONTENT_TYPE" do
         post "/", {}, { "CONTENT_TYPE" => "application/xml" }
-        last_request.env["CONTENT_TYPE"].should == "application/xml"
+        expect(last_request.env["CONTENT_TYPE"]).to eq("application/xml")
       end
     end
   end
@@ -520,7 +520,7 @@ describe Rack::Test::Session do
 
     it "accepts a body" do
       put "/", "Lobsterlicious!"
-      last_request.body.read.should == "Lobsterlicious!"
+      expect(last_request.body.read).to eq("Lobsterlicious!")
     end
   end
 
@@ -533,7 +533,7 @@ describe Rack::Test::Session do
 
     it "accepts a body" do
       patch "/", "Lobsterlicious!"
-      last_request.body.read.should == "Lobsterlicious!"
+      expect(last_request.body.read).to eq("Lobsterlicious!")
     end
   end
 
