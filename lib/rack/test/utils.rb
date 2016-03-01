@@ -8,16 +8,16 @@ module Rack
       def build_nested_query(value, prefix = nil)
         case value
         when Array
-	        if value.empty?
-	          "#{prefix}[]="
+          if value.empty?
+            "#{prefix}[]="
           else
             value.map do |v|
               unless unescape(prefix) =~ /\[\]$/
                 prefix = "#{prefix}[]"
               end
               build_nested_query(v, "#{prefix}")
-           end.join("&")
-         end
+            end.join("&")
+          end
         when Hash
           value.map do |k, v|
             build_nested_query(v, prefix ? "#{prefix}[#{escape(k)}]" : escape(k))
