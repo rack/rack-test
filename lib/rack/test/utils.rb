@@ -3,6 +3,7 @@ module Rack
 
     module Utils # :nodoc:
       include Rack::Utils
+      extend Rack::Utils
 
       def build_nested_query(value, prefix = nil)
         case value
@@ -83,13 +84,13 @@ module Rack
           flattened_params
         end
       end
-
       module_function :build_multipart
 
     private
       def build_parts(parameters)
         get_parts(parameters).join + "--#{MULTIPART_BOUNDARY}--\r"
       end
+      module_function :build_parts
 
       def get_parts(parameters)
         parameters.map { |name, value|
@@ -115,6 +116,7 @@ module Rack
           end
         }
       end
+      module_function :get_parts
 
       def build_primitive_part(parameter_name, value)
         unless value.is_a? Array
@@ -129,6 +131,7 @@ Content-Disposition: form-data; name="#{parameter_name}"\r
 EOF
         end.join
       end
+      module_function :build_primitive_part
 
       def build_file_part(parameter_name, uploaded_file)
         ::File.open(uploaded_file.path, "rb") do |physical_file|
@@ -143,6 +146,7 @@ Content-Length: #{::File.stat(uploaded_file.path).size}\r
 EOF
         end
       end
+      module_function :build_file_part
 
     end
 
