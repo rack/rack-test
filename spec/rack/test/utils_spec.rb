@@ -50,10 +50,10 @@ describe Rack::Test::Utils do
     end
   end
 
-  describe "build_multipart" do
+  describe "Rack::Test::Utils.build_multipart" do
     it "builds multipart bodies" do
       files = Rack::Test::UploadedFile.new(multipart_file("foo.txt"))
-      data  = build_multipart("submit-name" => "Larry", "files" => files)
+      data  = Rack::Test::Utils.build_multipart("submit-name" => "Larry", "files" => files)
 
       options = {
         "CONTENT_TYPE" => "multipart/form-data; boundary=#{Rack::Test::MULTIPART_BOUNDARY}",
@@ -69,7 +69,7 @@ describe Rack::Test::Utils do
 
    it "builds multipart bodies from array of files" do
       files = [Rack::Test::UploadedFile.new(multipart_file("foo.txt")), Rack::Test::UploadedFile.new(multipart_file("bar.txt"))]
-      data  = build_multipart("submit-name" => "Larry", "files" => files)
+      data  = Rack::Test::Utils.build_multipart("submit-name" => "Larry", "files" => files)
 
       options = {
         "CONTENT_TYPE" => "multipart/form-data; boundary=#{Rack::Test::MULTIPART_BOUNDARY}",
@@ -89,7 +89,7 @@ describe Rack::Test::Utils do
 
     it "builds nested multipart bodies" do
       files = Rack::Test::UploadedFile.new(multipart_file("foo.txt"))
-      data  = build_multipart("people" => [{"submit-name" => "Larry", "files" => files}], "foo" => ['1', '2'])
+      data  = Rack::Test::Utils.build_multipart("people" => [{"submit-name" => "Larry", "files" => files}], "foo" => ['1', '2'])
 
       options = {
         "CONTENT_TYPE" => "multipart/form-data; boundary=#{Rack::Test::MULTIPART_BOUNDARY}",
@@ -106,7 +106,7 @@ describe Rack::Test::Utils do
 
     it "builds nested multipart bodies with an array of hashes" do
       files = Rack::Test::UploadedFile.new(multipart_file("foo.txt"))
-      data  = build_multipart("files" => files, "foo" => [{"id" => "1", "name" => 'Dave'}, {"id" => "2", "name" => 'Steve'}])
+      data  = Rack::Test::Utils.build_multipart("files" => files, "foo" => [{"id" => "1", "name" => 'Dave'}, {"id" => "2", "name" => 'Steve'}])
 
       options = {
         "CONTENT_TYPE" => "multipart/form-data; boundary=#{Rack::Test::MULTIPART_BOUNDARY}",
@@ -122,7 +122,7 @@ describe Rack::Test::Utils do
 
     it "builds nested multipart bodies with arbitrarily nested array of hashes" do
       files = Rack::Test::UploadedFile.new(multipart_file("foo.txt"))
-      data  = build_multipart("files" => files, "foo" => {"bar" => [{"id" => "1", "name" => 'Dave'},
+      data  = Rack::Test::Utils.build_multipart("files" => files, "foo" => {"bar" => [{"id" => "1", "name" => 'Dave'},
                                                                     {"id" => "2", "name" => 'Steve', "qux" => [{"id" => '3', "name" => 'mike'},
                                                                                                                {"id" => '4', "name" => 'Joan'}]}]})
 
@@ -142,7 +142,7 @@ describe Rack::Test::Utils do
 
     it 'does not break with params that look nested, but are not' do
       files = Rack::Test::UploadedFile.new(multipart_file("foo.txt"))
-      data  = build_multipart("foo[]" => "1", "bar[]" => {"qux" => "2"}, "files[]" => files)
+      data  = Rack::Test::Utils.build_multipart("foo[]" => "1", "bar[]" => {"qux" => "2"}, "files[]" => files)
 
       options = {
         "CONTENT_TYPE" => "multipart/form-data; boundary=#{Rack::Test::MULTIPART_BOUNDARY}",
@@ -159,7 +159,7 @@ describe Rack::Test::Utils do
 
     it 'allows for nested files' do
       files = Rack::Test::UploadedFile.new(multipart_file("foo.txt"))
-      data  = build_multipart("foo" => [{"id" => "1", "data" => files},
+      data  = Rack::Test::Utils.build_multipart("foo" => [{"id" => "1", "data" => files},
                                         {"id" => "2", "data" => ["3", "4"]}])
 
       options = {
@@ -176,13 +176,13 @@ describe Rack::Test::Utils do
     end
 
     it "returns nil if no UploadedFiles were used" do
-      data = build_multipart("people" => [{"submit-name" => "Larry", "files" => "contents"}])
+      data = Rack::Test::Utils.build_multipart("people" => [{"submit-name" => "Larry", "files" => "contents"}])
       expect(data).to be_nil
     end
 
     it "raises ArgumentErrors if params is not a Hash" do
       expect {
-        build_multipart("foo=bar")
+        Rack::Test::Utils.build_multipart("foo=bar")
       }.to raise_error(ArgumentError, "value must be a Hash")
     end
 
