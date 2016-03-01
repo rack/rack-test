@@ -493,7 +493,7 @@ describe Rack::Test::Session do
       expect(last_request.POST["foo bar"]).to eq("baz")
     end
 
-    it "uses application/x-www-form-urlencoded as the CONTENT_TYPE" do
+    it "uses application/x-www-form-urlencoded as the default CONTENT_TYPE" do
       post "/"
       expect(last_request.env["CONTENT_TYPE"]).to eq("application/x-www-form-urlencoded")
     end
@@ -546,7 +546,7 @@ describe Rack::Test::Session do
 
      it "does not set a content type" do
        delete "/"
-   
+
        expect(last_request.env['CONTENT_TYPE']).to be_nil
      end
   end
