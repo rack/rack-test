@@ -8,12 +8,16 @@ module Rack
       def build_nested_query(value, prefix = nil)
         case value
         when Array
-          value.map do |v|
-            unless unescape(prefix) =~ /\[\]$/
-              prefix = "#{prefix}[]"
-            end
-            build_nested_query(v, "#{prefix}")
-          end.join("&")
+	        if value.empty?
+	          "#{prefix}[]="
+          else
+            value.map do |v|
+              unless unescape(prefix) =~ /\[\]$/
+                prefix = "#{prefix}[]"
+              end
+              build_nested_query(v, "#{prefix}")
+           end.join("&")
+         end
         when Hash
           value.map do |k, v|
             build_nested_query(v, prefix ? "#{prefix}[#{escape(k)}]" : escape(k))
@@ -24,7 +28,6 @@ module Rack
           "#{prefix}=#{escape(value)}"
         end
       end
-
       module_function :build_nested_query
 
       def build_multipart(params, first = true)
@@ -86,7 +89,7 @@ module Rack
       end
       module_function :build_multipart
 
-    private
+      private
       def build_parts(parameters)
         get_parts(parameters).join + "--#{MULTIPART_BOUNDARY}--\r"
       end
@@ -123,7 +126,7 @@ module Rack
           value = [value]
         end
         value.map do |v|
-<<-EOF
+          <<-EOF
 --#{MULTIPART_BOUNDARY}\r
 Content-Disposition: form-data; name="#{parameter_name}"\r
 \r
@@ -136,7 +139,7 @@ EOF
       def build_file_part(parameter_name, uploaded_file)
         ::File.open(uploaded_file.path, "rb") do |physical_file|
           physical_file.set_encoding(Encoding::BINARY) if physical_file.respond_to?(:set_encoding)
-<<-EOF
+          <<-EOF
 --#{MULTIPART_BOUNDARY}\r
 Content-Disposition: form-data; name="#{parameter_name}"; filename="#{escape(uploaded_file.original_filename)}"\r
 Content-Type: #{uploaded_file.content_type}\r
