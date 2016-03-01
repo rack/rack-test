@@ -41,7 +41,7 @@ request helpers feature.
 
 If you want to test one app in isolation, you just return that app as shown above. But if you want to test the entire app stack, including middlewares, cascades etc. you need to parse the app defined in config.ru.
 
-    OUTER_APP = Rack::Builder.parse_file('config.ru').first
+    OUTER_APP = Rack::Builder.parse_file("config.ru").first
 
     class TestApp < Test::Unit::TestCase
       include Rack::Test::Methods
@@ -51,7 +51,7 @@ If you want to test one app in isolation, you just return that app as shown abov
       end
 
       def test_root
-        get '/'
+        get "/"
         assert last_response.ok?
       end
     end
