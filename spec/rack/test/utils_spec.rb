@@ -48,6 +48,11 @@ describe Rack::Test::Utils do
     it "converts arrays of hashes" do
       expect(build_nested_query(:a => [{ :b => 2}, { :c => 3}])).to eq("a[][b]=2&a[][c]=3")
     end
+
+    it "supports hash keys with empty arrays" do
+      input = { collection: [] }
+      expect(build_nested_query(input)).to eq('collection[]=')
+    end
   end
 
   describe "Rack::Test::Utils.build_multipart" do
