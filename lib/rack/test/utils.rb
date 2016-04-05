@@ -26,13 +26,12 @@ module Rack
 
       module_function :build_nested_query
 
-      def build_multipart(params, first = true)
+      def build_multipart(params, first = true, multipart = false)
         if first
           unless params.is_a?(Hash)
             raise ArgumentError, "value must be a Hash"
           end
 
-          multipart = false
           query = lambda { |value|
             case value
             when Array
