@@ -66,7 +66,7 @@ describe Rack::Test::Utils do
         :input => StringIO.new(data)
       }
       env = Rack::MockRequest.env_for("/", options)
-      params = Rack::Utils::Multipart.parse_multipart(env)
+      params = Rack::Multipart.parse_multipart(env)
       check expect(params["submit-name"]).to eq("Larry")
       check expect(params["files"][:filename]).to eq("foo.txt")
       expect(params["files"][:tempfile].read).to eq("bar\n")
@@ -82,7 +82,7 @@ describe Rack::Test::Utils do
         :input => StringIO.new(data)
       }
       env = Rack::MockRequest.env_for("/", options)
-      params = Rack::Utils::Multipart.parse_multipart(env)
+      params = Rack::Multipart.parse_multipart(env)
       check expect(params["submit-name"]).to eq("Larry")
 
       check expect(params["files"][0][:filename]).to eq("foo.txt")
@@ -102,7 +102,7 @@ describe Rack::Test::Utils do
         :input => StringIO.new(data)
       }
       env = Rack::MockRequest.env_for("/", options)
-      params = Rack::Utils::Multipart.parse_multipart(env)
+      params = Rack::Multipart.parse_multipart(env)
       check expect(params["people"][0]["submit-name"]).to eq("Larry")
       check expect(params["people"][0]["files"][:filename]).to eq("foo.txt")
       expect(params["people"][0]["files"][:tempfile].read).to eq("bar\n")
@@ -119,7 +119,7 @@ describe Rack::Test::Utils do
         :input => StringIO.new(data)
       }
       env = Rack::MockRequest.env_for("/", options)
-      params = Rack::Utils::Multipart.parse_multipart(env)
+      params = Rack::Multipart.parse_multipart(env)
       check expect(params["files"][:filename]).to eq("foo.txt")
       expect(params["files"][:tempfile].read).to eq("bar\n")
       check expect(params["foo"]).to eq([{"id" => "1", "name" => "Dave"}, {"id" => "2", "name" => "Steve"}])
@@ -137,7 +137,7 @@ describe Rack::Test::Utils do
         :input => StringIO.new(data)
       }
       env = Rack::MockRequest.env_for("/", options)
-      params = Rack::Utils::Multipart.parse_multipart(env)
+      params = Rack::Multipart.parse_multipart(env)
       check expect(params["files"][:filename]).to eq("foo.txt")
       expect(params["files"][:tempfile].read).to eq("bar\n")
       check expect(params["foo"]).to eq({"bar" => [{"id" => "1", "name" => "Dave"},
@@ -155,7 +155,7 @@ describe Rack::Test::Utils do
         :input => StringIO.new(data)
       }
       env = Rack::MockRequest.env_for("/", options)
-      params = Rack::Utils::Multipart.parse_multipart(env)
+      params = Rack::Multipart.parse_multipart(env)
       check expect(params["files"][0][:filename]).to eq("foo.txt")
       expect(params["files"][0][:tempfile].read).to eq("bar\n")
       check expect(params["foo"][0]).to eq("1")
@@ -173,7 +173,7 @@ describe Rack::Test::Utils do
         :input => StringIO.new(data)
       }
       env = Rack::MockRequest.env_for("/", options)
-      params = Rack::Utils::Multipart.parse_multipart(env)
+      params = Rack::Multipart.parse_multipart(env)
       check expect(params["foo"][0]["id"]).to eq("1")
       check expect(params["foo"][0]["data"][:filename]).to eq("foo.txt")
       expect(params["foo"][0]["data"][:tempfile].read).to eq("bar\n")
