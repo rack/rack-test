@@ -14,17 +14,9 @@ describe Rack::Test::UploadedFile do
   it 'responds to things that Tempfile responds to' do
     uploaded_file = Rack::Test::UploadedFile.new(test_file_path)
 
-    expect(uploaded_file).to respond_to(:close)
-    expect(uploaded_file).to respond_to(:close!)
-    expect(uploaded_file).to respond_to(:delete)
-    expect(uploaded_file).to respond_to(:length)
-    expect(uploaded_file).to respond_to(:open)
-    expect(uploaded_file).to respond_to(:path)
-    expect(uploaded_file).to respond_to(:size)
-    expect(uploaded_file).to respond_to(:unlink)
-    expect(uploaded_file).to respond_to(:read)
-    expect(uploaded_file).to respond_to(:original_filename)
-    expect(uploaded_file).to respond_to(:tempfile) # Allows calls to params[:file].tempfile
+    Tempfile.public_instance_methods(false).each do |method|
+      expect(uploaded_file).to respond_to(method)
+    end
   end
 
   it "creates Tempfiles with original file's extension" do

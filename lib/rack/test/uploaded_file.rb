@@ -40,11 +40,11 @@ module Rack
       alias local_path path
 
       def method_missing(method_name, *args, &block) #:nodoc:
-        @tempfile.__send__(method_name, *args, &block)
+        tempfile.public_send(method_name, *args, &block)
       end
 
-      def respond_to?(method_name, include_private = false) #:nodoc:
-        @tempfile.respond_to?(method_name, include_private) || super
+      def respond_to_missing?(method_name, include_private = false) #:nodoc:
+        tempfile.respond_to?(method_name, include_private) || super
       end
 
       def self.finalize(file)
