@@ -18,23 +18,18 @@ module Rack
       # The content type of the "uploaded" file
       attr_accessor :content_type
 
-      def initialize(path, content_type = 'text/plain', binary = false)
-        raise "#{path} file does not exist" unless ::File.exist?(path)
-
+      def initialize(content, content_type = 'text/plain', binary = false, original_filename: nil)
+        if content.respond_to?(:read)
+          initialize_from_io(content, original_filename)
+        else
+          initialize_from_file_path(content)
+        end
         @content_type = content_type
-        @original_filename = ::File.basename(path)
-
-        @tempfile = Tempfile.new([@original_filename, ::File.extname(path)])
-        @tempfile.set_encoding(Encoding::BINARY) if @tempfile.respond_to?(:set_encoding)
         @tempfile.binmode if binary
-
-        ObjectSpace.define_finalizer(self, self.class.finalize(@tempfile))
-
-        FileUtils.copy_file(path, @tempfile.path)
       end
 
       def path
-        @tempfile.path
+        tempfile.path
       end
 
       alias local_path path
@@ -54,6 +49,26 @@ module Rack
       def self.actually_finalize(file)
         file.close
         file.unlink
+      end
+
+      private
+
+      def initialize_from_io(io, original_filename)
+        @tempfile = io
+        @original_filename = original_filename || raise(ArgumentError, 'Missing `original_filename` for IO')
+      end
+
+      def initialize_from_file_path(path)
+        raise "#{path} file does not exist" unless ::File.exist?(path)
+
+        @original_filename = ::File.basename(path)
+
+        @tempfile = Tempfile.new([@original_filename, ::File.extname(path)])
+        @tempfile.set_encoding(Encoding::BINARY) if @tempfile.respond_to?(:set_encoding)
+
+        ObjectSpace.define_finalizer(self, self.class.finalize(@tempfile))
+
+        FileUtils.copy_file(path, @tempfile.path)
       end
     end
   end

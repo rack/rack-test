@@ -43,4 +43,27 @@ describe Rack::Test::UploadedFile do
       end
     end
   end
+
+  describe '#initialize' do
+    subject { -> { uploaded_file } }
+    let(:uploaded_file) { described_class.new(io, original_filename: original_filename) }
+
+    context 'with an IO object' do
+      let(:io) { StringIO.new('I am content') }
+
+      context 'with an original filename' do
+        let(:original_filename) { 'content.txt' }
+
+        it 'sets the specified filename' do
+          subject.call
+          uploaded_file.original_filename.should == original_filename
+        end
+      end
+
+      context 'without an original filename' do
+        let(:original_filename) { nil }
+        it { should raise_error(ArgumentError) }
+      end
+    end
+  end
 end
