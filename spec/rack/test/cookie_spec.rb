@@ -20,16 +20,6 @@ describe Rack::Test::Session do
       last_request.cookies.should == {}
     end
 
-    it "cookie path defaults to the uri of the document that was requested" do
-      pending "See issue rack-test github issue #50" do
-        post "/cookies/default-path", "value" => "cookie"
-        get "/cookies/default-path"
-        check last_request.cookies.should == { "simple"=>"cookie" }
-        get "/cookies/show"
-        check last_request.cookies.should == { }
-      end
-    end
-
     it "escapes cookie values" do
       jar = Rack::Test::CookieJar.new
       jar["value"] = "foo;abc"
@@ -118,10 +108,16 @@ describe Rack::Test::Session do
       last_request.cookies.should == {}
     end
 
-    it "defaults the domain to the request path up to the last slash" do
+    it "defaults the path to the request path up to the last slash" do
       get "/cookies/set-simple", "value" => "1"
       get "/not-cookies/show"
       last_request.cookies.should == {}
+    end
+
+    it "defaults the path to '/' when path is not explicitly set" do
+      get "/set-forced-path", "value" => "1"
+      get "/set-default-path", "value" => "2"
+      rack_mock_session.cookie_jar['value'].should == "2"
     end
 
     it "supports secure cookies" do
