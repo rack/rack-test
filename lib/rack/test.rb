@@ -281,7 +281,7 @@ module Rack
       end
 
       def digest_auth_configured?
-        @digest_username
+        defined?(@digest_username)
       end
 
       def default_env
