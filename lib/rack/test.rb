@@ -240,6 +240,7 @@ module Rack
       def process_request(uri, env)
         uri = URI.parse(uri)
         uri.host ||= @default_host
+        uri.scheme ||= "https" if env["HTTPS"] == "on"
 
         @rack_mock_session.request(uri, env)
 
