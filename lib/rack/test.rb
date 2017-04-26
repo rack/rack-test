@@ -36,6 +36,8 @@ module Rack
       def initialize(mock_session)
         @headers = {}
         @env = {}
+        @digest_username = nil
+        @digest_password = nil
 
         if mock_session.is_a?(MockSession)
           @rack_mock_session = mock_session
@@ -205,7 +207,7 @@ module Rack
         # Stringifying and upcasing methods has be commit upstream
         env["REQUEST_METHOD"] ||= env[:method] ? env[:method].to_s.upcase : "GET"
 
-        if env["REQUEST_METHOD"] == "GET"
+        if ["GET", "DELETE"].include?(env["REQUEST_METHOD"])
           # merge :params with the query string
           if params = env[:params]
             params = parse_nested_query(params) if params.is_a?(String)

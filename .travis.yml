@@ -1,0 +1,16 @@
+language: ruby
+sudo: false
+before_install:
+  - which bundle || gem install bundler
+rvm:
+  - 2.2.7
+  - 2.3.4
+  - 2.4.1
+  - ruby-head
+  - jruby-9.1.8.0
+  - jruby-head
+matrix:
+  allow_failures:
+    - rvm: ruby-head
+    - rvm: jruby-head
+  fast_finish: true

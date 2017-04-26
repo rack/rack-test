@@ -1,6 +1,6 @@
-= Rack::Test {<img src="https://codeclimate.com/github/brynary/rack-test.png" />}[https://codeclimate.com/github/brynary/rack-test] {<img src="https://codeclimate.com/github/brynary/rack-test/coverage.png" />}[https://codeclimate.com/github/brynary/rack-test]
+= Rack::Test {<img src="https://travis-ci.org/rack-test/rack-test.svg?branch=master" />}[https://travis-ci.org/rack-test/rack-test] {<img src="https://codeclimate.com/github/brynary/rack-test.png" />}[https://codeclimate.com/github/brynary/rack-test] {<img src="https://codeclimate.com/github/brynary/rack-test/coverage.png" />}[https://codeclimate.com/github/brynary/rack-test]
 
-- Code: http://github.com/brynary/rack-test
+- Code: http://github.com/rack-test/rack-test
 
 == Description
 
@@ -41,7 +41,7 @@ request helpers feature.
 
 If you want to test one app in isolation, you just return that app as shown above. But if you want to test the entire app stack, including middlewares, cascades etc. you need to parse the app defined in config.ru.
 
-    OUTER_APP = Rack::Builder.parse_file('config.ru').first
+    OUTER_APP = Rack::Builder.parse_file("config.ru").first
 
     class TestApp < Test::Unit::TestCase
       include Rack::Test::Methods
@@ -51,7 +51,7 @@ If you want to test one app in isolation, you just return that app as shown abov
       end
 
       def test_root
-        get '/'
+        get "/"
         assert last_response.ok?
       end
     end
