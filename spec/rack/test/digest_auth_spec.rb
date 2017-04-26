@@ -15,31 +15,31 @@ describe Rack::Test::Session do
     it 'incorrectly authenticates GETs' do
       digest_authorize 'foo', 'bar'
       get '/'
-      last_response.should be_challenge
+      expect(last_response).to be_challenge
     end
 
     it "correctly authenticates GETs" do
       digest_authorize "alice", "correct-password"
       response = get "/"
-      response.should be_ok
+      expect(response).to be_ok
     end
 
     it "correctly authenticates GETs with params" do
       digest_authorize "alice", "correct-password"
       response = get "/", "foo" => "bar"
-      response.should be_ok
+      expect(response).to be_ok
     end
 
     it "correctly authenticates POSTs" do
       digest_authorize "alice", "correct-password"
       response = post "/"
-      response.should be_ok
+      expect(response).to be_ok
     end
 
     it "returns a re-challenge if authenticating incorrectly" do
       digest_authorize "alice", "incorrect-password"
       response = get "/"
-      response.should be_challenge
+      expect(response).to be_challenge
     end
 
   end
