@@ -1,6 +1,7 @@
 pkg
 doc
 coverage
+Gemfile.lock
 VERSION
 *.rbc
 .bundle
