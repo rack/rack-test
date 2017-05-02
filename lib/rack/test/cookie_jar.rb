@@ -120,7 +120,7 @@ module Rack
       def [](name)
         cookies = hash_for(nil)
         # TODO: Should be case insensitive
-        cookies[name] && cookies[name].value
+        cookies[name.to_s] && cookies[name.to_s].value
       end
 
       def []=(name, value)
