@@ -48,6 +48,7 @@ Gem::Specification.new do |s|
     "spec/support/matchers/challenge.rb"
   ]
   s.homepage = "http://github.com/brynary/rack-test"
+  s.licenses = ['MIT']
   s.require_paths = ["lib"]
   s.rubyforge_project = "rack-test"
   s.rubygems_version = "1.8.23"
