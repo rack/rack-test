@@ -1,16 +1,16 @@
 # -*- encoding: utf-8 -*-
+# stub: rack-test 0.6.3 ruby lib
 
 Gem::Specification.new do |s|
   s.name = "rack-test"
   s.version = "0.6.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
+  s.require_paths = ["lib"]
   s.authors = ["Bryan Helmkamp"]
-  s.license = 'MIT'
-  s.date = "2015-01-09"
+  s.date = "2017-05-08"
   s.description = "Rack::Test is a small, simple testing API for Rack apps. It can be used on its\nown or as a reusable starting point for Web frameworks and testing libraries\nto build on. Most of its initial functionality is an extraction of Merb 1.0's\nrequest helpers feature."
   s.email = "bryan@brynary.com"
-  s.license = 'MIT'
   s.extra_rdoc_files = [
     "README.rdoc",
     "MIT-LICENSE.txt"
@@ -18,8 +18,9 @@ Gem::Specification.new do |s|
   s.files = [
     ".document",
     ".gitignore",
+    ".travis.yml",
     "Gemfile",
-    "Gemfile.lock",
+    "Gemfile.rack-1.x",
     "History.txt",
     "MIT-LICENSE.txt",
     "README.rdoc",
@@ -37,6 +38,8 @@ Gem::Specification.new do |s|
     "spec/fixtures/config.ru",
     "spec/fixtures/fake_app.rb",
     "spec/fixtures/foo.txt",
+    "spec/rack/test/cookie_jar_spec.rb",
+    "spec/rack/test/cookie_object_spec.rb",
     "spec/rack/test/cookie_spec.rb",
     "spec/rack/test/digest_auth_spec.rb",
     "spec/rack/test/multipart_spec.rb",
@@ -47,13 +50,15 @@ Gem::Specification.new do |s|
     "spec/support/matchers/body.rb",
     "spec/support/matchers/challenge.rb"
   ]
-  s.homepage = "http://github.com/brynary/rack-test"
-  s.require_paths = ["lib"]
+  s.homepage = "http://github.com/rack-test/rack-test"
+  s.licenses = ["MIT"]
   s.rubyforge_project = "rack-test"
-  s.rubygems_version = "1.8.23"
+  s.rubygems_version = "2.4.5.2"
   s.summary = "Simple testing API built on Rack"
   s.test_files = [
     "spec/fixtures/fake_app.rb",
+    "spec/rack/test/cookie_jar_spec.rb",
+    "spec/rack/test/cookie_object_spec.rb",
     "spec/rack/test/cookie_spec.rb",
     "spec/rack/test/digest_auth_spec.rb",
     "spec/rack/test/multipart_spec.rb",
@@ -66,7 +71,7 @@ Gem::Specification.new do |s|
   ]
 
   if s.respond_to? :specification_version then
-    s.specification_version = 3
+    s.specification_version = 4
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<rack>, [">= 1.0"])

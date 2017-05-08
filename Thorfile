@@ -9,7 +9,8 @@ module GemHelpers
       s.version   = Rack::Test::VERSION
       s.author    = "Bryan Helmkamp"
       s.email     = "bryan@brynary.com"
-      s.homepage  = "http://github.com/brynary/rack-test"
+      s.license   = "MIT"
+      s.homepage  = "http://github.com/rack-test/rack-test"
       s.summary   = "Simple testing API built on Rack"
       s.description  = <<-EOS.strip
 Rack::Test is a small, simple testing API for Rack apps. It can be used on its
