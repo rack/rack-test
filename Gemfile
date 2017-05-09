@@ -6,7 +6,7 @@ gemspec
 gem 'rake'
 gem 'rspec'
 # To use rack 2
-gem 'sinatra', '~> 2.0.0.rc2'
+gem 'sinatra', '~> 2.0'
 # Keep version < 1 to supress deprecated warning temporary.
 gem 'codeclimate-test-reporter', '< 1', :require => false
 
