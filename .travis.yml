@@ -2,6 +2,9 @@ language: ruby
 sudo: false
 before_install:
   - which bundle || gem install bundler
+script:
+  - bundle list
+  - bundle exec rake
 rvm:
   - 2.2.7
   - 2.3.4
@@ -9,6 +12,9 @@ rvm:
   - ruby-head
   - jruby-9.1.8.0
   - jruby-head
+gemfile:
+  - Gemfile
+  - Gemfile.rack-1.x
 matrix:
   allow_failures:
     - rvm: ruby-head

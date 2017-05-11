@@ -43,6 +43,12 @@ describe Rack::Test::Session do
       expect(jar["abcd"]).to eq(nil)
     end
 
+    it "allow symbol access" do
+      jar = Rack::Test::CookieJar.new
+      jar["value"] = "foo;abc"
+      jar[:value].should == "foo;abc"
+    end
+
     it "doesn't send cookies with the wrong domain" do
       get "http://www.example.com/cookies/set", "value" => "1"
       get "http://www.other.example/cookies/show"
