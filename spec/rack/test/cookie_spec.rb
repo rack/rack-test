@@ -138,6 +138,16 @@ describe Rack::Test::Session do
       expect(rack_mock_session.cookie_jar['secure-cookie']).to eq('set')
     end
 
+    it "supports secure cookies when enabling SSL via env" do
+      get "//example.com/cookies/set-secure", { "value" => "set" }, "HTTPS" => "on"
+      get "//example.com/cookies/show", nil, "HTTPS" => "off"
+      check expect(last_request.cookies).to eq({})
+
+      get "//example.com/cookies/show", nil, "HTTPS" => "on"
+      expect(last_request.cookies).to eq({ "secure-cookie" => "set" })
+      expect(rack_mock_session.cookie_jar['secure-cookie']).to eq('set')
+    end
+
     it "keeps separate cookie jars for different domains" do
       get "http://example.com/cookies/set", "value" => "example"
       get "http://example.com/cookies/show"
