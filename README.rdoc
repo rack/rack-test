@@ -19,6 +19,7 @@ request helpers feature.
 == Examples
 
   require "rack/test"
+  require "test/unit"
 
   class HomepageTest < Test::Unit::TestCase
     include Rack::Test::Methods
