@@ -67,7 +67,7 @@ module Rack
                 flattened_params["#{k}[]"] ||= []
                 flattened_params["#{k}[]"] << nested_params
               else
-                flattened_params["#{k}[]"] = value
+                flattened_params["#{k}[]"] = v
               end
 
             end
