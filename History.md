@@ -161,7 +161,7 @@
 
 ## 0.2.0 / 2009-04-26
 
-Because #last_response is now a MockResponse instead of a Rack::Response, #last_response.body
+Because `#last_response` is now a `MockResponse` instead of a `Rack::Response`, `#last_response.body`
 now returns a string instead of an array.
 
 * Major enhancements
@@ -169,8 +169,8 @@ now returns a string instead of an array.
 * Minor enhancements
   * Updated for Rack 1.0
   * Don't require rubygems (See http://gist.github.com/54177)
-  * Support HTTP Digest authentication with the #digest_authorize method
-  * #last_response returns a MockResponse instead of a Response
+  * Support HTTP Digest authentication with the `#digest_authorize` method
+  * `#last_response` returns a `MockResponse` instead of a Response
     (Michael Fellinger)
 
 ## 0.1.0 / 2009-03-02
