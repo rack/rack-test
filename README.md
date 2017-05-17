@@ -91,6 +91,6 @@ Or via Bundler:
 Contributions are welcome. Please make sure to:
 
 * Use a regular forking workflow
-* write tests for the new / changed behaviour.
+* Write tests for the new or changed behaviour
 * Provide an explanation/motivation in your commit message / PR message
 * Ensure History.txt is updated
