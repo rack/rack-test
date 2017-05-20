@@ -31,6 +31,8 @@ module Rack
         @tempfile.binmode if binary
 
         FileUtils.copy_file(path, @tempfile.path)
+
+        ObjectSpace.define_finalizer( self, self.class.finalize(@tempfile) )
       end
 
       def path
@@ -45,6 +47,14 @@ module Rack
 
       def respond_to?(method_name, include_private = false) #:nodoc:
         @tempfile.respond_to?(method_name, include_private) || super
+      end
+
+      def self.finalize(file)
+        proc { actually_finalize file }
+      end
+
+      def self.actually_finalize(file)
+        file.close
       end
 
     end

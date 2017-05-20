@@ -26,4 +26,15 @@ describe Rack::Test::UploadedFile do
 
     expect(File.extname(uploaded_file.path)).to eq(".txt")
   end
+
+  context 'it should call its destructor' do
+    it 'calls the destructor' do
+      uploaded_file = Rack::Test::UploadedFile.new(test_file_path)
+
+      expect(Rack::Test::UploadedFile).to receive(:actually_finalize).at_least(:once)
+
+      uploaded_file = nil
+      GC.start
+    end
+  end
 end
