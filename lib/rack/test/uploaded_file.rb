@@ -30,9 +30,9 @@ module Rack
         @tempfile.set_encoding(Encoding::BINARY) if @tempfile.respond_to?(:set_encoding)
         @tempfile.binmode if binary
 
-        FileUtils.copy_file(path, @tempfile.path)
-
         ObjectSpace.define_finalizer( self, self.class.finalize(@tempfile) )
+
+        FileUtils.copy_file(path, @tempfile.path)
       end
 
       def path

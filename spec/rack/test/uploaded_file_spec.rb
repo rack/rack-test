@@ -5,6 +5,12 @@ describe Rack::Test::UploadedFile do
     File.dirname(__FILE__) + "/../../fixtures/foo.txt"
   end
 
+  it "returns an instance of `Rack::Test::UploadedFile`" do
+    uploaded_file = Rack::Test::UploadedFile.new(test_file_path)
+
+    expect(uploaded_file).to be_a(Rack::Test::UploadedFile)
+  end
+
   it "responds to things that Tempfile responds to" do
     uploaded_file = Rack::Test::UploadedFile.new(test_file_path)
 
