@@ -6,11 +6,10 @@ require "rack/test/mock_digest_request"
 require "rack/test/utils"
 require "rack/test/methods"
 require "rack/test/uploaded_file"
+require "rack/test/version"
 
 module Rack
   module Test
-    VERSION = "0.6.3"
-
     DEFAULT_HOST = "example.org"
     MULTIPART_BOUNDARY = "----------XnJLe9ZIbbGUYtzPQJ16u1"
 
