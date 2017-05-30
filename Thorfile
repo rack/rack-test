@@ -1,54 +1,4 @@
 module GemHelpers
-
-  def generate_gemspec
-    $LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__), "lib")))
-    require "rack/test"
-
-    Gem::Specification.new do |s|
-      s.name      = "rack-test"
-      s.version   = Rack::Test::VERSION
-      s.author    = "Bryan Helmkamp"
-      s.email     = "bryan@brynary.com"
-      s.license   = "MIT"
-      s.homepage  = "http://github.com/rack-test/rack-test"
-      s.summary   = "Simple testing API built on Rack"
-      s.description  = <<-EOS.strip
-Rack::Test is a small, simple testing API for Rack apps. It can be used on its
-own or as a reusable starting point for Web frameworks and testing libraries
-to build on. Most of its initial functionality is an extraction of Merb 1.0's
-request helpers feature.
-      EOS
-      s.rubyforge_project = "rack-test"
-
-      require "git"
-      repo = Git.open(".")
-
-      s.files      = normalize_files(repo.ls_files.keys - repo.lib.ignored_files)
-      s.test_files = normalize_files(Dir['spec/**/*.rb'] - repo.lib.ignored_files)
-
-      s.has_rdoc = true
-      s.extra_rdoc_files = %w[README.rdoc MIT-LICENSE.txt]
-
-      s.add_dependency "rack", ">= 1.0"
-    end
-  end
-
-  def normalize_files(array)
-    # only keep files, no directories, and sort
-    array.select do |path|
-      File.file?(path)
-    end.sort
-  end
-
-  # Adds extra space when outputting an array. This helps create better version
-  # control diffs, because otherwise it is all on the same line.
-  def prettyify_array(gemspec_ruby, array_name)
-    gemspec_ruby.gsub(/s\.#{array_name.to_s} = \[.+?\]/) do |match|
-      leadin, files = match[0..-2].split("[")
-      leadin + "[\n    #{files.split(",").join(",\n   ")}\n  ]"
-    end
-  end
-
   def read_gemspec
     @read_gemspec ||= eval(File.read("rack-test.gemspec"))
   end
@@ -62,21 +12,6 @@ end
 class Default < Thor
   include GemHelpers
 
-  desc "gemspec", "Regenerate rack-test.gemspec"
-  def gemspec
-    File.open("rack-test.gemspec", "w") do |file|
-      gemspec_ruby = generate_gemspec.to_ruby
-      gemspec_ruby = prettyify_array(gemspec_ruby, :files)
-      gemspec_ruby = prettyify_array(gemspec_ruby, :test_files)
-      gemspec_ruby = prettyify_array(gemspec_ruby, :extra_rdoc_files)
-
-      file.write gemspec_ruby
-    end
-
-    puts "Wrote gemspec to rack-test.gemspec"
-    read_gemspec.validate
-  end
-
   desc "build", "Build a rack-test gem"
   def build
     sh "gem build rack-test.gemspec"
@@ -89,9 +24,8 @@ class Default < Thor
     sh "gem install --local pkg/#{read_gemspec.file_name}"
   end
 
-  desc "release", "Release the current branch to GitHub and Gemcutter"
+  desc "release", "Release the current branch to GitHub and RubyGems.org"
   def release
-    gemspec
     build
     Release.new.tag
     Release.new.gem
@@ -108,7 +42,7 @@ class Release < Thor
     sh "git push origin #{release_tag}"
   end
 
-  desc "gem", "Push the gem to Gemcutter"
+  desc "gem", "Push the gem to RubyGems.org"
   def gem
     sh "gem push pkg/#{read_gemspec.file_name}"
   end

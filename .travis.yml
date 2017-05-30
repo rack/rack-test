@@ -4,7 +4,15 @@ before_install:
   - which bundle || gem install bundler
 script:
   - bundle list
+  # Unit test
   - bundle exec rake
+  # Release test
+  - bundle exec thor :build
+  - ls -l pkg/rack-test-*.gem
+  - gem install pkg/rack-test-*.gem
+  - gem list rack-test
+  - ruby -e 'require "rack/test"'
+  - gem specification pkg/rack-test-*.gem --ruby
 rvm:
   - 2.2.7
   - 2.3.4

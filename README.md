@@ -94,3 +94,9 @@ Contributions are welcome. Please make sure to:
 * Write tests for the new or changed behaviour
 * Provide an explanation/motivation in your commit message / PR message
 * Ensure History.txt is updated
+
+## Releasing
+
+* Ensure History.txt is up-to-date
+* Bump VERSION in lib/rack/test/version.rb
+* bundle exec thor :release
