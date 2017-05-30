@@ -386,6 +386,16 @@ describe Rack::Test::Session do
         follow_redirect!
       }.to raise_error(Rack::Test::Error)
     end
+
+    context "for HTTP 307" do
+      it "keeps the original method" do
+        post "/redirect?status=307", {foo: "bar"}
+        follow_redirect!
+        last_response.body.should include "post"
+        last_response.body.should include "foo"
+        last_response.body.should include "bar"
+      end
+    end
   end
 
   describe "#last_request" do
