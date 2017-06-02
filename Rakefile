@@ -23,11 +23,11 @@ task :default => :spec
 desc "Generate RDoc"
 task :docs do
   FileUtils.rm_rf("doc")
-  require "rack/test"
-  system "hanna --title 'Rack::Test #{Rack::Test::VERSION} API Documentation'"
+  require "rack/test/version"
+  sh "rdoc --title 'Rack::Test #{Rack::Test::VERSION} API Documentation'"
 end
 
 desc 'Removes trailing whitespace'
 task :whitespace do
-  sh %{find . -name '*.rb' -exec sed -i '' 's/ *$//g' {} \\;}
+  sh %{find . -name '*.rb' -exec sed -i 's/ *$//g' {} \\;}
 end
