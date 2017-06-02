@@ -55,6 +55,7 @@ module Rack
 
       def self.actually_finalize(file)
         file.close
+        file.unlink
       end
 
     end
