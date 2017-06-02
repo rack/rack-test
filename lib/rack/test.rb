@@ -6,11 +6,10 @@ require "rack/test/mock_digest_request"
 require "rack/test/utils"
 require "rack/test/methods"
 require "rack/test/uploaded_file"
+require "rack/test/version"
 
 module Rack
   module Test
-    VERSION = "0.6.3"
-
     DEFAULT_HOST = "example.org"
     MULTIPART_BOUNDARY = "----------XnJLe9ZIbbGUYtzPQJ16u1"
 
@@ -185,8 +184,11 @@ module Rack
         unless last_response.redirect?
           raise Error.new("Last response was not a redirect. Cannot follow_redirect!")
         end
-
-        get(last_response["Location"], {}, { "HTTP_REFERER" => last_request.url })
+        if last_response.status == 307
+          send(last_request.request_method.downcase.to_sym, last_response["Location"], last_request.params, { "HTTP_REFERER" => last_request.url })
+        else
+          get(last_response["Location"], {}, { "HTTP_REFERER" => last_request.url })
+        end
       end
 
     private
