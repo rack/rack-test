@@ -33,14 +33,28 @@ describe Rack::Test::UploadedFile do
     expect(File.extname(uploaded_file.path)).to eq(".txt")
   end
 
-  context "it should call its destructor" do
-    it "calls the destructor" do
-      uploaded_file = Rack::Test::UploadedFile.new(test_file_path)
-
+  context 'it should call its destructor' do
+    it 'calls the destructor' do
       expect(Rack::Test::UploadedFile).to receive(:actually_finalize).at_least(:once)
 
-      uploaded_file = nil
-      GC.start
+      if RUBY_PLATFORM == 'java' && RUBY_VERSION == '2.3.1'
+        require 'java'
+        java_import 'java.lang.System'
+
+        20.times do |i|
+          uploaded_file = Rack::Test::UploadedFile.new(test_file_path)
+
+          uploaded_file = nil
+
+          System.gc()
+        end
+      else
+        uploaded_file = Rack::Test::UploadedFile.new(test_file_path)
+
+        uploaded_file = nil
+
+        GC.start
+      end
     end
   end
 end
