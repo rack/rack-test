@@ -30,6 +30,8 @@ module Rack
         @tempfile.set_encoding(Encoding::BINARY) if @tempfile.respond_to?(:set_encoding)
         @tempfile.binmode if binary
 
+        ObjectSpace.define_finalizer(self, self.class.finalize(@tempfile))
+
         FileUtils.copy_file(path, @tempfile.path)
       end
 
@@ -45,6 +47,15 @@ module Rack
 
       def respond_to?(method_name, include_private = false) #:nodoc:
         @tempfile.respond_to?(method_name, include_private) || super
+      end
+
+      def self.finalize(file)
+        proc { actually_finalize file }
+      end
+
+      def self.actually_finalize(file)
+        file.close
+        file.unlink
       end
 
     end

@@ -6,3 +6,4 @@ VERSION
 *.rbc
 *.swp
 /.bundle
+/.idea
