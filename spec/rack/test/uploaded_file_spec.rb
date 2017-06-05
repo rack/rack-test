@@ -37,7 +37,7 @@ describe Rack::Test::UploadedFile do
     it "calls the destructor" do
       expect(Rack::Test::UploadedFile).to receive(:actually_finalize).at_least(:once)
 
-      if RUBY_PLATFORM == 'java' && RUBY_VERSION == '2.3.1'
+      if RUBY_PLATFORM == 'java'
         require 'java'
         java_import 'java.lang.System'
 
