@@ -29,6 +29,13 @@ module Rack
       @last_request = Rack::Request.new(env)
       status, headers, body = @app.call(@last_request.env)
 
+      # Support for rack.hijack:
+      if headers["rack.hijack"]
+        body = StringIO.new
+        headers["rack.hijack"].call(body)
+        body.rewind
+      end
+
       @last_response = MockResponse.new(status, headers, body, env["rack.errors"].flush)
       body.close if body.respond_to?(:close)
 

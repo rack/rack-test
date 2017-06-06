@@ -186,6 +186,21 @@ describe Rack::Test::Session do
       end
     end
 
+    context "when rack.hijack is given" do
+      it "runs the hijacked input" do
+        app = lambda do |env|
+          jack = lambda do |io|
+            io.write "Hello, World!"
+            io.flush
+          end
+          [200, {"Content-Type" => "text/html", "rack.hijack" => jack}, []]
+        end
+        session = Rack::Test::Session.new(Rack::MockSession.new(app))
+        session.request("/")
+        session.last_response.body.should == "Hello, World!"
+      end
+    end
+
     context "when input is given" do
       it "sends the input" do
         request "/", :method => "POST", :input => "foo"
