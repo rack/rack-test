@@ -160,7 +160,7 @@ module Rack
       # Example:
       #   basic_authorize "bryan", "secret"
       def basic_authorize(username, password)
-        encoded_login = ["#{username}:#{password}"].pack("m*")
+        encoded_login = ["#{username}:#{password}"].pack("m0")
         header('Authorization', "Basic #{encoded_login}")
       end
 

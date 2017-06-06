@@ -26,6 +26,7 @@
     #125)
   * Update README code example quotes to be consistent. (Dmitry Gritsay #112)
   * Update README not to recommend installing gem with sudo. (T.J. Schuck #87)
+  * Removed new line from basic auth. (Felix Kleinschmidt #185)
 
 ## 0.6.3 / 2015-01-09
 
