@@ -48,6 +48,10 @@ module Rack
       def respond_to?(method_name, include_private = false) #:nodoc:
         @tempfile.respond_to?(method_name, include_private) || super
       end
+          
+      def to_hash
+        {content_type: self.content_type, original_filename: self.original_filename}
+      end
 
       def self.finalize(file)
         proc { actually_finalize file }
