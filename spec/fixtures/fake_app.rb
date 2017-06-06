@@ -94,7 +94,7 @@ module Rack
 
         response.set_cookie("value", {
           :value => params["value"],
-          :path => "/cookies",
+          :path => params["cookiepath"] || "/cookies",
           :expires => Time.now + 10
         })
         "Set"

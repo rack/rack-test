@@ -77,13 +77,13 @@ module Rack
 
         real_domain = domain =~ /^\./ ? domain[1..-1] : domain
         (!secure? || (secure? && uri.scheme == "https")) &&
-        uri.host =~ Regexp.new("#{Regexp.escape(real_domain)}$", Regexp::IGNORECASE) &&
-        uri.path =~ Regexp.new("^#{Regexp.escape(path)}")
+        uri.host =~ Regexp.new("#{Regexp.escape(real_domain)}$", Regexp::IGNORECASE)
       end
 
       # :api: private
       def matches?(uri)
-        ! expired? && valid?(uri)
+        ! expired? && valid?(uri) &&
+        (uri || default_uri).path =~ Regexp.new("^#{Regexp.escape(path)}")
       end
 
       # :api: private

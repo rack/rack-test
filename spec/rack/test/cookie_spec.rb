@@ -170,6 +170,15 @@ describe Rack::Test::Session do
       expect(last_request.cookies).to eq({ "count" => "2" })
     end
 
+    it "allows cookies to be set on some path" do
+      get "/cookies/set", "value" => "1", "cookiepath" => "/something"
+      get "/cookies/show"
+      last_request.cookies.should == {}
+      get "/cookies/set", "value" => "1", "cookiepath" => "/cookies/show"
+      get "/cookies/show"
+      last_request.cookies.should == { "value" => "1" }
+    end
+
     it "allows cookies to be cleared" do
       get "/cookies/set", "value" => "1"
       clear_cookies
