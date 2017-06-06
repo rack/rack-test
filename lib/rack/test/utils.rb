@@ -25,7 +25,7 @@ module Rack
         when NilClass
           prefix.to_s
         else
-          "#{prefix}=#{escape(value)}"
+          "#{escape(prefix)}=#{escape(value)}"
         end
       end
       module_function :build_nested_query
