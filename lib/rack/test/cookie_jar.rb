@@ -26,7 +26,9 @@ module Rack
       end
 
       def replaces?(other)
-        [name.downcase, domain, path] == [other.name.downcase, other.domain, other.path]
+        name.downcase == other.name.downcase &&
+        domain == other.domain &&
+        path == other.path
       end
 
       # :api: private
