@@ -1,0 +1,13 @@
+# Ref: default config
+# https://github.com/bbatsov/rubocop/blob/master/config/default.yml
+AllCops:
+  Include:
+    - '{lib,spec}/**/*.rb'
+    - 'Gemfile'
+    - 'Gemfile.rack-1.x'
+    - 'rack-test.gemspec'
+    - 'Rakefile'
+    - 'Thorfile'
+  DisplayCopNames: true
+  DisplayStyleGuide: true
+  ExtraDetails: true

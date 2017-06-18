@@ -26,6 +26,7 @@ request helpers feature.
   s.add_development_dependency 'rspec', '~> 3.6'
   s.add_development_dependency 'sinatra', '>= 1.0', '< 3'
   s.add_development_dependency 'rdoc', '~> 5.1'
+  s.add_development_dependency 'rubocop', '>= 0.49', '< 0.50'
   # Keep version < 1 to supress deprecated warning temporary.
   s.add_development_dependency 'codeclimate-test-reporter', '~> 0.6'
   # For Thorfile. Run "bundle exec thor help" to see the help.
