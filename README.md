@@ -1,7 +1,7 @@
 # Rack::Test
 [<img src="https://travis-ci.org/rack-test/rack-test.svg?branch=master" />](https://travis-ci.org/rack-test/rack-test)
-[<img src="https://codeclimate.com/github/brynary/rack-test.png" />](https://codeclimate.com/github/brynary/rack-test)
-[<img src="https://codeclimate.com/github/brynary/rack-test/coverage.png" />](https://codeclimate.com/github/brynary/rack-test)
+[<img src="https://codeclimate.com/github/rack-test/rack-test.png" />](https://codeclimate.com/github/rack-test/rack-test)
+[<img src="https://codeclimate.com/github/rack-test/rack-test/coverage.png" />](https://codeclimate.com/github/rack-test/rack-test)
 
 Code: https://github.com/rack-test/rack-test
 
