@@ -38,6 +38,14 @@ class HomepageTest < Test::Unit::TestCase
     assert last_response.ok?
     assert_equal last_response.body, "All responses are OK"
   end
+  
+  def set_request_headers
+    headers 'Accept-Charset', 'utf-8'
+    get "/"
+
+    assert last_response.ok?
+    assert_equal last_response.body, "All responses are OK"
+  end
 
   def test_response_is_ok_for_other_paths
     get "/other_paths"
