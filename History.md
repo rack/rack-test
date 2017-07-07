@@ -20,11 +20,11 @@
     Chris Marshall #120, Robert Reiz #126, Nic Benders #127, Nic Benders #130)
   * Feature/bulk pr for readme updates (Patrick Mulder #65,
     Troels Knak-Nielsen #74, Jeff Casimir #76)
-  * Switches README format to markdown (Dennis Sivia #176)
-  * Converts History.txt to markdown (Dennis Sivia #179)
+  * Switch README format to Markdown (Dennis Sivia #176)
+  * Convert History.txt to Markdown (Dennis Sivia #179)
   * Stop generating gemspec file. (Jun Aruga #181)
   * Fix errors at rake docs and whitespace. (Jun Aruga #183)
-  * FIX: Ensure Rack::Test::UploadedFile closes its tempfile file descriptor
+  * Fix ensure Rack::Test::UploadedFile closes its tempfile file descriptor
     on GC (Michael de Silva #180)
   * Change codeclimate URL correctly. (Jun Aruga #186)
 * Bug fixes
