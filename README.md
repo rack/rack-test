@@ -1,7 +1,7 @@
 # Rack::Test
 [<img src="https://travis-ci.org/rack-test/rack-test.svg?branch=master" />](https://travis-ci.org/rack-test/rack-test)
-[<img src="https://codeclimate.com/github/brynary/rack-test.png" />](https://codeclimate.com/github/brynary/rack-test)
-[<img src="https://codeclimate.com/github/brynary/rack-test/coverage.png" />](https://codeclimate.com/github/brynary/rack-test)
+[<img src="https://codeclimate.com/github/rack-test/rack-test.png" />](https://codeclimate.com/github/rack-test/rack-test)
+[<img src="https://codeclimate.com/github/rack-test/rack-test/coverage.png" />](https://codeclimate.com/github/rack-test/rack-test)
 
 Code: https://github.com/rack-test/rack-test
 
@@ -33,6 +33,14 @@ class HomepageTest < Test::Unit::TestCase
   end
 
   def test_response_is_ok
+    get "/"
+
+    assert last_response.ok?
+    assert_equal last_response.body, "All responses are OK"
+  end
+  
+  def set_request_headers
+    headers 'Accept-Charset', 'utf-8'
     get "/"
 
     assert last_response.ok?
