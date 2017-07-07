@@ -24,7 +24,7 @@
   * Convert History.txt to Markdown (Dennis Sivia #179)
   * Stop generating gemspec file. (Jun Aruga #181)
   * Fix errors at rake docs and whitespace. (Jun Aruga #183)
-  * Fix ensure Rack::Test::UploadedFile closes its tempfile file descriptor
+  * Ensure Rack::Test::UploadedFile closes its tempfile file descriptor
     on GC (Michael de Silva #180)
   * Change codeclimate URL correctly. (Jun Aruga #186)
 * Bug fixes
