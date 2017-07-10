@@ -1,4 +1,4 @@
-## master
+## 0.7.0 / 2017-07-10
 
 * Major enhancements
   * The project URL changed to https://github.com/rack-test/rack-test
