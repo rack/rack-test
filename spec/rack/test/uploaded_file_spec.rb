@@ -1,17 +1,17 @@
-require "spec_helper"
+require 'spec_helper'
 
 describe Rack::Test::UploadedFile do
   def test_file_path
-    File.dirname(__FILE__) + "/../../fixtures/foo.txt"
+    File.dirname(__FILE__) + '/../../fixtures/foo.txt'
   end
 
-  it "returns an instance of `Rack::Test::UploadedFile`" do
+  it 'returns an instance of `Rack::Test::UploadedFile`' do
     uploaded_file = Rack::Test::UploadedFile.new(test_file_path)
 
     expect(uploaded_file).to be_a(Rack::Test::UploadedFile)
   end
 
-  it "responds to things that Tempfile responds to" do
+  it 'responds to things that Tempfile responds to' do
     uploaded_file = Rack::Test::UploadedFile.new(test_file_path)
 
     expect(uploaded_file).to respond_to(:close)
@@ -30,29 +30,23 @@ describe Rack::Test::UploadedFile do
   it "creates Tempfiles with original file's extension" do
     uploaded_file = Rack::Test::UploadedFile.new(test_file_path)
 
-    expect(File.extname(uploaded_file.path)).to eq(".txt")
+    expect(File.extname(uploaded_file.path)).to eq('.txt')
   end
 
-  context "it should call its destructor" do
-    it "calls the destructor" do
+  context 'it should call its destructor' do
+    it 'calls the destructor' do
       expect(Rack::Test::UploadedFile).to receive(:actually_finalize).at_least(:once)
 
       if RUBY_PLATFORM == 'java'
         require 'java'
         java_import 'java.lang.System'
 
-        50.times do |i|
-          uploaded_file = Rack::Test::UploadedFile.new(test_file_path)
-
-          uploaded_file = nil
-
-          System.gc()
+        50.times do |_i|
+          Rack::Test::UploadedFile.new(test_file_path)
+          System.gc
         end
       else
-        uploaded_file = Rack::Test::UploadedFile.new(test_file_path)
-
-        uploaded_file = nil
-
+        Rack::Test::UploadedFile.new(test_file_path)
         GC.start
       end
     end

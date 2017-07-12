@@ -1,14 +1,13 @@
-require "rubygems"
-
+require 'rubygems'
 
 require 'rspec/core'
-require "rspec/core/rake_task"
+require 'rspec/core/rake_task'
 
-task default: :spec
+task default: %i[spec rubocop]
 
 RSpec::Core::RakeTask.new do |t|
-  t.pattern = "spec/**/*_spec.rb"
-  t.ruby_opts = "-w"
+  t.pattern = 'spec/**/*_spec.rb'
+  t.ruby_opts = '-w'
 end
 
 require 'rubocop/rake_task'
@@ -23,14 +22,14 @@ RuboCop::RakeTask.new
 #   t.rcov_opts = ['-x spec']
 # end
 
-desc "Generate RDoc"
+desc 'Generate RDoc'
 task :docs do
-  FileUtils.rm_rf("doc")
-  require "rack/test/version"
+  FileUtils.rm_rf('doc')
+  require 'rack/test/version'
   sh "rdoc --title 'Rack::Test #{Rack::Test::VERSION} API Documentation'"
 end
 
 desc 'Removes trailing whitespace'
 task :whitespace do
-  sh %{find . -name '*.rb' -exec sed -i 's/ *$//g' {} \\;}
+  sh %(find . -name '*.rb' -exec sed -i 's/ *$//g' {} \\;)
 end

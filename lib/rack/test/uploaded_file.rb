@@ -1,16 +1,14 @@
-require "tempfile"
-require "fileutils"
+require 'tempfile'
+require 'fileutils'
 
 module Rack
   module Test
-
     # Wraps a Tempfile with a content type. Including one or more UploadedFile's
     # in the params causes Rack::Test to build and issue a multipart request.
     #
     # Example:
     #   post "/photos", "file" => Rack::Test::UploadedFile.new("me.jpg", "image/jpeg")
     class UploadedFile
-
       # The filename, *not* including the path, of the "uploaded" file
       attr_reader :original_filename
 
@@ -20,7 +18,7 @@ module Rack
       # The content type of the "uploaded" file
       attr_accessor :content_type
 
-      def initialize(path, content_type = "text/plain", binary = false)
+      def initialize(path, content_type = 'text/plain', binary = false)
         raise "#{path} file does not exist" unless ::File.exist?(path)
 
         @content_type = content_type
@@ -39,7 +37,7 @@ module Rack
         @tempfile.path
       end
 
-      alias_method :local_path, :path
+      alias local_path path
 
       def method_missing(method_name, *args, &block) #:nodoc:
         @tempfile.__send__(method_name, *args, &block)
@@ -57,8 +55,6 @@ module Rack
         file.close
         file.unlink
       end
-
     end
-
   end
 end

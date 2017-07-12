@@ -1,8 +1,7 @@
-require "forwardable"
+require 'forwardable'
 
 module Rack
   module Test
-
     # This module serves as the primary integration point for using Rack::Test
     # in a testing environment. It depends on an app method being defined in the
     # same context, and provides the Rack::Test API methods (see Rack::Test::Session
@@ -56,26 +55,26 @@ module Rack
         @_current_session_names ||= [:default]
       end
 
-      METHODS = [
-        :request,
-        :get,
-        :post,
-        :put,
-        :patch,
-        :delete,
-        :options,
-        :head,
-        :follow_redirect!,
-        :header,
-        :env,
-        :set_cookie,
-        :clear_cookies,
-        :authorize,
-        :basic_authorize,
-        :digest_authorize,
-        :last_response,
-        :last_request
-      ]
+      METHODS = %i[
+        request
+        get
+        post
+        put
+        patch
+        delete
+        options
+        head
+        follow_redirect!
+        header
+        env
+        set_cookie
+        clear_cookies
+        authorize
+        basic_authorize
+        digest_authorize
+        last_response
+        last_request
+      ].freeze
 
       def_delegators :current_session, *METHODS
     end
