@@ -573,4 +573,20 @@ describe Rack::Test::Session do
       "options"
     end
   end
+
+  describe "#link" do
+    it_should_behave_like "any #verb methods"
+
+    def verb
+      "link"
+    end
+  end
+
+  describe "#unlink" do
+    it_should_behave_like "any #verb methods"
+
+    def verb
+      "unlink"
+    end
+  end
 end

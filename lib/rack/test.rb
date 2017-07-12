@@ -113,6 +113,24 @@ module Rack
         process_request(uri, env, &block)
       end
 
+      # Issue a LINK request for the given URI. See #get
+      #
+      # Example:
+      #   link "/"
+      def link(uri, params = {}, env = {}, &block)
+        env = env_for(uri, env.merge(:method => "LINK", :params => params))
+        process_request(uri, env, &block)
+      end
+
+      # Issue an UNLINK request for the given URI. See #get
+      #
+      # Example:
+      #   unlink "/"
+      def unlink(uri, params = {}, env = {}, &block)
+        env = env_for(uri, env.merge(:method => "UNLINK", :params => params))
+        process_request(uri, env, &block)
+      end
+
       # Issue a request to the Rack app for the given URI and optional Rack
       # environment. Stores the issues request object in #last_request and
       # the app's response in #last_response. Yield #last_response to a block
