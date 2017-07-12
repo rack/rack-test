@@ -4,12 +4,15 @@ require "rubygems"
 require 'rspec/core'
 require "rspec/core/rake_task"
 
+task default: :spec
+
 RSpec::Core::RakeTask.new do |t|
   t.pattern = "spec/**/*_spec.rb"
   t.ruby_opts = "-w"
 end
 
-task :default => :spec
+require 'rubocop/rake_task'
+RuboCop::RakeTask.new
 
 # desc "Run all specs in spec directory with RCov"
 # RSpec::Core::RakeTask.new(:rcov) do |t|

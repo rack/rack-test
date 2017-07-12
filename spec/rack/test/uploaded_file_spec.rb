@@ -41,7 +41,7 @@ describe Rack::Test::UploadedFile do
         require 'java'
         java_import 'java.lang.System'
 
-        20.times do |i|
+        50.times do |i|
           uploaded_file = Rack::Test::UploadedFile.new(test_file_path)
 
           uploaded_file = nil

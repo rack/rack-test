@@ -1,4 +1,7 @@
-## master
+## vNext / 2017-xx-xx
+  * Removed new line from basic auth. (Felix Kleinschmidt #185)
+
+## 0.7.0 / 2017-07-10
 
 * Major enhancements
   * The project URL changed to https://github.com/rack-test/rack-test
@@ -18,6 +21,15 @@
   * Add license to gemspec (Jordi Massaguer Pla #72, Anatol Pomozov #89,
     Anatol Pomozov #90, Johannes Barre #109, Mandaryn #115,
     Chris Marshall #120, Robert Reiz #126, Nic Benders #127, Nic Benders #130)
+  * Feature/bulk pr for readme updates (Patrick Mulder #65,
+    Troels Knak-Nielsen #74, Jeff Casimir #76)
+  * Switch README format to Markdown (Dennis Sivia #176)
+  * Convert History.txt to Markdown (Dennis Sivia #179)
+  * Stop generating gemspec file. (Jun Aruga #181)
+  * Fix errors at rake docs and whitespace. (Jun Aruga #183)
+  * Ensure Rack::Test::UploadedFile closes its tempfile file descriptor
+    on GC (Michael de Silva #180)
+  * Change codeclimate URL correctly. (Jun Aruga #186)
 * Bug fixes
   * Initialize digest_username before using it. (Guo Xiang Tan #116,
     John Drago #124, Mike Perham #154)
@@ -26,7 +38,9 @@
     #125)
   * Update README code example quotes to be consistent. (Dmitry Gritsay #112)
   * Update README not to recommend installing gem with sudo. (T.J. Schuck #87)
-  * Removed new line from basic auth. (Felix Kleinschmidt #185)
+  * Set scheme when using ENV to enable SSL (Neil Ang #155)
+  * Reuse request method and parameters on HTTP 307 redirect. (Martin Mauch
+    #138)
 
 ## 0.6.3 / 2015-01-09
 
