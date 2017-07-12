@@ -55,6 +55,7 @@ module Rack
       # Example:
       #   get "/"
       def get(uri, params = {}, env = {}, &block)
+        uri = URI.parse(uri)
         env = env_for(uri, env.merge(:method => "GET", :params => params))
         process_request(uri, env, &block)
       end
@@ -64,6 +65,7 @@ module Rack
       # Example:
       #   post "/signup", "name" => "Bryan"
       def post(uri, params = {}, env = {}, &block)
+        uri = URI.parse(uri)
         env = env_for(uri, env.merge(:method => "POST", :params => params))
         process_request(uri, env, &block)
       end
@@ -73,6 +75,7 @@ module Rack
       # Example:
       #   put "/"
       def put(uri, params = {}, env = {}, &block)
+        uri = URI.parse(uri)
         env = env_for(uri, env.merge(:method => "PUT", :params => params))
         process_request(uri, env, &block)
       end
@@ -82,6 +85,7 @@ module Rack
       # Example:
       #   patch "/"
       def patch(uri, params = {}, env = {}, &block)
+        uri = URI.parse(uri)
         env = env_for(uri, env.merge(:method => "PATCH", :params => params))
         process_request(uri, env, &block)
       end
@@ -91,6 +95,7 @@ module Rack
       # Example:
       #   delete "/"
       def delete(uri, params = {}, env = {}, &block)
+        uri = URI.parse(uri)
         env = env_for(uri, env.merge(:method => "DELETE", :params => params))
         process_request(uri, env, &block)
       end
@@ -100,6 +105,7 @@ module Rack
       # Example:
       #   options "/"
       def options(uri, params = {}, env = {}, &block)
+        uri = URI.parse(uri)
         env = env_for(uri, env.merge(:method => "OPTIONS", :params => params))
         process_request(uri, env, &block)
       end
@@ -109,6 +115,7 @@ module Rack
       # Example:
       #   head "/"
       def head(uri, params = {}, env = {}, &block)
+        uri = URI.parse(uri)
         env = env_for(uri, env.merge(:method => "HEAD", :params => params))
         process_request(uri, env, &block)
       end
@@ -121,6 +128,7 @@ module Rack
       # Example:
       #   request "/"
       def request(uri, env = {}, &block)
+        uri = URI.parse(uri)
         env = env_for(uri, env)
         process_request(uri, env, &block)
       end
@@ -193,8 +201,7 @@ module Rack
 
     private
 
-      def env_for(path, env)
-        uri = URI.parse(path)
+      def env_for(uri, env)
         uri.path = "/#{uri.path}" unless uri.path[0] == ?/
         uri.host ||= @default_host
 
@@ -242,7 +249,6 @@ module Rack
       end
 
       def process_request(uri, env)
-        uri = URI.parse(uri)
         uri.host ||= @default_host
         uri.scheme ||= "https" if env["HTTPS"] == "on"
 
@@ -254,7 +260,7 @@ module Rack
             "rack-test.digest_auth_retry" => true
           })
           auth_env.delete('rack.request')
-          process_request(uri.path, auth_env)
+          process_request(uri, auth_env)
         else
           yield last_response if block_given?
 
