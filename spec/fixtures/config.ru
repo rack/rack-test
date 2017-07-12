@@ -1,3 +1,3 @@
-require "fake_app"
+require 'fake_app'
 
 run Rack::Test::FakeApp

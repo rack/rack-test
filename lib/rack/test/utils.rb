@@ -1,6 +1,5 @@
 module Rack
   module Test
-
     module Utils # :nodoc:
       include Rack::Utils
       extend Rack::Utils
@@ -12,16 +11,14 @@ module Rack
             "#{prefix}[]="
           else
             value.map do |v|
-              unless unescape(prefix) =~ /\[\]$/
-                prefix = "#{prefix}[]"
-              end
-              build_nested_query(v, "#{prefix}")
-            end.join("&")
+              prefix = "#{prefix}[]" unless unescape(prefix) =~ /\[\]$/
+              build_nested_query(v, prefix.to_s)
+            end.join('&')
           end
         when Hash
           value.map do |k, v|
             build_nested_query(v, prefix ? "#{prefix}[#{escape(k)}]" : escape(k))
-          end.join("&")
+          end.join('&')
         when NilClass
           prefix.to_s
         else
@@ -32,9 +29,7 @@ module Rack
 
       def build_multipart(params, first = true, multipart = false)
         if first
-          unless params.is_a?(Hash)
-            raise ArgumentError, "value must be a Hash"
-          end
+          raise ArgumentError, 'value must be a Hash' unless params.is_a?(Hash)
 
           query = lambda { |value|
             case value
@@ -50,7 +45,7 @@ module Rack
           return nil unless multipart
         end
 
-        flattened_params = Hash.new
+        flattened_params = {}
 
         params.each do |key, value|
           k = first ? key.to_s : "[#{key}]"
@@ -58,23 +53,21 @@ module Rack
           case value
           when Array
             value.map do |v|
-
-              if (v.is_a?(Hash))
+              if v.is_a?(Hash)
                 nested_params = {}
-                build_multipart(v, false).each { |subkey, subvalue|
+                build_multipart(v, false).each do |subkey, subvalue|
                   nested_params[subkey] = subvalue
-                }
+                end
                 flattened_params["#{k}[]"] ||= []
                 flattened_params["#{k}[]"] << nested_params
               else
                 flattened_params["#{k}[]"] = value
               end
-
             end
           when Hash
-            build_multipart(value, false).each { |subkey, subvalue|
+            build_multipart(value, false).each do |subkey, subvalue|
               flattened_params[k + subkey] = subvalue
-            }
+            end
           else
             flattened_params[k] = value
           end
@@ -89,24 +82,25 @@ module Rack
       module_function :build_multipart
 
       private
+
       def build_parts(parameters)
         get_parts(parameters).join + "--#{MULTIPART_BOUNDARY}--\r"
       end
       module_function :build_parts
 
       def get_parts(parameters)
-        parameters.map { |name, value|
-          if name =~ /\[\]\Z/ && value.is_a?(Array) && value.all? {|v| v.is_a?(Hash)}
-            value.map { |hash|
+        parameters.map do |name, value|
+          if name =~ /\[\]\Z/ && value.is_a?(Array) && value.all? { |v| v.is_a?(Hash) }
+            value.map do |hash|
               new_value = {}
-              hash.each { |k, v| new_value[name+k] = v }
+              hash.each { |k, v| new_value[name + k] = v }
               get_parts(new_value).join
-            }.join
+            end.join
           else
             if value.respond_to?(:original_filename)
               build_file_part(name, value)
 
-            elsif value.is_a?(Array) and value.all? { |v| v.respond_to?(:original_filename) }
+            elsif value.is_a?(Array) && value.all? { |v| v.respond_to?(:original_filename) }
               value.map do |v|
                 build_file_part(name, v)
               end.join
@@ -116,14 +110,12 @@ module Rack
               Rack::Test.encoding_aware_strings? ? primitive_part.force_encoding('BINARY') : primitive_part
             end
           end
-        }
+        end
       end
       module_function :get_parts
 
       def build_primitive_part(parameter_name, value)
-        unless value.is_a? Array
-          value = [value]
-        end
+        value = [value] unless value.is_a? Array
         value.map do |v|
           <<-EOF
 --#{MULTIPART_BOUNDARY}\r
@@ -136,7 +128,7 @@ EOF
       module_function :build_primitive_part
 
       def build_file_part(parameter_name, uploaded_file)
-        ::File.open(uploaded_file.path, "rb") do |physical_file|
+        ::File.open(uploaded_file.path, 'rb') do |physical_file|
           physical_file.set_encoding(Encoding::BINARY) if physical_file.respond_to?(:set_encoding)
           <<-EOF
 --#{MULTIPART_BOUNDARY}\r
@@ -149,8 +141,6 @@ EOF
         end
       end
       module_function :build_file_part
-
     end
-
   end
 end

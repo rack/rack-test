@@ -1,9 +1,8 @@
-require "uri"
-require "time"
+require 'uri'
+require 'time'
 
 module Rack
   module Test
-
     class Cookie # :nodoc:
       include Rack::Utils
 
@@ -21,8 +20,8 @@ module Rack
         @name, @value = parse_query(@name_value_raw, ';').to_a.first
         @options = parse_query(options, ';')
 
-        @options["domain"]  ||= (uri.host || default_host)
-        @options["path"]    ||= uri.path.sub(/\/[^\/]*\Z/, "")
+        @options['domain']  ||= (uri.host || default_host)
+        @options['path']    ||= uri.path.sub(/\/[^\/]*\Z/, '')
       end
 
       def replaces?(other)
@@ -41,25 +40,25 @@ module Rack
 
       # :api: private
       def domain
-        @options["domain"]
+        @options['domain']
       end
 
       def secure?
-        @options.has_key?("secure")
+        @options.key?('secure')
       end
 
       def http_only?
-        @options.has_key?('HttpOnly')
+        @options.key?('HttpOnly')
       end
 
       # :api: private
       def path
-        @options["path"].strip || "/"
+        @options['path'].strip || '/'
       end
 
       # :api: private
       def expires
-        Time.parse(@options["expires"]) if @options["expires"]
+        Time.parse(@options['expires']) if @options['expires']
       end
 
       # :api: private
@@ -71,19 +70,17 @@ module Rack
       def valid?(uri)
         uri ||= default_uri
 
-        if uri.host.nil?
-          uri.host = @default_host
-        end
+        uri.host = @default_host if uri.host.nil?
 
         real_domain = domain =~ /^\./ ? domain[1..-1] : domain
-        (!secure? || (secure? && uri.scheme == "https")) &&
-        uri.host =~ Regexp.new("#{Regexp.escape(real_domain)}$", Regexp::IGNORECASE) &&
-        uri.path =~ Regexp.new("^#{Regexp.escape(path)}")
+        (!secure? || (secure? && uri.scheme == 'https')) &&
+          uri.host =~ Regexp.new("#{Regexp.escape(real_domain)}$", Regexp::IGNORECASE) &&
+          uri.path =~ Regexp.new("^#{Regexp.escape(path)}")
       end
 
       # :api: private
       def matches?(uri)
-        ! expired? && valid?(uri)
+        !expired? && valid?(uri)
       end
 
       # :api: private
@@ -91,25 +88,24 @@ module Rack
         # Orders the cookies from least specific to most
         [name, path, domain.reverse] <=> [other.name, other.path, other.domain.reverse]
       end
+
       def to_h
         @options.merge(
           'value'    => @value,
           'HttpOnly' => http_only?,
-          'secure'   => secure?,
+          'secure'   => secure?
         )
       end
-      alias_method :to_hash, :to_h
+      alias to_hash to_h
 
-    protected
+      protected
 
       def default_uri
-        URI.parse("//" + @default_host + "/")
+        URI.parse('//' + @default_host + '/')
       end
-
     end
 
     class CookieJar # :nodoc:
-
       # :api: private
       def initialize(cookies = [], default_host = DEFAULT_HOST)
         @default_host = default_host
@@ -128,7 +124,7 @@ module Rack
       end
 
       def get_cookie(name)
-        hash_for(nil).fetch(name,nil)
+        hash_for(nil).fetch(name, nil)
       end
 
       def delete(name)
@@ -142,7 +138,7 @@ module Rack
 
         if raw_cookies.is_a? String
           raw_cookies = raw_cookies.split("\n")
-          raw_cookies.reject!{|c| c.empty? }
+          raw_cookies.reject!(&:empty?)
         end
 
         raw_cookies.each do |raw_cookie|
@@ -162,7 +158,7 @@ module Rack
 
       # :api: private
       def for(uri)
-        hash_for(uri).values.map { |c| c.raw }.join(';')
+        hash_for(uri).values.map(&:raw).join(';')
       end
 
       def to_hash
@@ -172,10 +168,10 @@ module Rack
           cookies[name] = cookie.value
         end
 
-        return cookies
+        cookies
       end
 
-    protected
+      protected
 
       def hash_for(uri = nil)
         cookies = {}
@@ -189,10 +185,8 @@ module Rack
           cookies[cookie.name] = cookie if !uri || cookie.matches?(uri)
         end
 
-        return cookies
+        cookies
       end
-
     end
-
   end
 end
