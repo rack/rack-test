@@ -141,6 +141,14 @@ module Rack
         end
       end
 
+      # Get all headers 
+      #
+      # Example:
+      #  {"User-Agent"=>"Firefox"}
+      def headers
+        @headers
+      end
+
       # Set an env var to be included on all subsequent requests through the
       # session. Use a value of nil to remove a previously configured env.
       #

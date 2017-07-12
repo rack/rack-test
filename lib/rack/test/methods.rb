@@ -67,6 +67,7 @@ module Rack
         :head,
         :follow_redirect!,
         :header,
+        :headers,
         :env,
         :set_cookie,
         :clear_cookies,
