@@ -29,6 +29,32 @@ describe Rack::Test::Session do
       expect(last_request.cookies).to eq({})
     end
 
+    it 'uses the first path when many paths are defiend' do
+      cookie_string = [
+      '/',
+      'csrf_id=ABC123',
+      'path=/, _github_ses=ABC123',
+      'path=/',
+      'expires=Wed, 01 Jan 2020 08:00:00 GMT',
+      'HttpOnly'
+      ].join('; ')
+      cookie = Rack::Test::Cookie.new(cookie_string)
+      cookie.path.should == '/'
+    end
+
+    it 'uses the first path when many paths are defiend' do
+      cookie_string = [
+      '/',
+      'csrf_id=ABC123',
+      'path=/',
+      'expires=Wed, 01 Jan 2020 08:00:00 GMT',
+      'HttpOnly'
+      ].join('; ')
+      cookie = Rack::Test::Cookie.new(cookie_string)
+      cookie.path.should == '/'
+    end
+
+
     it "escapes cookie values" do
       jar = Rack::Test::CookieJar.new
       jar["value"] = "foo;abc"
