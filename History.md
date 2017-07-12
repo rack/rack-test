@@ -1,5 +1,5 @@
 ## vNext / 2017-xx-xx
-  * Removed new line from basic auth. (Felix Kleinschmidt #185)
+  * Remove new line from basic auth. (Felix Kleinschmidt #185, closes #64)
 
 ## 0.7.0 / 2017-07-10
 
