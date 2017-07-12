@@ -339,12 +339,12 @@ describe Rack::Test::Session do
     end
   end
 
-  describe "#authorize" do
+  describe "#basic_authorize" do
     it "sets the HTTP_AUTHORIZATION header" do
       authorize "bryan", "secret"
       request "/"
 
-      expect(last_request.env["HTTP_AUTHORIZATION"]).to eq("Basic YnJ5YW46c2VjcmV0\n")
+      expect(last_request.env["HTTP_AUTHORIZATION"]).to eq("Basic YnJ5YW46c2VjcmV0")
     end
 
     it "includes the header for subsequent requests" do
@@ -352,7 +352,7 @@ describe Rack::Test::Session do
       request "/"
       request "/"
 
-      expect(last_request.env["HTTP_AUTHORIZATION"]).to eq("Basic YnJ5YW46c2VjcmV0\n")
+      expect(last_request.env["HTTP_AUTHORIZATION"]).to eq("Basic YnJ5YW46c2VjcmV0")
     end
   end
 
