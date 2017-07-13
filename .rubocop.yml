@@ -1,4 +1,4 @@
-# Ref: default config
+# Ref: default config, with minor tweaks
 # https://github.com/bbatsov/rubocop/blob/master/config/default.yml
 AllCops:
   Include:
@@ -11,3 +11,9 @@ AllCops:
   DisplayCopNames: true
   DisplayStyleGuide: true
   ExtraDetails: true
+
+# Rationale: defalt approach forces us to indent multiline `foo = if bar` statements in an unreasonable way.
+Lint/EndAlignment:
+  EnforcedStyleAlignWith: variable
+
+inherit_from: .rubocop_todo.yml

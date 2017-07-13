@@ -1,5 +1,4 @@
 module Rack
-
   class MockSession # :nodoc:
     attr_writer :cookie_jar
     attr_reader :default_host
@@ -25,16 +24,16 @@ module Rack
     end
 
     def request(uri, env)
-      env["HTTP_COOKIE"] ||= cookie_jar.for(uri)
+      env['HTTP_COOKIE'] ||= cookie_jar.for(uri)
       @last_request = Rack::Request.new(env)
       status, headers, body = @app.call(@last_request.env)
 
-      @last_response = MockResponse.new(status, headers, body, env["rack.errors"].flush)
+      @last_response = MockResponse.new(status, headers, body, env['rack.errors'].flush)
       body.close if body.respond_to?(:close)
 
-      cookie_jar.merge(last_response.headers["Set-Cookie"], uri)
+      cookie_jar.merge(last_response.headers['Set-Cookie'], uri)
 
-      @after_request.each { |hook| hook.call }
+      @after_request.each(&:call)
 
       if @last_response.respond_to?(:finish)
         @last_response.finish
@@ -46,21 +45,19 @@ module Rack
     # Return the last request issued in the session. Raises an error if no
     # requests have been sent yet.
     def last_request
-      raise Rack::Test::Error.new("No request yet. Request a page first.") unless @last_request
+      raise Rack::Test::Error, 'No request yet. Request a page first.' unless @last_request
       @last_request
     end
 
     # Return the last response received in the session. Raises an error if
     # no requests have been sent yet.
     def last_response
-      raise Rack::Test::Error.new("No response yet. Request a page first.") unless @last_response
+      raise Rack::Test::Error, 'No response yet. Request a page first.' unless @last_response
       @last_response
     end
 
     def cookie_jar
       @cookie_jar ||= Rack::Test::CookieJar.new([], @default_host)
     end
-
   end
-
 end

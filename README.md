@@ -80,11 +80,21 @@ end
 
 To install the latest release as a gem:
 
-`gem install rack-test`
+```
+gem install rack-test
+```
 
 Or via Bundler:
 
-`gem "rack-test", require: "rack/test"`
+```
+gem 'rack-test', require: 'rack/test'
+```
+
+Or to install unreleased version via Bundler:
+
+```
+gem 'rack-test', github: 'rack-test', branch: 'master'
+```
 
 ## Authors
 
