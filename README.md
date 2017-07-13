@@ -1,7 +1,7 @@
 # Rack::Test
 [<img src="https://travis-ci.org/rack-test/rack-test.svg?branch=master" />](https://travis-ci.org/rack-test/rack-test)
-[<img src="https://codeclimate.com/github/rack-test/rack-test.svg" />](https://codeclimate.com/github/rack-test/rack-test)
-[<img src="https://codeclimate.com/github/rack-test/rack-test/badges/coverage.svg" />](https://codeclimate.com/github/rack-test/rack-test)
+[![Code Climate](https://codeclimate.com/github/codeclimate/codeclimate/badges/gpa.svg)](https://codeclimate.com/github/codeclimate/codeclimate)
+[![Test Coverage](https://codeclimate.com/github/codeclimate/codeclimate/badges/coverage.svg)](https://codeclimate.com/github/codeclimate/codeclimate/coverage)
 
 Code: https://github.com/rack-test/rack-test
 
