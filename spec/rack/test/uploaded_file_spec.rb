@@ -14,17 +14,9 @@ describe Rack::Test::UploadedFile do
   it 'responds to things that Tempfile responds to' do
     uploaded_file = Rack::Test::UploadedFile.new(test_file_path)
 
-    expect(uploaded_file).to respond_to(:close)
-    expect(uploaded_file).to respond_to(:close!)
-    expect(uploaded_file).to respond_to(:delete)
-    expect(uploaded_file).to respond_to(:length)
-    expect(uploaded_file).to respond_to(:open)
-    expect(uploaded_file).to respond_to(:path)
-    expect(uploaded_file).to respond_to(:size)
-    expect(uploaded_file).to respond_to(:unlink)
-    expect(uploaded_file).to respond_to(:read)
-    expect(uploaded_file).to respond_to(:original_filename)
-    expect(uploaded_file).to respond_to(:tempfile) # Allows calls to params[:file].tempfile
+    Tempfile.public_instance_methods(false).each do |method|
+      expect(uploaded_file).to respond_to(method)
+    end
   end
 
   it "creates Tempfiles with original file's extension" do
@@ -48,6 +40,29 @@ describe Rack::Test::UploadedFile do
       else
         Rack::Test::UploadedFile.new(test_file_path)
         GC.start
+      end
+    end
+  end
+
+  describe '#initialize' do
+    subject { -> { uploaded_file } }
+    let(:uploaded_file) { described_class.new(io, original_filename: original_filename) }
+
+    context 'with an IO object' do
+      let(:io) { StringIO.new('I am content') }
+
+      context 'with an original filename' do
+        let(:original_filename) { 'content.txt' }
+
+        it 'sets the specified filename' do
+          subject.call
+          uploaded_file.original_filename.should == original_filename
+        end
+      end
+
+      context 'without an original filename' do
+        let(:original_filename) { nil }
+        it { should raise_error(ArgumentError) }
       end
     end
   end

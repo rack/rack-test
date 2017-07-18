@@ -128,17 +128,15 @@ EOF
       module_function :build_primitive_part
 
       def build_file_part(parameter_name, uploaded_file)
-        ::File.open(uploaded_file.path, 'rb') do |physical_file|
-          physical_file.set_encoding(Encoding::BINARY) if physical_file.respond_to?(:set_encoding)
-          <<-EOF
+        uploaded_file.set_encoding(Encoding::BINARY) if uploaded_file.respond_to?(:set_encoding)
+        <<-EOF
 --#{MULTIPART_BOUNDARY}\r
 Content-Disposition: form-data; name="#{parameter_name}"; filename="#{escape(uploaded_file.original_filename)}"\r
 Content-Type: #{uploaded_file.content_type}\r
-Content-Length: #{::File.stat(uploaded_file.path).size}\r
+Content-Length: #{uploaded_file.size}\r
 \r
-#{physical_file.read}\r
+#{uploaded_file.read}\r
 EOF
-        end
       end
       module_function :build_file_part
     end
