@@ -25,11 +25,6 @@ Lint/AssignmentInCondition:
 Metrics/AbcSize:
   Max: 58
 
-# Offense count: 20
-# Configuration parameters: CountComments, ExcludedMethods.
-Metrics/BlockLength:
-  Max: 455
-
 # Offense count: 2
 # Configuration parameters: CountComments.
 Metrics/ClassLength:
