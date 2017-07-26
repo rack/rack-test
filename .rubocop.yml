@@ -12,8 +12,14 @@ AllCops:
   DisplayStyleGuide: true
   ExtraDetails: true
 
-# Rationale: defalt approach forces us to indent multiline `foo = if bar` statements in an unreasonable way.
+# Rationale: default approach forces us to indent multiline `foo = if bar` statements in an unreasonable way.
 Lint/EndAlignment:
   EnforcedStyleAlignWith: variable
 
 inherit_from: .rubocop_todo.yml
+
+# Rationale: RSpec blocks are very long and not necessary bad. The gemspec is a configuration
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*
+    - rack-test.gemspec
