@@ -19,6 +19,8 @@ to build on.
 * Small footprint. Approximately 200 LOC
 
 ## Examples
+(The examples use `Test::Unit` but it's equally possible to use `rack-test` with other testing frameworks like `rspec`.)
+
 ```ruby
 require "test/unit"
 require "rack/test"
@@ -33,25 +35,32 @@ class HomepageTest < Test::Unit::TestCase
   end
 
   def test_response_is_ok
-    get "/"
+    get '/'
 
     assert last_response.ok?
-    assert_equal last_response.body, "All responses are OK"
+    assert_equal last_response.body, 'All responses are OK'
   end
 
   def set_request_headers
     headers 'Accept-Charset', 'utf-8'
-    get "/"
+    get '/'
 
     assert last_response.ok?
-    assert_equal last_response.body, "All responses are OK"
+    assert_equal last_response.body, 'All responses are OK'
   end
 
   def test_response_is_ok_for_other_paths
-    get "/other_paths"
+    get '/other_paths'
 
     assert last_response.ok?
-    assert_equal last_response.body, "All responses are OK"
+    assert_equal last_response.body, 'All responses are OK'
+  end
+  
+  def post_with_json
+    # No assertion in this, we just demonstrate how you can post a JSON-encoded string.
+    # By default, Rack::Test will use HTTP form encoding if you pass in a Hash as the
+    # parameters, so make sure that `json` below is already a JSON-serialized string.
+    post(uri, json, { 'CONTENT_TYPE' => 'application/json' })
   end
 end
 ```
