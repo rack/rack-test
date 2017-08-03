@@ -56,7 +56,7 @@ describe Rack::Test::UploadedFile do
 
         it 'sets the specified filename' do
           subject.call
-          uploaded_file.original_filename.should == original_filename
+          expect(uploaded_file.original_filename).to eq(original_filename)
         end
       end
 
