@@ -28,7 +28,7 @@ describe Rack::Test::Session do
       expect(last_request.cookies).to eq({})
     end
 
-    it 'uses the first "path" when many paths is defined when given many paths' do
+    it 'uses the first "path" when multiple paths are defined' do
       cookie_string = [
         '/',
         'csrf_id=ABC123',
@@ -41,7 +41,7 @@ describe Rack::Test::Session do
       expect(cookie.path).to eq('/')
     end
 
-    it 'uses the first path when many paths is defined' do
+    it 'uses the single "path" when only one path is defined' do
       cookie_string = [
         '/',
         'csrf_id=ABC123',
