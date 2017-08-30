@@ -62,8 +62,9 @@ module Rack
         raise "#{path} file does not exist" unless ::File.exist?(path)
 
         @original_filename = ::File.basename(path)
+        extension = ::File.extname(@original_filename)
 
-        @tempfile = Tempfile.new([@original_filename, ::File.extname(path)])
+        @tempfile = Tempfile.new([::File.basename(@original_filename, extension), extension])
         @tempfile.set_encoding(Encoding::BINARY) if @tempfile.respond_to?(:set_encoding)
 
         ObjectSpace.define_finalizer(self, self.class.finalize(@tempfile))

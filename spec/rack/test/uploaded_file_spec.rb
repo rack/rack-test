@@ -25,6 +25,12 @@ describe Rack::Test::UploadedFile do
     expect(File.extname(uploaded_file.path)).to eq('.txt')
   end
 
+  it 'creates Tempfiles with a path that includes a single extension' do
+    uploaded_file = Rack::Test::UploadedFile.new(test_file_path)
+
+    expect(uploaded_file.path).to_not match(/foo.txt/)
+  end
+
   context 'it should call its destructor' do
     it 'calls the destructor' do
       expect(Rack::Test::UploadedFile).to receive(:actually_finalize).at_least(:once)
