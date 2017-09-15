@@ -43,7 +43,7 @@ class HomepageTest < Test::Unit::TestCase
   end
 
   def set_request_headers
-    headers 'Accept-Charset', 'utf-8'
+    header 'Accept-Charset', 'utf-8'
     get '/'
 
     assert last_response.ok?
