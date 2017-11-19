@@ -1,4 +1,4 @@
-## 0.8.0 / 2017-xx-xx
+## 0.8.0 / 2017-11-19
 
 * Minor enhancements
   * Add a required_ruby_version of >= 2.2.2, similar to rack 2.0.1.
