@@ -1,8 +1,9 @@
 ## 0.8.0 / 2017-11-20
 
 * Known Issue
-  * In `UploadedFile.new`, when passing an `IO`, an `ArgumentError`
-    can be raised. See #207, #209.
+  * In `UploadedFile.new`, when passing an `IO` (eg. a `Pathname`)
+    errors can be raised (eg. `ArgumentError: Missing original_filename 
+    for IO`, or `NoMethodError: undefined method 'size'`) See #207, #209.
 * Minor enhancements
   * Add a required_ruby_version of >= 2.2.2, similar to rack 2.0.1.
     (Samuel Giddins #194)
