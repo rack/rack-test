@@ -1,9 +1,8 @@
 ## 0.8.0 / 2017-11-20
 
-* Breaking Change
-  * In `UploadedFile.new`, when passing a `Pathname`, an additional argument
-    is now required (`original_filename`). Provide the new argument or
-    call `to_s` on your `Pathname`.
+* Known Issue
+  * In `UploadedFile.new`, when passing an `IO`, an `ArgumentError`
+    can be raised. See #207, #209.
 * Minor enhancements
   * Add a required_ruby_version of >= 2.2.2, similar to rack 2.0.1.
     (Samuel Giddins #194)
