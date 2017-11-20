@@ -1,7 +1,7 @@
 ## 0.8.0 / 2017-11-20
 
 * Known Issue
-  * In `UploadedFile.new`, when passing an `IO` (eg. a `Pathname`)
+  * In `UploadedFile.new`, when passing e.g. a `Pathname` object,
     errors can be raised (eg. `ArgumentError: Missing original_filename 
     for IO`, or `NoMethodError: undefined method 'size'`) See #207, #209.
 * Minor enhancements
