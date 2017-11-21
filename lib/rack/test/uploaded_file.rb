@@ -28,7 +28,7 @@ module Rack
       # @param original_filename [String] an optional parameter that provides the original filename if `content` is an IO
       #   object.
       def initialize(content, content_type = 'text/plain', binary = false, original_filename: nil)
-        if content.respond_to?(:read) && !content.is_a?(Pathname)
+        if content.respond_to?(:read) && (content.is_a?(IO) || content.is_a?(StringIO))
           initialize_from_io(content, original_filename)
         else
           initialize_from_file_path(content)
