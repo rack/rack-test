@@ -1,4 +1,4 @@
-## 0.8.1 / 2017-11-21
+## 0.8.2 / 2017-11-21
 
 * Bug fixes:
   * Bugfix for `UploadedFile.new` unintended API breakage.
