@@ -1,5 +1,6 @@
-require 'tempfile'
 require 'fileutils'
+require 'pathname'
+require 'tempfile'
 
 module Rack
   module Test
@@ -18,8 +19,16 @@ module Rack
       # The content type of the "uploaded" file
       attr_accessor :content_type
 
+      # Creates a new UploadedFile instance.
+      #
+      # @param content [IO, Pathname, String, StringIO] a path to a file, or an {IO} or {StringIO} object representing the
+      #   file.
+      # @param content_type [String]
+      # @param binary [Boolean] an optional flag that indicates whether the file should be open in binary mode or not.
+      # @param original_filename [String] an optional parameter that provides the original filename if `content` is an IO
+      #   object.
       def initialize(content, content_type = 'text/plain', binary = false, original_filename: nil)
-        if content.respond_to?(:read)
+        if content.respond_to?(:read) && (content.is_a?(IO) || content.is_a?(StringIO))
           initialize_from_io(content, original_filename)
         else
           initialize_from_file_path(content)
