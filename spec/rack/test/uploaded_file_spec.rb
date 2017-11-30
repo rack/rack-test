@@ -28,7 +28,8 @@ describe Rack::Test::UploadedFile do
   it 'creates Tempfiles with a path that includes a single extension' do
     uploaded_file = Rack::Test::UploadedFile.new(test_file_path)
 
-    expect(uploaded_file.path).to_not match(/foo.txt/)
+    regex = /foo#{Time.now.year}.*\.txt\Z/
+    expect(uploaded_file.path).to match(regex)
   end
 
   context 'it should call its destructor' do
