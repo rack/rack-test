@@ -14,9 +14,10 @@ script:
   - ruby -e 'require "rack/test"'
   - gem specification pkg/rack-test-*.gem --ruby
 rvm:
-  - 2.2.7
-  - 2.3.4
-  - 2.4.2
+  - 2.2.9
+  - 2.3.6
+  - 2.4.3
+  - 2.5.0
   - ruby-head
   - jruby-9.1.13.0
   - jruby-head
