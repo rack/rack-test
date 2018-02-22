@@ -1,5 +1,29 @@
-## vNext / 2017-xx-xx
-  * Remove new line from basic auth. (Felix Kleinschmidt #185, closes #64)
+## 0.8.2 / 2017-11-21
+
+* Bug fixes:
+  * Bugfix for `UploadedFile.new` unintended API breakage.
+    (Per Lundberg #210)
+
+## 0.8.0 / 2017-11-20
+
+* Known Issue
+  * In `UploadedFile.new`, when passing e.g. a `Pathname` object,
+    errors can be raised (eg. `ArgumentError: Missing original_filename
+    for IO`, or `NoMethodError: undefined method 'size'`) See #207, #209.
+* Minor enhancements
+  * Add a required_ruby_version of >= 2.2.2, similar to rack 2.0.1.
+    (Samuel Giddins #194)
+  * Remove new line from basic auth. (Felix Kleinschmidt #185)
+  * Rubocop fixes (Per Lundberg #196)
+  * Add how to install rack-test from github to README. (Jun Aruga #189)
+  * Update CodeClimate badges (Toshimaru #195)
+  * Add the ability to create Test::UploadedFile instances without
+    the file system (Adam Milligan #149)
+  * Add custom_request, remove duplication (Johannes Barre #184)
+  * README.md: Added note about how to post JSON (Per Lundberg #198)
+  * README.md: Added version badge (Per Lundberg #199)
+* Bug fixes
+  * Bugfix for Cookies with multiple paths (Kyle Welsby #197)
 
 ## 0.7.0 / 2017-07-10
 

@@ -19,6 +19,15 @@ to build on.
 * Set request headers to be used by all subsequent requests
 * Small footprint. Approximately 200 LOC
 
+## Supported platforms
+
+* 2.2.2+
+* 2.3
+* 2.4
+* JRuby 9.1.+
+
+If you are using Ruby 1.8, 1.9 or JRuby 1.7, use rack-test 0.6.3.
+
 ## Examples
 (The examples use `Test::Unit` but it's equally possible to use `rack-test` with other testing frameworks like `rspec`.)
 
@@ -43,7 +52,7 @@ class HomepageTest < Test::Unit::TestCase
   end
 
   def set_request_headers
-    headers 'Accept-Charset', 'utf-8'
+    header 'Accept-Charset', 'utf-8'
     get '/'
 
     assert last_response.ok?
