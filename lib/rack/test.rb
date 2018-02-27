@@ -217,30 +217,30 @@ module Rack
         # Stringifying and upcasing methods has be commit upstream
         env['REQUEST_METHOD'] ||= env[:method] ? env[:method].to_s.upcase : 'GET'
 
-        if %w[GET DELETE].include?(env['REQUEST_METHOD'])
+        params = env.delete(:params) do {} end
+
+        if env['REQUEST_METHOD'] == 'GET'
           # merge :params with the query string
-          if params = env[:params]
+          if params
             params = parse_nested_query(params) if params.is_a?(String)
 
             uri.query = [uri.query, build_nested_query(params)].compact.reject { |v| v == '' }.join('&')
           end
         elsif !env.key?(:input)
-          env['CONTENT_TYPE'] ||= 'application/x-www-form-urlencoded'
+          env['CONTENT_TYPE'] ||= 'application/x-www-form-urlencoded' unless params.nil?
 
-          if env[:params].is_a?(Hash)
-            if data = build_multipart(env[:params])
+          if params.is_a?(Hash)
+            if data = build_multipart(params)
               env[:input] = data
               env['CONTENT_LENGTH'] ||= data.length.to_s
               env['CONTENT_TYPE'] = "multipart/form-data; boundary=#{MULTIPART_BOUNDARY}"
             else
-              env[:input] = params_to_string(env[:params])
+              env[:input] = params_to_string(params)
             end
           else
-            env[:input] = env[:params]
+            env[:input] = params
           end
         end
-
-        env.delete(:params)
 
         set_cookie(env.delete(:cookie), uri) if env.key?(:cookie)
 
