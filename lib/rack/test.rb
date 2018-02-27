@@ -217,7 +217,7 @@ module Rack
         # Stringifying and upcasing methods has be commit upstream
         env['REQUEST_METHOD'] ||= env[:method] ? env[:method].to_s.upcase : 'GET'
 
-        params = env.delete(:params, {})
+        params = env.delete(:params) do {} end
 
         if env['REQUEST_METHOD'] == 'GET'
           # merge :params with the query string
