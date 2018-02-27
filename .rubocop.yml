@@ -23,3 +23,7 @@ Metrics/BlockLength:
   Exclude:
     - spec/**/*
     - rack-test.gemspec
+
+# Rationale: allow Weirich-style blocks, but do not enforce them.
+Style/BlockDelimiters:
+  Enabled: false

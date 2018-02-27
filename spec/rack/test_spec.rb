@@ -463,6 +463,11 @@ describe Rack::Test::Session do
       expect(last_request.env['HTTP_USER_AGENT']).to eq('Rack::Test')
     end
 
+    it 'does not set CONTENT_TYPE if params are explicitly set to nil' do
+      public_send(verb, '/', nil)
+      expect(last_request.env['CONTENT_TYPE']).to be_nil
+    end
+
     it 'yields the response to a given block' do
       yielded = false
 
@@ -600,12 +605,6 @@ describe Rack::Test::Session do
 
     def verb
       'delete'
-    end
-
-    it 'does not set a content type' do
-      delete '/'
-
-      expect(last_request.env['CONTENT_TYPE']).to be_nil
     end
   end
 
