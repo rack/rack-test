@@ -188,11 +188,17 @@ module Rack
         unless last_response.redirect?
           raise Error, 'Last response was not a redirect. Cannot follow_redirect!'
         end
-        if last_response.status == 307
-          send(last_request.request_method.downcase.to_sym, last_response['Location'], last_request.params, 'HTTP_REFERER' => last_request.url)
-        else
-          get(last_response['Location'], {}, 'HTTP_REFERER' => last_request.url)
-        end
+        request_method, params =
+          if last_response.status == 307
+            [last_request.request_method.downcase.to_sym, last_request.params]
+          else
+            [:get, {}]
+          end
+        send(
+          request_method, last_response['Location'], params,
+          'HTTP_REFERER' => last_request.url,
+          'rack.session' => last_request.session
+        )
       end
 
       private

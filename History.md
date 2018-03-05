@@ -1,3 +1,8 @@
+## master
+
+* Minor enhancements
+  * Save `session` during `follow_redirect!`
+
 ## 0.8.2 / 2017-11-21
 
 * Bug fixes:
