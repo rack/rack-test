@@ -2,6 +2,7 @@
 
 * Minor enhancements
   * Save `session` during `follow_redirect!`
+    (Alexander Popov #218)
 
 ## 0.8.2 / 2017-11-21
 
