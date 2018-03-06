@@ -28,6 +28,10 @@ to build on.
 
 If you are using Ruby 1.8, 1.9 or JRuby 1.7, use rack-test 0.6.3.
 
+## Known incompatibilites
+
+* `rack-test >= 0.71` _does not_ work with older Capybara versions (`< 2.17`). See [#214](https://github.com/rack-test/rack-test/issues/214) for more details.
+
 ## Examples
 (The examples use `Test::Unit` but it's equally possible to use `rack-test` with other testing frameworks like `rspec`.)
 
