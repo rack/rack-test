@@ -606,6 +606,11 @@ describe Rack::Test::Session do
     def verb
       'delete'
     end
+
+    it 'uses the provided params hash' do
+      delete '/', foo: 'bar'
+      expect(last_request.GET).to eq('foo' => 'bar')
+    end
   end
 
   describe '#options' do
