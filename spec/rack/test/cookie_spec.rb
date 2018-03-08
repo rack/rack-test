@@ -36,7 +36,7 @@ describe Rack::Test::Session do
         'path=/',
         'expires=Wed, 01 Jan 2020 08:00:00 GMT',
         'HttpOnly'
-      ].join('; ')
+      ].join(Rack::Test::CookieJar::DELIMITER)
       cookie = Rack::Test::Cookie.new(cookie_string)
       expect(cookie.path).to eq('/')
     end
@@ -48,7 +48,7 @@ describe Rack::Test::Session do
         'path=/',
         'expires=Wed, 01 Jan 2020 08:00:00 GMT',
         'HttpOnly'
-      ].join('; ')
+      ].join(Rack::Test::CookieJar::DELIMITER)
       cookie = Rack::Test::Cookie.new(cookie_string)
       expect(cookie.path).to eq('/')
     end

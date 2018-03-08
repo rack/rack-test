@@ -11,15 +11,15 @@ describe Rack::Test::Cookie do
       'domain=' + domain,
       'path=' + path,
       'expires=' + expires
-    ].join('; ')
+    ].join(Rack::Test::CookieJar::DELIMITER)
   end
 
   let(:http_only_raw_cookie_string) do
-    raw_cookie_string + '; HttpOnly'
+    raw_cookie_string + Rack::Test::CookieJar::DELIMITER + 'HttpOnly'
   end
 
   let(:http_only_secure_raw_cookie_string) do
-    http_only_raw_cookie_string + '; secure'
+    http_only_raw_cookie_string + Rack::Test::CookieJar::DELIMITER + 'secure'
   end
 
   let(:value) { 'the cookie value' }
