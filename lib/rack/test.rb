@@ -219,7 +219,7 @@ module Rack
 
         params = env.delete(:params) do {} end
 
-        if %w[GET DELETE].include?(env['REQUEST_METHOD'])
+        if env['REQUEST_METHOD'] == 'GET'
           # merge :params with the query string
           if params
             params = parse_nested_query(params) if params.is_a?(String)

@@ -1,7 +1,5 @@
 ## Next
 
-* Bug fixes:
-  * Cannot set URL parameters for DELETE method. (Timur Platonov #220)
 
 ## 0.8.2 / 2017-11-21
 
