@@ -1,6 +1,8 @@
 # Ref: default config, with minor tweaks
 # https://github.com/bbatsov/rubocop/blob/master/config/default.yml
 AllCops:
+  Exclude:
+    - 'bin/*'
   Include:
     - '{lib,spec}/**/*.rb'
     - 'Gemfile'
