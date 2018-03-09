@@ -233,7 +233,7 @@ module Rack
             uri.query = [uri.query, build_nested_query(params)].compact.reject { |v| v == '' }.join('&')
           end
         elsif !env.key?(:input)
-          env['CONTENT_TYPE'] ||= 'application/x-www-form-urlencoded' unless params.nil?
+          env['CONTENT_TYPE'] ||= 'application/x-www-form-urlencoded'
 
           if params.is_a?(Hash)
             if data = build_multipart(params)
@@ -241,6 +241,8 @@ module Rack
               env['CONTENT_LENGTH'] ||= data.length.to_s
               env['CONTENT_TYPE'] = "multipart/form-data; boundary=#{MULTIPART_BOUNDARY}"
             else
+              # NB: We do not need to set CONTENT_LENGTH here;
+              # Rack::ContentLength will determine it automatically.
               env[:input] = params_to_string(params)
             end
           else

@@ -457,11 +457,11 @@ describe Rack::Test::Session do
     end
   end
 
-  shared_examples_for 'any #verb methods' do
+  shared_examples_for 'any #verb methods' do |verb|
     it 'requests the URL using VERB' do
       public_send(verb, '/')
 
-      check expect(last_request.env['REQUEST_METHOD']).to eq(verb.upcase)
+      check expect(last_request.env['REQUEST_METHOD']).to eq(verb.to_s.upcase)
       expect(last_response).to be_ok
     end
 
@@ -470,9 +470,28 @@ describe Rack::Test::Session do
       expect(last_request.env['HTTP_USER_AGENT']).to eq('Rack::Test')
     end
 
-    it 'does not set CONTENT_TYPE if params are explicitly set to nil' do
-      public_send(verb, '/', nil)
-      expect(last_request.env['CONTENT_TYPE']).to be_nil
+    context 'when params are not provided', unless: verb == :get do
+      it 'sets CONTENT_TYPE to application/x-www-form-urlencoded' do
+        public_send(verb, '/')
+        expect(last_request.env['CONTENT_TYPE']).to eq 'application/x-www-form-urlencoded'
+      end
+
+      it 'sets CONTENT_LENGTH to zero' do
+        public_send(verb, '/')
+        expect(last_request.env['CONTENT_LENGTH']).to eq '0'
+      end
+    end
+
+    context 'when params are explicitly set to nil', unless: verb == :get do
+      it 'sets CONTENT_TYPE to application/x-www-form-urlencoded' do
+        public_send(verb, '/', nil)
+        expect(last_request.env['CONTENT_TYPE']).to eq 'application/x-www-form-urlencoded'
+      end
+
+      it 'sets CONTENT_LENGTH to 0' do
+        public_send(verb, '/')
+        expect(last_request.env['CONTENT_LENGTH']).to eq '0'
+      end
     end
 
     it 'yields the response to a given block' do
@@ -506,10 +525,43 @@ describe Rack::Test::Session do
   end
 
   describe '#get' do
-    it_should_behave_like 'any #verb methods'
+    it_should_behave_like 'any #verb methods', :get
 
-    def verb
-      'get'
+    context 'when params are not provided' do
+      # This is not actually explicitly stated in the relevant RFCs;
+      # https://tools.ietf.org/html/rfc7231#section-3.1.1.5
+      # ...but e.g. curl do not set it for GET requests.
+      it 'does not set CONTENT_TYPE' do
+        get '/'
+        expect(last_request.env.key?('CONTENT_TYPE')).to eq false
+      end
+
+      # Quoting from https://tools.ietf.org/html/rfc7230#section-3.3.2:
+      #
+      #   A user agent SHOULD NOT send a Content-Length header field when
+      #   the request message does not contain a payload body and the
+      #   method semantics do not anticipate such a body.
+      #
+      # _However_, something causes CONTENT_LENGTH to always be present.
+      # Even when we don't set it ourselves. It could be
+      # Rack::ContentLength that is playing tricks with us:
+      # https://github.com/rack/rack/blob/master/lib/rack/content_length.rb
+      it 'sets CONTENT_LENGTH to zero' do
+        get '/'
+        expect(last_request.env['CONTENT_LENGTH']).to eq '0'
+      end
+    end
+
+    context 'when params are explicitly set to nil' do
+      it 'sets CONTENT_TYPE to application/x-www-form-urlencoded' do
+        get '/', nil
+        expect(last_request.env.key?('CONTENT_TYPE')).to eq false
+      end
+
+      it 'sets CONTENT_LENGTH to zero' do
+        get '/', nil
+        expect(last_request.env['CONTENT_LENGTH']).to eq '0'
+      end
     end
 
     it 'uses the provided params hash' do
@@ -539,19 +591,11 @@ describe Rack::Test::Session do
   end
 
   describe '#head' do
-    it_should_behave_like 'any #verb methods'
-
-    def verb
-      'head'
-    end
+    it_should_behave_like 'any #verb methods', :head
   end
 
   describe '#post' do
-    it_should_behave_like 'any #verb methods'
-
-    def verb
-      'post'
-    end
+    it_should_behave_like 'any #verb methods', :post
 
     it 'uses the provided params hash' do
       post '/', foo: 'bar'
@@ -568,6 +612,13 @@ describe Rack::Test::Session do
       expect(last_request.env['CONTENT_TYPE']).to eq('application/x-www-form-urlencoded')
     end
 
+    # NB: This is never set in _our code_, but is added automatically
+    # (presumably by Rack::ContentLength)
+    it 'sets the CONTENT_LENGTH' do
+      post '/', foo: 'bar'
+      expect(last_request.env['CONTENT_LENGTH']).to eq('7')
+    end
+
     it 'accepts a body' do
       post '/', 'Lobsterlicious!'
       expect(last_request.body.read).to eq('Lobsterlicious!')
@@ -582,11 +633,7 @@ describe Rack::Test::Session do
   end
 
   describe '#put' do
-    it_should_behave_like 'any #verb methods'
-
-    def verb
-      'put'
-    end
+    it_should_behave_like 'any #verb methods', :put
 
     it 'accepts a body' do
       put '/', 'Lobsterlicious!'
@@ -595,11 +642,7 @@ describe Rack::Test::Session do
   end
 
   describe '#patch' do
-    it_should_behave_like 'any #verb methods'
-
-    def verb
-      'patch'
-    end
+    it_should_behave_like 'any #verb methods', :patch
 
     it 'accepts a body' do
       patch '/', 'Lobsterlicious!'
@@ -608,19 +651,11 @@ describe Rack::Test::Session do
   end
 
   describe '#delete' do
-    it_should_behave_like 'any #verb methods'
-
-    def verb
-      'delete'
-    end
+    it_should_behave_like 'any #verb methods', :delete
   end
 
   describe '#options' do
-    it_should_behave_like 'any #verb methods'
-
-    def verb
-      'options'
-    end
+    it_should_behave_like 'any #verb methods', :options
   end
 
   describe '#custom_request' do
