@@ -3,6 +3,8 @@
 * Minor enhancements
   * Save `session` during `follow_redirect!`
     (Alexander Popov #218)
+  * Document how to use URL params with DELETE method
+    (Timur Platonov #220)
 
 ## 0.8.2 / 2017-11-21
 
