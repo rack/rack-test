@@ -18,4 +18,13 @@ describe Rack::Test::CookieJar do
       end
     end
   end
+
+  describe '#for' do
+    it 'returns the cookie header string delimited by semicolon and a space' do
+      jar['a'] = 'b'
+      jar['c'] = 'd'
+
+      expect(jar.for(nil)).to eq('a=b; c=d')
+    end
+  end
 end
