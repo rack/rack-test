@@ -78,7 +78,7 @@ class HomepageTest < Test::Unit::TestCase
   end
   
   def delete_with_url_params_and_body
-    delete '/?foo=bar', JSON.generate('foo' => 'baz')
+    delete '/?foo=bar', JSON.generate('baz' => 'zot')
   end
 end
 ```
