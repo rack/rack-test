@@ -76,6 +76,10 @@ class HomepageTest < Test::Unit::TestCase
     # parameters, so make sure that `json` below is already a JSON-serialized string.
     post(uri, json, { 'CONTENT_TYPE' => 'application/json' })
   end
+  
+  def delete_with_url_params_and_body
+    delete '/?foo=bar', JSON.generate('baz' => 'zot')
+  end
 end
 ```
 

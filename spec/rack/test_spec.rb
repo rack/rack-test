@@ -613,6 +613,26 @@ describe Rack::Test::Session do
     def verb
       'delete'
     end
+
+    it 'uses the provided params hash' do
+      delete '/', foo: 'bar'
+      expect(last_request.GET).to eq({})
+      expect(last_request.POST).to eq('foo' => 'bar')
+      expect(last_request.body.read).to eq('foo=bar')
+    end
+
+    it 'accepts params in the path' do
+      delete '/?foo=bar'
+      expect(last_request.GET).to eq('foo' => 'bar')
+      expect(last_request.POST).to eq({})
+      expect(last_request.body.read).to eq('')
+    end
+
+    it 'accepts a body' do
+      delete '/', 'Lobsterlicious!'
+      expect(last_request.GET).to eq({})
+      expect(last_request.body.read).to eq('Lobsterlicious!')
+    end
   end
 
   describe '#options' do
