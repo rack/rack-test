@@ -106,6 +106,8 @@ module Rack
     end
 
     class CookieJar # :nodoc:
+      DELIMITER = '; '.freeze
+
       # :api: private
       def initialize(cookies = [], default_host = DEFAULT_HOST)
         @default_host = default_host
@@ -158,7 +160,7 @@ module Rack
 
       # :api: private
       def for(uri)
-        hash_for(uri).values.map(&:raw).join(';')
+        hash_for(uri).values.map(&:raw).join(DELIMITER)
       end
 
       def to_hash
