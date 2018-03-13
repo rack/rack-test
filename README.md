@@ -65,7 +65,7 @@ class HomepageTest < Test::Unit::TestCase
     assert last_response.ok?
     assert_equal last_response.body, 'All responses are OK'
   end
-  
+
   def post_with_json
     # No assertion in this, we just demonstrate how you can post a JSON-encoded string.
     # By default, Rack::Test will use HTTP form encoding if you pass in a Hash as the
@@ -134,6 +134,7 @@ Contributions are welcome. Please make sure to:
 
 ## Releasing
 
-* Ensure History.txt is up-to-date
+* Ensure `History.md` is up-to-date
 * Bump VERSION in lib/rack/test/version.rb
 * bundle exec thor :release
+* Updated the [GitHub releases page](https://github.com/rack-test/rack-test/releases)

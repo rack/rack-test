@@ -1,3 +1,14 @@
+## 0.8.3 / 2018-02-27
+
+* Bug fixes:
+  * Do not set Content-Type if params are explicitly set to nil
+    (Bartek Bułat #212). Fixes #200.
+  * Fix `UploadedFile#new` regression
+    (Per Lundberg #215)
+
+* Minor enhancements
+  * [CI] Test against Ruby 2.5 (Nicolas Leger #217)
+
 ## 0.8.2 / 2017-11-21
 
 * Bug fixes:
