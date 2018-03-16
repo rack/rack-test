@@ -114,7 +114,7 @@ gem install rack-test
 Or via Bundler:
 
 ```
-gem 'rack-test', require: 'rack/test'
+gem 'rack-test'
 ```
 
 Or to install unreleased version via Bundler:
