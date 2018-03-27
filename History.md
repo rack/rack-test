@@ -1,4 +1,4 @@
-## master
+## 1.0.0 / 2018-03-27
 
 * Minor enhancements
   * Save `session` during `follow_redirect!`
