@@ -1,6 +1,12 @@
-## master
+## 1.0.0 / 2018-03-27
 
-* Minor enhancements
+* Breaking changes:
+  * Always set CONTENT_TYPE for non-GET requests
+    (Per Lundberg #223)
+
+* Minor enhancements / bug fixes:
+  * Create tempfile using the basename without extension
+    (Edouard Chin #201)
   * Save `session` during `follow_redirect!`
     (Alexander Popov #218)
   * Document how to use URL params with DELETE method
