@@ -3,7 +3,7 @@ require 'rubygems'
 require 'rspec/core'
 require 'rspec/core/rake_task'
 
-task default: %i[spec rubocop]
+task default: %i[rubocop spec]
 
 RSpec::Core::RakeTask.new do |t|
   t.pattern = 'spec/**/*_spec.rb'
@@ -12,15 +12,6 @@ end
 
 require 'rubocop/rake_task'
 RuboCop::RakeTask.new
-
-# desc "Run all specs in spec directory with RCov"
-# RSpec::Core::RakeTask.new(:rcov) do |t|
-#   t.libs << 'lib'
-#   t.libs << 'spec'
-#   t.warning = true
-#   t.rcov = true
-#   t.rcov_opts = ['-x spec']
-# end
 
 desc 'Generate RDoc'
 task :docs do
