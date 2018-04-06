@@ -20,6 +20,14 @@ module Rack
         redirect '/redirected'
       end
 
+      get '/nested/redirect' do
+        [301, { 'location' => 'redirected' }, []]
+      end
+
+      get '/nested/redirected' do
+        'Hello World!'
+      end
+
       post '/redirect' do
         if params['status']
           redirect to('/redirected'), Integer(params['status'])
