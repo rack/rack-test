@@ -381,9 +381,7 @@ describe Rack::Test::Session do
     end
 
     it 'includes session options when following the redirect' do
-      env "rack.session.options", { "foo" => "bar" }
-
-      get '/redirect', {}
+      get '/redirect', {}, 'rack.session.options' => { 'foo' => 'bar' }
       follow_redirect!
 
       expect(last_response.body).to include('session {}{"foo"=>"bar"}')
