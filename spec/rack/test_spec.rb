@@ -366,6 +366,11 @@ describe Rack::Test::Session do
       expect(last_request.env['HTTP_REFERER']).to eql('http://example.org/redirect')
     end
 
+    it 'follows absolute redirects' do
+      get '/absolute/redirect'
+      expect(last_response.headers['location']).to be == 'https://www.google.com'
+    end
+
     it 'follows nested redirects' do
       get '/nested/redirect'
 

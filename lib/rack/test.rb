@@ -197,6 +197,7 @@ module Rack
 
         # Compute the next location by appending the location header with the
         # last request, as per https://tools.ietf.org/html/rfc7231#section-7.1.2
+        # Adding two absolute locations returns the right-hand location
         next_location = URI.parse(last_request.url) + URI.parse(last_response['Location'])
 
         send(

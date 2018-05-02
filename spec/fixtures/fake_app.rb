@@ -28,6 +28,10 @@ module Rack
         'Hello World!'
       end
 
+      get '/absolute/redirect' do
+        [301, { 'location' => 'https://www.google.com' }, []]
+      end
+
       post '/redirect' do
         if params['status']
           redirect to('/redirected'), Integer(params['status'])
