@@ -362,7 +362,7 @@ describe Rack::Test::Session do
       follow_redirect!
 
       expect(last_response).not_to be_redirect
-      expect(last_response.body).to eq("You've been redirected, session {}")
+      expect(last_response.body).to eq("You've been redirected, session {} with options {}")
       expect(last_request.env['HTTP_REFERER']).to eql('http://example.org/redirect')
     end
 
@@ -378,6 +378,13 @@ describe Rack::Test::Session do
       follow_redirect!
 
       expect(last_response.body).to include('session {"foo"=>"bar"}')
+    end
+
+    it 'includes session options when following the redirect' do
+      get '/redirect', {}, 'rack.session.options' => { 'foo' => 'bar' }
+      follow_redirect!
+
+      expect(last_response.body).to include('session {} with options {"foo"=>"bar"}')
     end
 
     it 'raises an error if the last_response is not set' do
