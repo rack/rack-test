@@ -42,7 +42,7 @@ module Rack
 
       %i[get put post delete].each do |meth|
         send(meth, '/redirected') do
-          additional_info = meth == :get ? ", session #{session}" : " using #{meth} with #{params}"
+          additional_info = meth == :get ? ", session #{session} with options #{request.session_options}" : " using #{meth} with #{params}"
           "You've been redirected" + additional_info
         end
       end

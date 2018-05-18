@@ -203,7 +203,8 @@ module Rack
         send(
           request_method, next_location.to_s, params,
           'HTTP_REFERER' => last_request.url,
-          'rack.session' => last_request.session
+          'rack.session' => last_request.session,
+          'rack.session.options' => last_request.session_options
         )
       end
 
