@@ -194,10 +194,17 @@ module Rack
           else
             [:get, {}]
           end
+
+        # Compute the next location by appending the location header with the
+        # last request, as per https://tools.ietf.org/html/rfc7231#section-7.1.2
+        # Adding two absolute locations returns the right-hand location
+        next_location = URI.parse(last_request.url) + URI.parse(last_response['Location'])
+
         send(
-          request_method, last_response['Location'], params,
+          request_method, next_location.to_s, params,
           'HTTP_REFERER' => last_request.url,
-          'rack.session' => last_request.session
+          'rack.session' => last_request.session,
+          'rack.session.options' => last_request.session_options
         )
       end
 
