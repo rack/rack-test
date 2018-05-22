@@ -1,7 +1,14 @@
+env:
+  global:
+    - CC_TEST_REPORTER_ID=e2b176de532d3d4ae08889931aa9679fe2e5e1fdc6eeb9381f93c329068235d5
 language: ruby
 sudo: false
 before_install:
   - which bundle || gem install bundler
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 script:
   - bundle list
   # Unit test
@@ -13,6 +20,8 @@ script:
   - gem list rack-test
   - ruby -e 'require "rack/test"'
   - gem specification pkg/rack-test-*.gem --ruby
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 rvm:
   - 2.2.9
   - 2.3.6

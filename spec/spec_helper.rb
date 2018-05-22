@@ -1,8 +1,10 @@
+require 'simplecov'
+SimpleCov.start do
+  add_filter '/spec/'
+end
+
 require 'rubygems'
 require 'bundler/setup'
-
-require 'codeclimate-test-reporter'
-CodeClimate::TestReporter.start
 
 require 'rack'
 require 'rspec'
