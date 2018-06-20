@@ -357,14 +357,18 @@ describe Rack::Test::Session do
   end
 
   describe '#digest_authorize' do
+    let(:challange_data) do
+      'realm="test-realm", qop="auth", nonce="nonsensenonce", opaque="morenonsense"'
+    end
+
     let(:digest_app) do
       basic_headers    = { 'Content-Type' => 'text/html', 'Content-Length' => '13' }
-      digest_challange = 'Digest realm="test-realm", qop="auth", nonce="nonsensenonce", opaque="morenonsense"'
-      auth_challange_headers   = {'WWW-Authenticate' => digest_challange}
-      cookie_headers = {'Set-Cookie' => "digest_auth_session=OZEnmjeekUSW%3D%3D; path=/; HttpOnly"}
+      digest_challange = "Digest #{challange_data}"
+      auth_challange_headers = { 'WWW-Authenticate' => digest_challange }
+      cookie_headers = { 'Set-Cookie' => 'digest_auth_session=OZEnmjeekUSW%3D%3D; path=/; HttpOnly' }
 
       lambda do |_env|
-        [401, basic_headers.merge(auth_challange_headers).merge(cookie_headers), ""]
+        [401, basic_headers.merge(auth_challange_headers).merge(cookie_headers), '']
       end
     end
 
@@ -379,7 +383,7 @@ describe Rack::Test::Session do
 
       session.request('/')
 
-      expect(session.last_request.env["rack-test.digest_auth_retry"]).to be_truthy
+      expect(session.last_request.env['rack-test.digest_auth_retry']).to be_truthy
     end
 
     it 'sends a digest auth header' do
@@ -405,7 +409,7 @@ describe Rack::Test::Session do
 
       session.request('/')
       auth_headers = session.last_request.env['HTTP_AUTHORIZATION']
-      challange_data = 'realm="test-realm", qop="auth", nonce="nonsensenonce", opaque="morenonsense"'
+
       expect(auth_headers).to include(challange_data)
     end
 
