@@ -357,18 +357,18 @@ describe Rack::Test::Session do
   end
 
   describe '#digest_authorize' do
-    let(:challange_data) do
+    let(:challenge_data) do
       'realm="test-realm", qop="auth", nonce="nonsensenonce", opaque="morenonsense"'
     end
 
     let(:digest_app) do
       basic_headers    = { 'Content-Type' => 'text/html', 'Content-Length' => '13' }
-      digest_challange = "Digest #{challange_data}"
-      auth_challange_headers = { 'WWW-Authenticate' => digest_challange }
+      digest_challenge = "Digest #{challenge_data}"
+      auth_challenge_headers = { 'WWW-Authenticate' => digest_challenge }
       cookie_headers = { 'Set-Cookie' => 'digest_auth_session=OZEnmjeekUSW%3D%3D; path=/; HttpOnly' }
 
       lambda do |_env|
-        [401, basic_headers.merge(auth_challange_headers).merge(cookie_headers), '']
+        [401, basic_headers.merge(auth_challenge_headers).merge(cookie_headers), '']
       end
     end
 
@@ -404,13 +404,13 @@ describe Rack::Test::Session do
       expect(auth_headers).to include('response="d773034bdc162b31c50c62764016bd31"')
     end
 
-    it 'includes the challange headers' do
+    it 'includes the challenge headers' do
       session = digest_session
 
       session.request('/')
       auth_headers = session.last_request.env['HTTP_AUTHORIZATION']
 
-      expect(auth_headers).to include(challange_data)
+      expect(auth_headers).to include(challenge_data)
     end
 
     it 'includes the username' do
