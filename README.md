@@ -144,5 +144,7 @@ Contributions are welcome. Please make sure to:
 
 * Ensure `History.md` is up-to-date
 * Bump VERSION in lib/rack/test/version.rb
+* `git commit . -m 'Release 1.1.0'`
+* `git push`
 * bundle exec thor :release
 * Updated the [GitHub releases page](https://github.com/rack-test/rack-test/releases)

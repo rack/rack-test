@@ -1,3 +1,16 @@
+## 1.1.0 / 2018-07-21
+
+* Breaking changes:
+  * None
+
+* Minor enhancements / new functionality:
+  * [GitHub] Added configuration for Stale (Per Lundberg #232)
+  * follow_direct: Include rack.session.options (Mark Edmondson #233)
+  * [CI] Add simplecov (fatkodima #227)
+
+Bug fixes:
+  * Follow relative locations correctly. (Samuel Williams #230)
+
 ## 1.0.0 / 2018-03-27
 
 * Breaking changes:
