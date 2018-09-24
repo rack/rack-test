@@ -356,6 +356,73 @@ describe Rack::Test::Session do
     end
   end
 
+  describe '#digest_authorize' do
+    let(:challenge_data) do
+      'realm="test-realm", qop="auth", nonce="nonsensenonce", opaque="morenonsense"'
+    end
+
+    let(:digest_app) do
+      basic_headers    = { 'Content-Type' => 'text/html', 'Content-Length' => '13' }
+      digest_challenge = "Digest #{challenge_data}"
+      auth_challenge_headers = { 'WWW-Authenticate' => digest_challenge }
+      cookie_headers = { 'Set-Cookie' => 'digest_auth_session=OZEnmjeekUSW%3D%3D; path=/; HttpOnly' }
+
+      lambda do |_env|
+        [401, basic_headers.merge(auth_challenge_headers).merge(cookie_headers), '']
+      end
+    end
+
+    let(:digest_session) do
+      session = Rack::Test::Session.new(Rack::MockSession.new(digest_app))
+      session.digest_authorize('test-name', 'test-password')
+      session
+    end
+
+    it 'retries digest requests' do
+      session = digest_session
+
+      session.request('/')
+
+      expect(session.last_request.env['rack-test.digest_auth_retry']).to be_truthy
+    end
+
+    it 'sends a digest auth header' do
+      session = digest_session
+
+      session.request('/')
+      auth_headers = session.last_request.env['HTTP_AUTHORIZATION']
+
+      expect(auth_headers).to include('Digest realm')
+    end
+
+    it 'includes the response based on the username,password and nonce' do
+      session = digest_session
+
+      session.request('/')
+      auth_headers = session.last_request.env['HTTP_AUTHORIZATION']
+
+      expect(auth_headers).to include('response="d773034bdc162b31c50c62764016bd31"')
+    end
+
+    it 'includes the challenge headers' do
+      session = digest_session
+
+      session.request('/')
+      auth_headers = session.last_request.env['HTTP_AUTHORIZATION']
+
+      expect(auth_headers).to include(challenge_data)
+    end
+
+    it 'includes the username' do
+      session = digest_session
+
+      session.request('/')
+      auth_headers = session.last_request.env['HTTP_AUTHORIZATION']
+
+      expect(auth_headers).to include('username="test-name"')
+    end
+  end
+
   describe 'follow_redirect!' do
     it 'follows redirects' do
       get '/redirect'

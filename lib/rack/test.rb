@@ -269,7 +269,7 @@ module Rack
           auth_env = env.merge('HTTP_AUTHORIZATION' => digest_auth_header,
                                'rack-test.digest_auth_retry' => true)
           auth_env.delete('rack.request')
-          process_request(uri.path, auth_env)
+          process_request(uri, auth_env)
         else
           yield last_response if block_given?
 
