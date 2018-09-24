@@ -341,7 +341,7 @@ describe Rack::Test::Session do
 
   describe '#basic_authorize' do
     it 'sets the HTTP_AUTHORIZATION header' do
-      authorize 'bryan', 'secret'
+      basic_authorize 'bryan', 'secret'
       request '/'
 
       expect(last_request.env['HTTP_AUTHORIZATION']).to eq('Basic YnJ5YW46c2VjcmV0')
@@ -446,7 +446,7 @@ describe Rack::Test::Session do
       expect(last_response['Content-Type']).to eq('text/html;charset=utf-8')
     end
 
-    it 'raises an error if no requests have been issued', focus: true do
+    it 'raises an error if no requests have been issued' do
       expect do
         last_response
       end.to raise_error(Rack::Test::Error)
