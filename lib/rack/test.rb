@@ -264,7 +264,11 @@ module Rack
 
       def multipart_content_type(env)
         requested_content_type = env['CONTENT_TYPE']
-        return requested_content_type if requested_content_type.start_with?('multipart/')
+        if requested_content_type.start_with?('multipart/')
+          requested_content_type
+        else
+          'multipart/form-data'
+        end
         'multipart/form-data'
       end
 
