@@ -269,7 +269,6 @@ module Rack
         else
           'multipart/form-data'
         end
-        'multipart/form-data'
       end
 
       def process_request(uri, env)
