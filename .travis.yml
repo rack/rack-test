@@ -4,7 +4,12 @@ env:
 language: ruby
 sudo: false
 before_install:
-  - which bundle || gem install bundler
+  - |
+    if ruby -e "exit(RUBY_ENGINE == 'ruby' && RUBY_VERSION.start_with?('2.2'))"; then
+      gem install bundler -v '< 2'
+    else
+      gem install bundler
+    fi
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
@@ -27,6 +32,7 @@ rvm:
   - 2.3.6
   - 2.4.3
   - 2.5.0
+  - 2.6.1
   - ruby-head
   - jruby-9.1.13.0
   - jruby-head
