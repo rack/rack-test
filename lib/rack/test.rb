@@ -246,7 +246,7 @@ module Rack
             if data = build_multipart(params)
               env[:input] = data
               env['CONTENT_LENGTH'] ||= data.length.to_s
-              env['CONTENT_TYPE'] = "multipart/form-data; boundary=#{MULTIPART_BOUNDARY}"
+              env['CONTENT_TYPE'] = "#{multipart_content_type(env)}; boundary=#{MULTIPART_BOUNDARY}"
             else
               # NB: We do not need to set CONTENT_LENGTH here;
               # Rack::ContentLength will determine it automatically.
@@ -260,6 +260,15 @@ module Rack
         set_cookie(env.delete(:cookie), uri) if env.key?(:cookie)
 
         Rack::MockRequest.env_for(uri.to_s, env)
+      end
+
+      def multipart_content_type(env)
+        requested_content_type = env['CONTENT_TYPE']
+        if requested_content_type.start_with?('multipart/')
+          requested_content_type
+        else
+          'multipart/form-data'
+        end
       end
 
       def process_request(uri, env)

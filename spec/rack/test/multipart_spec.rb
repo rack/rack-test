@@ -20,9 +20,14 @@ describe Rack::Test::Session do
   end
 
   context 'uploading a file' do
-    it 'sends the multipart/form-data content type' do
+    it 'sends the multipart/form-data content type if no content type is specified' do
       post '/', 'photo' => uploaded_file
       expect(last_request.env['CONTENT_TYPE']).to include('multipart/form-data;')
+    end
+
+    it 'sends multipart/related content type if it is explicitly specified' do
+      post '/', { 'photo' => uploaded_file }, 'CONTENT_TYPE' => 'multipart/related'
+      expect(last_request.env['CONTENT_TYPE']).to include('multipart/related;')
     end
 
     it 'sends regular params' do
