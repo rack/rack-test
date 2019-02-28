@@ -44,3 +44,11 @@ matrix:
     - rvm: ruby-head
     - rvm: jruby-head
   fast_finish: true
+notifications:
+  irc:
+    channels:
+      - "irc.freenode.org#rack-test"
+    on_success: change # [always|never|change] # default: always
+    on_failure: always # [always|never|change] # default: always
+    template:
+      - "%{message} by @%{author}: See %{build_url}"
