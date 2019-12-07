@@ -34,12 +34,14 @@ rvm:
   - 2.5.0
   - 2.6.1
   - ruby-head
-  - jruby-9.1.13.0
   - jruby-head
 gemfile:
   - Gemfile
   - Gemfile.rack-1.x
 matrix:
+  include:
+    - rvm: jruby-9.1.13.0
+      jdk: openjdk8
   allow_failures:
     - rvm: ruby-head
     - rvm: jruby-head
