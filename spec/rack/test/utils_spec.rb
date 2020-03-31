@@ -25,6 +25,10 @@ describe Rack::Test::Utils do
       expect(['a=1&b=2', 'b=2&a=1']).to include(build_nested_query(hash))
     end
 
+    it 'converts empty arrays' do
+      expect(build_nested_query(a: [])).to eq('a[]=')
+    end
+
     it 'converts arrays with one element' do
       expect(build_nested_query(a: [1])).to eq('a[]=1')
     end
