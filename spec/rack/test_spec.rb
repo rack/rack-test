@@ -93,13 +93,8 @@ describe Rack::Test::Session do
     end
 
     it 'allows passing :input in for POSTs' do
-      request '/', method: :post, input: 'foo'
+      request '/', method: 'POST', input: 'foo'
       expect(last_request.env['rack.input'].read).to eq('foo')
-    end
-
-    it 'converts method names to a uppercase strings' do
-      request '/', method: :put
-      expect(last_request.env['REQUEST_METHOD']).to eq('PUT')
     end
 
     it 'prepends a slash to the URI path' do
@@ -138,12 +133,12 @@ describe Rack::Test::Session do
     end
 
     it 'accepts params and builds url encoded params for POST requests' do
-      request '/foo', method: :post, params: { foo: { bar: '1' } }
+      request '/foo', method: 'POST', params: { foo: { bar: '1' } }
       expect(last_request.env['rack.input'].read).to eq('foo[bar]=1')
     end
 
     it 'accepts raw input in params for POST requests' do
-      request '/foo', method: :post, params: 'foo[bar]=1'
+      request '/foo', method: 'POST', params: 'foo[bar]=1'
       expect(last_request.env['rack.input'].read).to eq('foo[bar]=1')
     end
 
