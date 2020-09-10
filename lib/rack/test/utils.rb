@@ -128,14 +128,15 @@ EOF
       module_function :build_primitive_part
 
       def build_file_part(parameter_name, uploaded_file)
+        uploaded_file_size = uploaded_file.size
         uploaded_file.set_encoding(Encoding::BINARY) if uploaded_file.respond_to?(:set_encoding)
         <<-EOF
 --#{MULTIPART_BOUNDARY}\r
 Content-Disposition: form-data; name="#{parameter_name}"; filename="#{escape(uploaded_file.original_filename)}"\r
 Content-Type: #{uploaded_file.content_type}\r
-Content-Length: #{uploaded_file.size}\r
+Content-Length: #{uploaded_file_size}\r
 \r
-#{uploaded_file.read}\r
+#{uploaded_file.pread(uploaded_file_size, 0)}\r
 EOF
       end
       module_function :build_file_part
