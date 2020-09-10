@@ -49,6 +49,23 @@ module Rack
         tempfile.public_send(method_name, *args, &block)
       end
 
+      # Append to given buffer in 64K chunks to avoid multiple large
+      # copies of file data in memory.  Rewind tempfile before and
+      # after to make sure all data in tempfile is appended to the
+      # buffer.
+      def append_to(buffer)
+        tempfile.rewind
+
+        buf = String.new
+        until tempfile.eof?
+          buffer << tempfile.readpartial(65536, buf)
+        end
+
+        tempfile.rewind
+
+        nil
+      end
+
       def respond_to_missing?(method_name, include_private = false) #:nodoc:
         tempfile.respond_to?(method_name, include_private) || super
       end
