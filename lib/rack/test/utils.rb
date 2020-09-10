@@ -125,14 +125,16 @@ EOF
 
       def build_file_part(parameter_name, uploaded_file)
         uploaded_file.set_encoding(Encoding::BINARY) if uploaded_file.respond_to?(:set_encoding)
-        <<-EOF
+        buffer = String.new
+        buffer << (<<-EOF)
 --#{MULTIPART_BOUNDARY}\r
 Content-Disposition: form-data; name="#{parameter_name}"; filename="#{escape_path(uploaded_file.original_filename)}"\r
 Content-Type: #{uploaded_file.content_type}\r
 Content-Length: #{uploaded_file.size}\r
 \r
-#{uploaded_file.read}\r
 EOF
+        uploaded_file.append_to(buffer)
+        buffer << "\r\n"
       end
       module_function :build_file_part
     end

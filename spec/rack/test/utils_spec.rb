@@ -73,7 +73,8 @@ describe Rack::Test::Utils do
       params = Rack::Multipart.parse_multipart(env)
       check expect(params['submit-name']).to eq('Larry')
       check expect(params['files'][:filename]).to eq('foo.txt')
-      expect(params['files'][:tempfile].read).to eq("bar\n")
+      expect(files.pos).to eq(0)
+      expect(params['files'][:tempfile].read).to eq(files.read)
     end
 
     it 'builds multipart bodies from array of files' do
