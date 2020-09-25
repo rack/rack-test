@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.author = 'Bryan Helmkamp'
   s.email = 'bryan@brynary.com'
   s.license = 'MIT'
-  s.homepage = 'http://github.com/rack-test/rack-test'
+  s.homepage = 'https://github.com/rack-test/rack-test'
   s.summary = 'Simple testing API built on Rack'
   s.description = <<-EOS.strip
 Rack::Test is a small, simple testing API for Rack apps. It can be used on its
