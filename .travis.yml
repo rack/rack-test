@@ -33,6 +33,8 @@ rvm:
   - 2.4.3
   - 2.5.0
   - 2.6.1
+  - 2.7
+  - 3.0
   - ruby-head
   - jruby-head
 gemfile:
