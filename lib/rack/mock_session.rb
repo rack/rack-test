@@ -29,7 +29,6 @@ module Rack
       status, headers, body = @app.call(@last_request.env)
 
       @last_response = MockResponse.new(status, headers, body, env['rack.errors'].flush)
-      body.close if body.respond_to?(:close)
 
       cookie_jar.merge(last_response.headers['Set-Cookie'], uri)
 
