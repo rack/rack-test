@@ -45,8 +45,10 @@ describe Rack::Test::UploadedFile do
           System.gc
         end
       else
-        Rack::Test::UploadedFile.new(test_file_path)
-        GC.start
+        50.times do |_i|
+          Rack::Test::UploadedFile.new(test_file_path)
+          GC.start
+        end
       end
     end
   end
