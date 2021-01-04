@@ -31,7 +31,7 @@ module Rack
       @last_response = MockResponse.new(status, headers, body, env['rack.errors'].flush)
 
       # close() gets called automatically in newer Rack versions.
-      if Gem::Version.new(Rack::RELEASE) > Gem::Version.new("2.2.2")
+      if !defined?(Rack::RELEASE) || Gem::Version.new(Rack::RELEASE) > Gem::Version.new("2.2.2")
         body.close if body.respond_to?(:close)
       end
 
