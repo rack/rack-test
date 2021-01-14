@@ -1,6 +1,6 @@
 # Rack::Test
 [![Gem Version](https://badge.fury.io/rb/rack-test.svg)](https://badge.fury.io/rb/rack-test)
-[<img src="https://travis-ci.org/rack-test/rack-test.svg?branch=master" />](https://travis-ci.org/rack-test/rack-test)
+[<img src="https://travis-ci.org/rack/rack-test.svg?branch=master" />](https://travis-ci.org/rack-test/rack-test)
 [![Code Climate](https://codeclimate.com/github/rack-test/rack-test/badges/gpa.svg)](https://codeclimate.com/github/rack-test/rack-test)
 [![Test Coverage](https://codeclimate.com/github/rack-test/rack-test/badges/coverage.svg)](https://codeclimate.com/github/rack-test/rack-test/coverage)
 
