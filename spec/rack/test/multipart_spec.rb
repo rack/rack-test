@@ -3,12 +3,16 @@
 require 'spec_helper'
 
 describe Rack::Test::Session do
+  def fixture_path(name)
+    return File.join(File.dirname(__FILE__), '..', '..', 'fixtures', name)
+  end
+
   def test_file_path
-    File.dirname(__FILE__) + '/../../fixtures/foo.txt'
+    return fixture_path('foo.txt')
   end
 
   def second_test_file_path
-    File.dirname(__FILE__) + '/../../fixtures/bar.txt'
+    return fixture_path('bar.txt')
   end
 
   def uploaded_file
@@ -106,6 +110,11 @@ describe Rack::Test::Session do
     it 'sends files as Tempfiles' do
       post '/', 'photo' => uploaded_file
       expect(last_request.POST['photo'][:tempfile]).to be_a(::Tempfile)
+    end
+
+    it 'escapes spaces in filenames properly' do
+      post '/', 'photo' => Rack::Test::UploadedFile.new(fixture_path('space case.txt'))
+      expect(last_request.POST['photo'][:filename]).to eq('space case.txt')
     end
   end
 

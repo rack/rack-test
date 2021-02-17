@@ -131,7 +131,7 @@ EOF
         uploaded_file.set_encoding(Encoding::BINARY) if uploaded_file.respond_to?(:set_encoding)
         <<-EOF
 --#{MULTIPART_BOUNDARY}\r
-Content-Disposition: form-data; name="#{parameter_name}"; filename="#{escape(uploaded_file.original_filename)}"\r
+Content-Disposition: form-data; name="#{parameter_name}"; filename="#{escape_path(uploaded_file.original_filename)}"\r
 Content-Type: #{uploaded_file.content_type}\r
 Content-Length: #{uploaded_file.size}\r
 \r
