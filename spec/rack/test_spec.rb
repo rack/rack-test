@@ -147,6 +147,15 @@ describe Rack::Test::Session do
       expect(last_request.env['rack.input'].read).to eq('foo[bar]=1')
     end
 
+    it 'supports a Rack::Response' do
+      app = lambda do |_env|
+        Rack::Response.new('', 200, {})
+      end
+
+      session = Rack::Test::Session.new(Rack::MockSession.new(app))
+      expect(session.request('/')).to be_ok
+    end
+
     context 'when the response body responds_to?(:close)' do
       class CloseableBody
         def initialize
