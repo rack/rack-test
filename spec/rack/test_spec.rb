@@ -165,7 +165,7 @@ describe Rack::Test::Session do
 
       it "closes response's body" do
         body = CloseableBody.new
-        expect(body).to receive(:close)
+        expect(body).to receive(:close).at_least(:once)
 
         app = lambda do |_env|
           [200, { 'Content-Type' => 'text/html', 'Content-Length' => '13' }, body]
