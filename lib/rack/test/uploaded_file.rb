@@ -28,11 +28,13 @@ module Rack
       # @param original_filename [String] an optional parameter that provides the original filename if `content` is a StringIO
       #   object. Not used for other kind of `content` objects.
       def initialize(content, content_type = 'text/plain', binary = false, original_filename: nil)
-        if original_filename
+        case content
+        when StringIO
           initialize_from_stringio(content, original_filename)
         else
           initialize_from_file_path(content)
         end
+
         @content_type = content_type
         @tempfile.binmode if binary
       end
