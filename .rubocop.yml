@@ -3,6 +3,7 @@
 AllCops:
   Exclude:
     - 'bin/*'
+    - 'vendor/**/*'
   Include:
     - '{lib,spec}/**/*.rb'
     - 'Gemfile'
