@@ -29,7 +29,11 @@ module Rack
       status, headers, body = @app.call(@last_request.env)
 
       @last_response = MockResponse.new(status, headers, body, env['rack.errors'].flush)
-      body.close if body.respond_to?(:close)
+
+      # close() gets called automatically in newer Rack versions.
+      if !defined?(Rack::RELEASE) || Gem::Version.new(Rack::RELEASE) < Gem::Version.new('2.2.2')
+        body.close if body.respond_to?(:close)
+      end
 
       cookie_jar.merge(last_response.headers['Set-Cookie'], uri)
 
