@@ -62,5 +62,13 @@ describe Rack::Test::Cookie do
         expect(cookie.http_only?).to be(true)
       end
     end
+
+    context 'for a lower case HTTP only cookie' do
+      let(:cookie_string) { http_only_raw_cookie_string.downcase }
+
+      it 'returns true' do
+        expect(cookie.http_only?).to be(true)
+      end
+    end
   end
 end

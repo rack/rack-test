@@ -48,7 +48,7 @@ module Rack
       end
 
       def http_only?
-        @options.key?('HttpOnly')
+        @options.key?('HttpOnly') || @options.key?('httponly')
       end
 
       # :api: private
