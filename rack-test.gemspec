@@ -27,7 +27,6 @@ request helpers feature.
   s.add_development_dependency 'rspec', '~> 3.6'
   s.add_development_dependency 'sinatra', '>= 1.0', '< 3'
   s.add_development_dependency 'rdoc', '~> 5.1'
-  s.add_development_dependency 'rubocop', '>= 0.49', '< 0.50'
   s.add_development_dependency 'simplecov', '~> 0.16'
   # For Thorfile. Run "bundle exec thor help" to see the help.
   s.add_development_dependency 'thor', '~>  0.19'

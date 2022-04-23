@@ -10,8 +10,14 @@ RSpec::Core::RakeTask.new do |t|
   t.ruby_opts = '-w'
 end
 
-require 'rubocop/rake_task'
-RuboCop::RakeTask.new
+begin
+  require 'rubocop/rake_task'
+  RuboCop::RakeTask.new
+rescue LoadError
+  task :rubocop do
+    warn 'Rubocop not supported on this configuration.'
+  end
+end
 
 desc 'Generate RDoc'
 task :docs do
