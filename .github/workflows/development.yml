@@ -8,7 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-20.04 ]
-        ruby: [ 2.2, 2.3, 2.4, 2.5, 2.6 ]
+        ruby: [ 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, '3.0', 3.1 ]
         gemfile: [ Gemfile, Gemfile.rack-1.x ]
     runs-on: ${{ matrix.os }}
     env:
@@ -21,4 +21,16 @@ jobs:
         ruby-version: ${{ matrix.ruby }}
         bundler-cache: true
 
-    - run: bundle exec rake
+    - run: bundle exec rake spec
+
+  lint:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.1
+        bundler-cache: true
+
+    - run: bundle exec rake rubocop
