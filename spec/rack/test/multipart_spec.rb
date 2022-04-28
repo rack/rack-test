@@ -4,15 +4,15 @@ require 'spec_helper'
 
 describe Rack::Test::Session do
   def fixture_path(name)
-    return File.join(File.dirname(__FILE__), '..', '..', 'fixtures', name)
+    File.join(File.dirname(__FILE__), '..', '..', 'fixtures', name)
   end
 
   def test_file_path
-    return fixture_path('foo.txt')
+    fixture_path('foo.txt')
   end
 
   def second_test_file_path
-    return fixture_path('bar.txt')
+    fixture_path('bar.txt')
   end
 
   def uploaded_file
