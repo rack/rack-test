@@ -226,7 +226,9 @@ module Rack
         env.update('HTTPS' => 'on') if URI::HTTPS === uri
         env['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest' if env[:xhr]
 
-        env['REQUEST_METHOD'] ||= env[:method] || 'GET'
+        # TODO: Remove this after Rack 1.1 has been released.
+        # Stringifying and upcasing methods has be commit upstream
+        env['REQUEST_METHOD'] ||= env[:method] ? env[:method].to_s.upcase : 'GET'
 
         params = env.delete(:params) do {} end
 
