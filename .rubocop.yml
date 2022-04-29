@@ -28,6 +28,10 @@ Metrics/BlockLength:
     - spec/**/*
     - rack-test.gemspec
 
+# Rationale: Enforcing maximum module length makes code worse, without exception
+Metrics/ModuleLength:
+  Enabled: false
+
 # Rationale: allow Weirich-style blocks, but do not enforce them.
 Style/BlockDelimiters:
   Enabled: false
