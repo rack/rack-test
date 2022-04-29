@@ -57,9 +57,7 @@ module Rack
         tempfile.rewind
 
         buf = String.new
-        until tempfile.eof?
-          buffer << tempfile.readpartial(65536, buf)
-        end
+        buffer << tempfile.readpartial(65_536, buf) until tempfile.eof?
 
         tempfile.rewind
 
