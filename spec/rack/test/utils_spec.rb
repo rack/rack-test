@@ -92,6 +92,24 @@ describe Rack::Test::Utils do
       expect(params['files'][1][:tempfile].read).to eq("baz\n")
     end
 
+    it 'builds multipart bodies from mixed array of a file and a primitive' do
+      files = [Rack::Test::UploadedFile.new(multipart_file('foo.txt')), 'baz']
+      data = Rack::Test::Utils.build_multipart('files' => files)
+
+      options = {
+        'CONTENT_TYPE' => "multipart/form-data; boundary=#{Rack::Test::MULTIPART_BOUNDARY}",
+        'CONTENT_LENGTH' => data.length.to_s,
+        :input => StringIO.new(data)
+      }
+      env = Rack::MockRequest.env_for('/', options)
+      params = Rack::Multipart.parse_multipart(env)
+
+      check expect(params['files'][0][:filename]).to eq('foo.txt')
+      expect(params['files'][0][:tempfile].read).to eq("bar\n")
+
+      check expect(params['files'][1]).to eq('baz')
+    end
+
     it 'builds nested multipart bodies' do
       files = Rack::Test::UploadedFile.new(multipart_file('foo.txt'))
       data  = Rack::Test::Utils.build_multipart('people' => [{ 'submit-name' => 'Larry', 'files' => files }], 'foo' => %w[1 2])
