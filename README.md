@@ -1,10 +1,10 @@
 # Rack::Test
 [![Gem Version](https://badge.fury.io/rb/rack-test.svg)](https://badge.fury.io/rb/rack-test)
-[<img src="https://travis-ci.org/rack-test/rack-test.svg?branch=master" />](https://travis-ci.org/rack-test/rack-test)
+[<img src="https://travis-ci.org/rack/rack-test.svg?branch=master" />](https://travis-ci.org/rack-test/rack-test)
 [![Code Climate](https://codeclimate.com/github/rack-test/rack-test/badges/gpa.svg)](https://codeclimate.com/github/rack-test/rack-test)
 [![Test Coverage](https://codeclimate.com/github/rack-test/rack-test/badges/coverage.svg)](https://codeclimate.com/github/rack-test/rack-test/coverage)
 
-Code: https://github.com/rack-test/rack-test
+Code: https://github.com/rack/rack-test
 
 ## Description
 
@@ -30,7 +30,7 @@ If you are using Ruby 1.8, 1.9 or JRuby 1.7, use rack-test 0.6.3.
 
 ## Known incompatibilites
 
-* `rack-test >= 0.71` _does not_ work with older Capybara versions (`< 2.17`). See [#214](https://github.com/rack-test/rack-test/issues/214) for more details.
+* `rack-test >= 0.71` _does not_ work with older Capybara versions (`< 2.17`). See [#214](https://github.com/rack/rack-test/issues/214) for more details.
 
 ## Examples
 (The examples use `Test::Unit` but it's equally possible to use `rack-test` with other testing frameworks like `rspec`.)
@@ -147,4 +147,4 @@ Contributions are welcome. Please make sure to:
 * `git commit . -m 'Release 1.1.0'`
 * `git push`
 * bundle exec thor :release
-* Updated the [GitHub releases page](https://github.com/rack-test/rack-test/releases)
+* Updated the [GitHub releases page](https://github.com/rack/rack-test/releases)
