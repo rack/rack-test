@@ -1,12 +1,14 @@
-name: Development
+name: Development (Rack Head)
 
 on: [push, pull_request]
+
+env:
+  BUNDLE_GEMFILE: gems/rack-head.rb
 
 jobs:
   test:
     name: ${{matrix.ruby}} on ${{matrix.os}}
     runs-on: ${{matrix.os}}-latest
-    continue-on-error: ${{matrix.experimental}}
     
     strategy:
       matrix:
@@ -15,24 +17,7 @@ jobs:
           - macos
         
         ruby:
-          - 2.5
-          - 2.6
-          - 2.7
-          - "3.0"
           - "3.1"
-        
-        experimental: [false]
-        
-        include:
-          - os: ubuntu
-            ruby: truffleruby
-            experimental: true
-          - os: ubuntu
-            ruby: jruby
-            experimental: true
-          - os: ubuntu
-            ruby: head
-            experimental: true
     
     steps:
     - uses: actions/checkout@v3

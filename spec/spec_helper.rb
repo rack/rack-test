@@ -7,6 +7,7 @@ require 'rubygems'
 require 'bundler/setup'
 
 require 'rack'
+require 'rack/session'
 require 'rspec'
 
 Dir[File.dirname(__FILE__) + '/support/**/*.rb'].each { |f| require f }
