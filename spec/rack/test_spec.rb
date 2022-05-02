@@ -29,6 +29,12 @@ describe Rack::Test::Session do
       expect(last_request.env['X-Foo']).to eq('bar')
     end
 
+    it 'sets SERVER_PROTOCOL and HTTP_VERSION to HTTP/1.0 by default' do
+      request '/'
+      expect(last_request.env['SERVER_PROTOCOL']).to eq('HTTP/1.0')
+      expect(last_request.env['HTTP_VERSION']).to eq('HTTP/1.0')
+    end
+
     it 'allows HTTP_HOST to be set' do
       request '/', 'HTTP_HOST' => 'www.example.ua'
       expect(last_request.env['HTTP_HOST']).to eq('www.example.ua')
