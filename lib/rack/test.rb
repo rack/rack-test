@@ -219,11 +219,11 @@ module Rack
       end
 
       def env_for(uri, env)
-        env = default_env.merge(env)
+        env = default_env.merge!(env)
 
         env['HTTP_HOST'] ||= [uri.host, (uri.port if uri.port != uri.default_port)].compact.join(':')
 
-        env.update('HTTPS' => 'on') if URI::HTTPS === uri
+        env['HTTPS'] = 'on' if URI::HTTPS === uri
         env['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest' if env[:xhr]
 
         # TODO: Remove this after Rack 1.1 has been released.
@@ -312,7 +312,7 @@ module Rack
       end
 
       def default_env
-        { 'rack.test' => true, 'REMOTE_ADDR' => '127.0.0.1' }.merge(@env).merge(headers_for_env)
+        { 'rack.test' => true, 'REMOTE_ADDR' => '127.0.0.1', 'SERVER_PROTOCOL' => 'HTTP/1.0', 'HTTP_VERSION' => 'HTTP/1.0' }.merge!(@env).merge!(headers_for_env)
       end
 
       def headers_for_env
