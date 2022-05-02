@@ -22,7 +22,7 @@ RSpec.configure do |config|
   config.filter_run_when_matching :focus
 
   def app
-    Rack::Lint.new(Rack::Test::FakeApp.new)
+    Rack::Test::FAKE_APP
   end
 
   def check(*args); end
