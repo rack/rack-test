@@ -87,9 +87,36 @@ describe Rack::Test::Session do
       end
     end
 
-    it 'supports sending :params' do
+    it 'supports sending :params for GET' do
       request '/', params: { 'foo' => 'bar' }
       expect(last_request.GET['foo']).to eq('bar')
+    end
+
+    it 'supports sending :query_params for GET' do
+      request '/', query_params: { 'foo' => 'bar' }
+      expect(last_request.GET['foo']).to eq('bar')
+    end
+
+    it 'supports sending both :params and :query_params for GET' do
+      request '/', query_params: { 'foo' => 'bar' }, params: { 'foo2' => 'bar2' }
+      expect(last_request.GET['foo']).to eq('bar')
+      expect(last_request.GET['foo2']).to eq('bar2')
+    end
+
+    it 'supports sending :params for POST' do
+      request '/', method: :post, params: { 'foo' => 'bar' }
+      expect(last_request.POST['foo']).to eq('bar')
+    end
+
+    it 'supports sending :query_params for POST' do
+      request '/', method: :post, query_params: { 'foo' => 'bar' }
+      expect(last_request.GET['foo']).to eq('bar')
+    end
+
+    it 'supports sending both :params and :query_params for POST' do
+      request '/', method: :post, query_params: { 'foo' => 'bar' }, params: { 'foo2' => 'bar2' }
+      expect(last_request.GET['foo']).to eq('bar')
+      expect(last_request.POST['foo2']).to eq('bar2')
     end
 
     it "doesn't follow redirects by default" do

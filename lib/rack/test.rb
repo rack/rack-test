@@ -230,17 +230,17 @@ module Rack
         # Stringifying and upcasing methods has be commit upstream
         env['REQUEST_METHOD'] ||= env[:method] ? env[:method].to_s.upcase : 'GET'
 
-        params = env.delete(:params) do {} end
+        params = env.delete(:params)
+        query_array = [uri.query]
 
         if env['REQUEST_METHOD'] == 'GET'
-          # merge :params with the query string
+          # Treat params as query params
           if params
-            params = parse_nested_query(params) if params.is_a?(String)
-
-            uri.query = [uri.query, build_nested_query(params)].compact.reject { |v| v == '' }.join('&')
+            append_query_params(query_array, params)
           end
         elsif !env.key?(:input)
           env['CONTENT_TYPE'] ||= 'application/x-www-form-urlencoded'
+          params ||= {}
 
           if params.is_a?(Hash)
             if data = build_multipart(params)
@@ -257,9 +257,19 @@ module Rack
           end
         end
 
+        if query_params = env.delete(:query_params)
+          append_query_params(query_array, query_params)
+        end
+        uri.query = query_array.compact.reject { |v| v == '' }.join('&')
+
         set_cookie(env.delete(:cookie), uri) if env.key?(:cookie)
 
         Rack::MockRequest.env_for(uri.to_s, env)
+      end
+
+      def append_query_params(query_array, query_params)
+        query_params = parse_nested_query(query_params) if query_params.is_a?(String)
+        query_array << build_nested_query(query_params)
       end
 
       def multipart_content_type(env)
