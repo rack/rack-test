@@ -1,3 +1,5 @@
+$:.unshift(File.expand_path("../lib", File.dirname(__FILE__)))
+
 if ENV.delete('COVERAGE')
   require 'simplecov'
   SimpleCov.start do
@@ -8,22 +10,16 @@ if ENV.delete('COVERAGE')
   end
 end
 
-require 'rspec'
+ENV['MT_NO_PLUGINS'] = '1' # Work around stupid autoloading of plugins
+require 'minitest/global_expectations/autorun'
 
-Dir[File.dirname(__FILE__) + '/support/**/*.rb'].each { |f| require f }
+require_relative '../lib/rack/test'
+require_relative 'fixtures/fake_app'
 
-require 'rack/test'
-require File.dirname(__FILE__) + '/fixtures/fake_app'
-
-RSpec.configure do |config|
-  config.mock_with :rspec
-  config.include Rack::Test::Methods
-
-  config.filter_run_when_matching :focus
+class Minitest::Spec
+  include Rack::Test::Methods
 
   def app
     Rack::Test::FAKE_APP
   end
-
-  def check(*args); end
 end

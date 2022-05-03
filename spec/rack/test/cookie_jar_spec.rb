@@ -1,30 +1,21 @@
-require 'spec_helper'
+require_relative '../../spec_helper'
 
 describe Rack::Test::CookieJar do
-  subject(:jar) { Rack::Test::CookieJar.new }
+  cookie_value = 'foo;abc'.freeze
+  cookie_name = 'a_cookie_name'.freeze
 
-  describe '#get_cookie' do
-    context 'with a populated jar' do
-      let(:cookie_value) { 'foo;abc' }
-      let(:cookie_name) { 'a_cookie_name' }
-
-      before do
-        jar[cookie_name] = cookie_value
-      end
-
-      it 'returns full cookie objects' do
-        cookie = jar.get_cookie(cookie_name)
-        expect(cookie).to be_a(Rack::Test::Cookie)
-      end
-    end
+  it '#get_cookie with a populated jar returns full cookie objects' do
+    jar = Rack::Test::CookieJar.new
+    jar[cookie_name] = cookie_value
+    cookie = jar.get_cookie(cookie_name)
+    cookie.must_be_kind_of Rack::Test::Cookie
   end
 
-  describe '#for' do
-    it 'returns the cookie header string delimited by semicolon and a space' do
-      jar['a'] = 'b'
-      jar['c'] = 'd'
+  it '#for returns the cookie header string delimited by semicolon and a space' do
+    jar = Rack::Test::CookieJar.new
+    jar['a'] = 'b'
+    jar['c'] = 'd'
 
-      expect(jar.for(nil)).to eq('a=b; c=d')
-    end
+    jar.for(nil).must_equal 'a=b; c=d'
   end
 end
