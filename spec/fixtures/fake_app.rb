@@ -26,9 +26,7 @@ module Rack
 
         if path == '/'
           case method
-          when 'HEAD'
-            return [200, {}, []]
-          when 'OPTIONS'
+          when 'HEAD', 'OPTIONS'
             return [200, {}, []]
           else
             return [200, {}, ["Hello, #{method}: #{params.inspect}"]]
@@ -60,7 +58,11 @@ module Rack
         end
 
         if path == '/redirected'
-          additional_info = method == 'GET' ? ", session #{session.inspect} with options #{env['rack.session.options'].inspect}" : " using #{method.downcase} with #{params}"
+          additional_info = if method == 'GET'
+            ", session #{session.inspect} with options #{env['rack.session.options'].inspect}"
+          else
+            " using #{method.downcase} with #{params}"
+          end
           return [200, {}, ["You've been redirected" + additional_info]]
         end
 
@@ -68,7 +70,7 @@ module Rack
           return [200, {}, []]
         end
 
-        if %w'/cookies/show /COOKIES/show /not-cookies/show /cookies/default-path'.include?(path) && method == 'GET'
+        if %w[/cookies/show /COOKIES/show /not-cookies/show /cookies/default-path].include?(path) && method == 'GET'
           return [200, {}, [req.cookies.inspect]]
         end
 
@@ -90,7 +92,6 @@ module Rack
         end
 
         if path == '/cookies/set' && method == 'GET'
-          # expires: Time.now + 10)
           return [200, { 'Set-Cookie' => "value=#{params['value'] || raise}; path=/cookies; expires=#{Time.now+10}" }, ['Set']]
         end
 
@@ -112,7 +113,7 @@ module Rack
           return [200, { 'Set-Cookie' => "key1=value1\nkey2=value2"}, ['Set']]
         end
 
-        return [404, {}, []]
+        [404, {}, []]
       end
     end
 
