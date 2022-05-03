@@ -1,11 +1,15 @@
-require 'rubygems'
-
 require 'rspec/core'
 require 'rspec/core/rake_task'
 
-task default: %i[rubocop spec]
+task default: :spec
 
 RSpec::Core::RakeTask.new do |t|
+  t.pattern = 'spec/**/*_spec.rb'
+  t.ruby_opts = '-w'
+end
+
+RSpec::Core::RakeTask.new(:spec_cov) do |t|
+  ENV['COVERAGE'] = '1'
   t.pattern = 'spec/**/*_spec.rb'
   t.ruby_opts = '-w'
 end

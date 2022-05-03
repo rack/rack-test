@@ -2,14 +2,12 @@ require 'spec_helper'
 
 describe Rack::Test::Session do
   context 'HTTP Digest authentication' do
-    def app
-      app = Rack::Auth::Digest::MD5.new(Rack::Test::FakeApp.new) do |username|
-        { 'alice' => 'correct-password' }[username]
-      end
-      app.realm = 'WallysWorld'
-      app.opaque = 'this-should-be-secret'
-      app
+    app = Rack::Auth::Digest::MD5.new(Rack::Test::FakeApp.new.freeze) do |username|
+      { 'alice' => 'correct-password' }[username]
     end
+    app.realm = 'WallysWorld'
+    app.opaque = 'this-should-be-secret'
+    define_method(:app) { app }
 
     it 'incorrectly authenticates GETs' do
       digest_authorize 'foo', 'bar'

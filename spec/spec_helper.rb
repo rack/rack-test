@@ -1,12 +1,13 @@
-require 'simplecov'
-SimpleCov.start do
-  add_filter '/spec/'
+if ENV.delete('COVERAGE')
+  require 'simplecov'
+  SimpleCov.start do
+    enable_coverage :branch
+    add_filter "/spec/"
+    add_group('Missing'){|src| src.covered_percent < 100}
+    add_group('Covered'){|src| src.covered_percent == 100}
+  end
 end
 
-require 'rubygems'
-require 'bundler/setup'
-
-require 'rack'
 require 'rspec'
 
 Dir[File.dirname(__FILE__) + '/support/**/*.rb'].each { |f| require f }
@@ -21,7 +22,7 @@ RSpec.configure do |config|
   config.filter_run_when_matching :focus
 
   def app
-    Rack::Lint.new(Rack::Test::FakeApp.new)
+    Rack::Test::FAKE_APP
   end
 
   def check(*args); end

@@ -1,164 +1,122 @@
-require 'rubygems'
-require 'sinatra/base'
-
 module Rack
   module Test
-    class FakeApp < Sinatra::Base
-      head '/' do
-        'meh'
+    class FakeApp
+      def call(env)
+        _, h, b = res = handle(env)
+        length = 0
+        b.each{|s| length += s.bytesize}
+        h['content-length'] = length.to_s
+        h['content-type'] = 'text/html;charset=utf-8'
+        res
       end
 
-      options '/' do
-        [200, {}, '']
+      private
+
+      def new_cookie_count(req)
+        old_value = req.cookies['count'].to_i || 0
+        (old_value + 1).to_s
       end
 
-      get '/' do
-        "Hello, GET: #{params.inspect}"
-      end
+      def handle(env)
+        method = env['REQUEST_METHOD']
+        path = env['PATH_INFO']
+        req = Rack::Request.new(env)
+        params = req.params
+        session = env['rack.session']
 
-      get '/redirect' do
-        redirect '/redirected'
-      end
-
-      get '/nested/redirect' do
-        [301, { 'location' => 'redirected' }, []]
-      end
-
-      get '/nested/redirected' do
-        'Hello World!'
-      end
-
-      get '/absolute/redirect' do
-        [301, { 'location' => 'https://www.google.com' }, []]
-      end
-
-      post '/redirect' do
-        if params['status']
-          redirect to('/redirected'), Integer(params['status'])
-        else
-          redirect '/redirected'
+        if path == '/'
+          case method
+          when 'HEAD', 'OPTIONS'
+            return [200, {}, []]
+          else
+            return [200, {}, ["Hello, #{method}: #{params.inspect}"]]
+          end
         end
-      end
 
-      %i[get put post delete].each do |meth|
-        send(meth, '/redirected') do
-          additional_info = meth == :get ? ", session #{session} with options #{request.session_options}" : " using #{meth} with #{params}"
-          "You've been redirected" + additional_info
+        if path == '/redirect' && method == 'GET'
+          return [301, { 'location' => '/redirected' }, []]
         end
-      end
 
-      get '/void' do
-        [200, {}, '']
-      end
+        if path == '/nested/redirect' && method == 'GET'
+          return [301, { 'location' => 'redirected' }, []]
+        end
 
-      get '/cookies/show' do
-        request.cookies.inspect
-      end
+        if path == '/nested/redirected' && method == 'GET'
+          return [200, {}, ['Hello World!']]
+        end
 
-      get '/COOKIES/show' do
-        request.cookies.inspect
-      end
+        if path == '/absolute/redirect' && method == 'GET'
+          return [301, { 'location' => 'https://www.google.com' }, []]
+        end
 
-      get '/not-cookies/show' do
-        request.cookies.inspect
-      end
+        if path == '/redirect' && method == 'POST'
+          if params['status']
+            return [Integer(params['status']), { 'location' => '/redirected' }, []]
+          else
+            return [302, { 'location' => '/redirected' }, []]
+          end
+        end
 
-      get '/cookies/set-secure' do
-        raise if params['value'].nil?
+        if path == '/redirected'
+          additional_info = if method == 'GET'
+            ", session #{session.inspect} with options #{env['rack.session.options'].inspect}"
+          else
+            " using #{method.downcase} with #{params}"
+          end
+          return [200, {}, ["You've been redirected" + additional_info]]
+        end
 
-        response.set_cookie('secure-cookie', value: params['value'], secure: true)
-        'Set'
-      end
+        if path == '/void' && method == 'GET'
+          return [200, {}, []]
+        end
 
-      get '/cookies/set-simple' do
-        raise if params['value'].nil?
+        if %w[/cookies/show /COOKIES/show /not-cookies/show /cookies/default-path].include?(path) && method == 'GET'
+          return [200, {}, [req.cookies.inspect]]
+        end
 
-        response.set_cookie 'simple', params['value']
-        'Set'
-      end
+        if path == '/cookies/set-secure' && method == 'GET'
+          return [200, { 'Set-Cookie' => "secure-cookie=#{params['value'] || raise}; secure" }, ['Set']]
+        end
 
-      post '/cookies/default-path' do
-        raise if params['value'].nil?
+        if (path == '/cookies/set-simple' && method == 'GET') || (path == '/cookies/default-path' && method == 'POST')
+          return [200, { 'Set-Cookie' => "simple=#{params['value'] || raise};" }, ['Set']]
+        end
 
-        response.set_cookie 'simple', params['value']
-        'Set'
-      end
+        if path == '/cookies/delete' && method == 'GET'
+          return [200, { 'Set-Cookie' => "value=; expires=#{Time.at(0)}" }, []]
+        end
 
-      get '/cookies/default-path' do
-        response.cookies.inspect
-      end
+        if path == '/cookies/count' && method == 'GET'
+          new_value = new_cookie_count(req)
+          return [200, { 'Set-Cookie' => "count=#{new_value};" }, [new_value]]
+        end
 
-      get '/cookies/delete' do
-        response.delete_cookie 'value'
-      end
+        if path == '/cookies/set' && method == 'GET'
+          return [200, { 'Set-Cookie' => "value=#{params['value'] || raise}; path=/cookies; expires=#{Time.now+10}" }, ['Set']]
+        end
 
-      get '/cookies/count' do
-        old_value = request.cookies['count'].to_i || 0
-        new_value = (old_value + 1).to_s
+        if path == '/cookies/domain' && method == 'GET'
+          new_value = new_cookie_count(req)
+          return [200, { 'Set-Cookie' => "count=#{new_value}; domain=localhost.com" }, [new_value]]
+        end
 
-        response.set_cookie('count', value: new_value)
-        new_value
-      end
+        if path == '/cookies/subdomain' && method == 'GET'
+          new_value = new_cookie_count(req)
+          return [200, { 'Set-Cookie' => "count=#{new_value}; domain=.example.org" }, [new_value]]
+        end
 
-      get '/cookies/set' do
-        raise if params['value'].nil?
+        if path == '/cookies/set-uppercase' && method == 'GET'
+          return [200, { 'Set-Cookie' => "VALUE=#{params['value'] || raise}; path=/cookies; expires=#{Time.now+10}" }, ['Set']]
+        end
 
-        response.set_cookie('value', value: params['value'],
-                                     path: '/cookies',
-                                     expires: Time.now + 10)
-        'Set'
-      end
+        if path == '/cookies/set-multiple' && method == 'GET'
+          return [200, { 'Set-Cookie' => "key1=value1\nkey2=value2"}, ['Set']]
+        end
 
-      get '/cookies/domain' do
-        old_value = request.cookies['count'].to_i || 0
-        new_value = (old_value + 1).to_s
-
-        response.set_cookie('count', value: new_value, domain: 'localhost.com')
-        new_value
-      end
-
-      get '/cookies/subdomain' do
-        old_value = request.cookies['count'].to_i || 0
-        new_value = (old_value + 1).to_s
-
-        response.set_cookie('count', value: new_value, domain: '.example.org')
-        new_value
-      end
-
-      get '/cookies/set-uppercase' do
-        raise if params['value'].nil?
-
-        response.set_cookie('VALUE', value: params['value'],
-                                     path: '/cookies',
-                                     expires: Time.now + 10)
-        'Set'
-      end
-
-      get '/cookies/set-multiple' do
-        response.set_cookie('key1', value: 'value1')
-        response.set_cookie('key2', value: 'value2')
-        'Set'
-      end
-
-      post '/' do
-        "Hello, POST: #{params.inspect}"
-      end
-
-      put '/' do
-        "Hello, PUT: #{params.inspect}"
-      end
-
-      patch '/' do
-        "Hello, PUT: #{params.inspect}"
-      end
-
-      delete '/' do
-        "Hello, DELETE: #{params.inspect}"
-      end
-
-      link '/' do
-        "Hello, LINK: #{params.inspect}"
+        [404, {}, []]
       end
     end
+
+    FAKE_APP = Rack::Lint.new(FakeApp.new.freeze)
   end
 end
