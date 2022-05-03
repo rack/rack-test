@@ -2,17 +2,16 @@ require "rake/testtask"
 
 task default: :spec
 
-Rake::TestTask.new("spec") do |t|
-  t.libs << "test"
-  t.test_files = FileList["spec/**/*_spec.rb"]
-  t.warning = true
-  t.verbose = true
+desc "Run specs"
+task "spec" do
+  sh "#{FileUtils::RUBY} -w spec/all.rb"
 end
 
 desc "Run specs with coverage"
 task "spec_cov" do
   ENV['COVERAGE'] = '1'
-  Rake::Task['spec'].invoke
+  sh "#{FileUtils::RUBY} -w spec/all.rb"
+  ENV.delete('COVERAGE')
 end
 
 begin
