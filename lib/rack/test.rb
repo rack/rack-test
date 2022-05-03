@@ -347,7 +347,7 @@ module Rack
     end
 
     def self.encoding_aware_strings?
-      defined?(Encoding) && ''.respond_to?(:encode)
+      Rack.release >= '1.6'
     end
   end
 end
