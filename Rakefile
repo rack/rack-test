@@ -1,17 +1,18 @@
-require 'rspec/core'
-require 'rspec/core/rake_task'
+require "rake/testtask"
 
 task default: :spec
 
-RSpec::Core::RakeTask.new do |t|
-  t.pattern = 'spec/**/*_spec.rb'
-  t.ruby_opts = '-w'
+Rake::TestTask.new("spec") do |t|
+  t.libs << "test"
+  t.test_files = FileList["spec/**/*_spec.rb"]
+  t.warning = true
+  t.verbose = true
 end
 
-RSpec::Core::RakeTask.new(:spec_cov) do |t|
+desc "Run specs with coverage"
+task "spec_cov" do
   ENV['COVERAGE'] = '1'
-  t.pattern = 'spec/**/*_spec.rb'
-  t.ruby_opts = '-w'
+  Rake::Task['spec'].invoke
 end
 
 begin

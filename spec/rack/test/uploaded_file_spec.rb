@@ -1,78 +1,69 @@
-require 'spec_helper'
+require_relative '../../spec_helper'
 
 describe Rack::Test::UploadedFile do
-  def test_file_path
+  def file_path
     File.dirname(__FILE__) + '/../../fixtures/foo.txt'
   end
 
   it 'returns an instance of `Rack::Test::UploadedFile`' do
-    uploaded_file = Rack::Test::UploadedFile.new(test_file_path)
+    uploaded_file = Rack::Test::UploadedFile.new(file_path)
 
-    expect(uploaded_file).to be_a(Rack::Test::UploadedFile)
+    uploaded_file.class.must_equal Rack::Test::UploadedFile
   end
 
   it 'responds to things that Tempfile responds to' do
-    uploaded_file = Rack::Test::UploadedFile.new(test_file_path)
+    uploaded_file = Rack::Test::UploadedFile.new(file_path)
 
     Tempfile.public_instance_methods(false).each do |method|
-      expect(uploaded_file).to respond_to(method)
+      uploaded_file.must_respond_to method
     end
   end
 
   it "creates Tempfiles with original file's extension" do
-    uploaded_file = Rack::Test::UploadedFile.new(test_file_path)
+    uploaded_file = Rack::Test::UploadedFile.new(file_path)
 
-    expect(File.extname(uploaded_file.path)).to eq('.txt')
+    File.extname(uploaded_file.path).must_equal '.txt'
   end
 
   it 'creates Tempfiles with a path that includes a single extension' do
-    uploaded_file = Rack::Test::UploadedFile.new(test_file_path)
+    uploaded_file = Rack::Test::UploadedFile.new(file_path)
 
     regex = /foo#{Time.now.year}.*\.txt\Z/
-    expect(uploaded_file.path).to match(regex)
+    uploaded_file.path.must_match regex
   end
 
-  context 'it should call its destructor' do
-    it 'calls the destructor' do
-      expect(Rack::Test::UploadedFile).to receive(:actually_finalize).at_least(:once)
-
-      if RUBY_PLATFORM == 'java'
-        require 'java'
-        java_import 'java.lang.System'
-
-        50.times do |_i|
-          Rack::Test::UploadedFile.new(test_file_path)
-          System.gc
-        end
-      else
-        Rack::Test::UploadedFile.new(test_file_path)
-        GC.start
+  it 'finalizes on garbage collection' do
+    finalized = false
+    c = Class.new(Rack::Test::UploadedFile) do
+      define_singleton_method(:actually_finalize) do |file|
+        finalized = true
+        super(file)
       end
     end
+
+    if RUBY_PLATFORM == 'java'
+      require 'java'
+      java_import 'java.lang.System'
+
+      50.times do |_i|
+        c.new(file_path)
+        System.gc
+      end
+    else
+      c.new(file_path)
+      GC.start
+    end
+
+    finalized.must_equal true
   end
 
-  describe '#initialize' do
-    context 'with an IO object' do
-      let(:stringio) { StringIO.new('I am content') }
-      subject { -> { uploaded_file } }
+  it '#initialize with an IO object sets the specified filename' do
+    original_filename = 'content.txt'
+    uploaded_file = Rack::Test::UploadedFile.new(StringIO.new('I am content'), original_filename: original_filename)
+    uploaded_file.original_filename.must_equal original_filename
+  end
 
-      context 'with an original filename' do
-        let(:original_filename) { 'content.txt' }
-        let(:uploaded_file) { described_class.new(stringio, original_filename: original_filename) }
-
-        it 'sets the specified filename' do
-          subject.call
-          expect(uploaded_file.original_filename).to eq(original_filename)
-        end
-      end
-
-      context 'without an original filename' do
-        let(:uploaded_file) { described_class.new(stringio) }
-
-        it 'raises an error' do
-          expect { subject.call }.to raise_error(ArgumentError, 'Missing `original_filename` for StringIO object')
-        end
-      end
-    end
+  it '#initialize without an original filename raises an error' do
+    proc { Rack::Test::UploadedFile.new(StringIO.new('I am content')) }.must_raise(ArgumentError, 'Missing `original_filename` for StringIO object')
   end
 end

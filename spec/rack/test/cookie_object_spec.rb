@@ -1,74 +1,46 @@
-require 'spec_helper'
+require_relative '../../spec_helper'
+require 'cgi'
 
 describe Rack::Test::Cookie do
-  subject(:cookie) { Rack::Test::Cookie.new(cookie_string) }
-
-  let(:cookie_string) { raw_cookie_string }
-
-  let(:raw_cookie_string) do
-    [
+  value = 'the cookie value'.freeze
+  domain = 'www.example.org'.freeze
+  path = '/'.freeze
+  expires = 'Mon, 10 Aug 2015 14:40:57 0100'.freeze
+  cookie_string = [
       'cookie_name=' + CGI.escape(value),
       'domain=' + domain,
       'path=' + path,
       'expires=' + expires
-    ].join(Rack::Test::CookieJar::DELIMITER)
+    ].join(Rack::Test::CookieJar::DELIMITER).freeze
+
+  define_method(:cookie) do |trailer=''|
+    Rack::Test::Cookie.new(cookie_string + trailer)
   end
 
-  let(:http_only_raw_cookie_string) do
-    raw_cookie_string + Rack::Test::CookieJar::DELIMITER + 'HttpOnly'
+  it '#to_h returns the cookie value and all options' do
+    cookie('; HttpOnly; secure').to_h.must_equal(
+      'value' => value,
+      'domain' => domain,
+      'path' => path,
+      'expires' => expires,
+      'HttpOnly' => true,
+      'secure' => true
+    )
   end
 
-  let(:http_only_secure_raw_cookie_string) do
-    http_only_raw_cookie_string + Rack::Test::CookieJar::DELIMITER + 'secure'
+  it '#to_hash is an alias for #to_h' do
+    cookie.to_hash.must_equal cookie.to_h
   end
 
-  let(:value) { 'the cookie value' }
-  let(:domain) { 'www.example.org' }
-  let(:path) { '/' }
-  let(:expires) { 'Mon, 10 Aug 2015 14:40:57 0100' }
-
-  describe '#to_h' do
-    let(:cookie_string) { http_only_secure_raw_cookie_string }
-
-    it 'returns the cookie value and all options' do
-      expect(cookie.to_h).to eq(
-        'value' => value,
-        'domain' => domain,
-        'path' => path,
-        'expires' => expires,
-        'HttpOnly' => true,
-        'secure' => true
-      )
-    end
+  it '#http_only? for a non HTTP only cookie returns false' do
+    cookie.http_only?.must_equal false
   end
 
-  describe '#to_hash' do
-    it 'is an alias for #to_h' do
-      expect(cookie.to_hash).to eq(cookie.to_h)
-    end
+  it '#http_only? for an HTTP only cookie returns true' do
+    cookie('; HttpOnly').http_only?.must_equal true
   end
 
-  describe '#http_only?' do
-    context 'for a non HTTP only cookie' do
-      it 'returns false' do
-        expect(cookie.http_only?).to be(false)
-      end
-    end
-
-    context 'for a HTTP only cookie' do
-      let(:cookie_string) { http_only_raw_cookie_string }
-
-      it 'returns true' do
-        expect(cookie.http_only?).to be(true)
-      end
-    end
-
-    context 'for a lower case HTTP only cookie' do
-      let(:cookie_string) { http_only_raw_cookie_string.downcase }
-
-      it 'returns true' do
-        expect(cookie.http_only?).to be(true)
-      end
-    end
+  it '#http_only? for an HTTP only cookie returns true' do
+    cookie('; httponly').http_only?.must_equal true
   end
 end
