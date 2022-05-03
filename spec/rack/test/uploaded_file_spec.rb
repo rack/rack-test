@@ -54,8 +54,11 @@ describe Rack::Test::UploadedFile do
       GC.start
     end
 
+    # Due to CRuby's conservative garbage collection, you can never guarantee
+    # an object will be garbage collected, so this is a source of potential
+    # nondeterministic failure
     finalized.must_equal true
-  end
+  end if RUBY_VERSION >= '2.7' || RUBY_ENGINE != 'ruby'
 
   it '#initialize with an IO object sets the specified filename' do
     original_filename = 'content.txt'
