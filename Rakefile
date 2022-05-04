@@ -26,7 +26,7 @@ end
 desc 'Generate RDoc'
 task :docs do
   FileUtils.rm_rf('doc')
-  require 'rack/test/version'
+  require_relative 'lib/rack/test/version'
   sh "rdoc --title 'Rack::Test #{Rack::Test::VERSION} API Documentation'"
 end
 
