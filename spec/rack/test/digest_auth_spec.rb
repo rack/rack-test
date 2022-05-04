@@ -1,4 +1,5 @@
 require_relative '../../spec_helper'
+require_relative '../../../lib/rack/test/mock_digest_request'
 
 describe 'Rack::Test::Session digest authentication' do
   app = Rack::Auth::Digest::MD5.new(Rack::Test::FakeApp.new.freeze) do |username|
