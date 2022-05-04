@@ -12,15 +12,6 @@ task "spec_cov" do
   ENV.delete('COVERAGE')
 end
 
-begin
-  require 'rubocop/rake_task'
-  RuboCop::RakeTask.new
-rescue LoadError
-  task :rubocop do
-    warn 'Rubocop not supported on this configuration.'
-  end
-end
-
 desc 'Generate RDoc'
 task :docs do
   FileUtils.rm_rf('doc')
