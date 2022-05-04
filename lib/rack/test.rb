@@ -1,12 +1,13 @@
 require 'uri'
 require 'rack'
-require 'rack/mock_session'
-require 'rack/test/cookie_jar'
-require 'rack/test/mock_digest_request'
-require 'rack/test/utils'
-require 'rack/test/methods'
-require 'rack/test/uploaded_file'
-require 'rack/test/version'
+
+require_relative 'mock_session'
+require_relative 'test/cookie_jar'
+require_relative 'test/mock_digest_request'
+require_relative 'test/utils'
+require_relative 'test/methods'
+require_relative 'test/uploaded_file'
+require_relative 'test/version'
 
 module Rack
   module Test
