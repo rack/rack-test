@@ -1,4 +1,6 @@
+# :nocov:
 require 'rack/auth/digest' unless defined?(Rack::Auth::Digest)
+# :nocov:
 
 module Rack
   module Test
