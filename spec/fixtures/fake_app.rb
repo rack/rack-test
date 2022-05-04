@@ -73,7 +73,7 @@ module Rack
           return [200, {}, []]
         end
 
-        if %w[/cookies/show /COOKIES/show /not-cookies/show /cookies/default-path].include?(path) && method == 'GET'
+        if %w[/cookies/show /COOKIES/show /not-cookies/show /cookies/default-path /cookies/default-path/sub].include?(path) && method == 'GET'
           return [200, {}, [req.cookies.inspect]]
         end
 
