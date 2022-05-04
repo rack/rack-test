@@ -1,5 +1,3 @@
-require "rake/testtask"
-
 task default: :spec
 
 desc "Run specs"
