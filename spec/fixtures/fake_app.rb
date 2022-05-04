@@ -122,7 +122,7 @@ module Rack
       end
     end
 
-    class EnvInput
+    class InputRewinder
       def initialize(app)
         @app = app
       end
@@ -143,6 +143,6 @@ module Rack
       end
     end
 
-    FAKE_APP = EnvInput.new(Rack::Lint.new(FakeApp.new.freeze))
+    FAKE_APP = InputRewinder.new(Rack::Lint.new(FakeApp.new.freeze))
   end
 end
