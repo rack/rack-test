@@ -91,7 +91,7 @@ module Rack
         extension = ::File.extname(@original_filename)
 
         @tempfile = Tempfile.new([::File.basename(@original_filename, extension), extension])
-        @tempfile.set_encoding(Encoding::BINARY) if @tempfile.respond_to?(:set_encoding)
+        @tempfile.set_encoding(Encoding::BINARY)
 
         ObjectSpace.define_finalizer(self, self.class.finalize(@tempfile))
 
