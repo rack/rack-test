@@ -102,7 +102,9 @@ module Rack
                 build_file_part(name, v)
               else
                 primitive_part = build_primitive_part(name, v)
+                # :nocov:
                 Rack::Test.encoding_aware_strings? ? primitive_part.force_encoding('BINARY') : primitive_part
+                # :nocov:
               end
             end.join
           end

@@ -38,8 +38,11 @@ module Rack
 
       if @last_response.respond_to?(:finish)
         @last_response.finish
+      # :nocov:
       else
+        # Rack <1.3 support
         @last_response
+      # :nocov:
       end
     end
 

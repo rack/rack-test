@@ -18,4 +18,25 @@ describe Rack::Test::CookieJar do
 
     jar.for(nil).must_equal 'a=b; c=d'
   end
+
+  it '#to_hash returns a hash of cookies' do
+    jar = Rack::Test::CookieJar.new
+    jar['a'] = 'b'
+    jar['c'] = 'd'
+    jar.to_hash.must_equal 'a' => 'b', 'c' => 'd'
+  end
+
+  it '#merge merges valid raw cookie strings' do
+    jar = Rack::Test::CookieJar.new
+    jar['a'] = 'b'
+    jar.merge('c=d')
+    jar.to_hash.must_equal 'a' => 'b', 'c' => 'd'
+  end
+
+  it '#merge does not merge invalid raw cookie strings' do
+    jar = Rack::Test::CookieJar.new
+    jar['a'] = 'b'
+    jar.merge('c=d; domain=example.org; secure', URI.parse('/'))
+    jar.to_hash.must_equal 'a' => 'b'
+  end
 end
