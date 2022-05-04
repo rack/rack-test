@@ -20,7 +20,13 @@ module Rack
         @name, @value = parse_query(@name_value_raw, ';').to_a.first
         @options = parse_query(options, ';')
 
-        @options['domain']  ||= (uri.host || default_host)
+        if @options['domain']
+          @exact_domain_match = false
+        else
+          @exact_domain_match = true
+          @options['domain'] = (uri.host || default_host)
+        end
+
         @options['path']    ||= uri.path.sub(/\/[^\/]*\Z/, '')
       end
 
@@ -74,7 +80,7 @@ module Rack
 
         real_domain = domain =~ /^\./ ? domain[1..-1] : domain
         !!((!secure? || (secure? && uri.scheme == 'https')) &&
-          uri.host =~ Regexp.new("#{Regexp.escape(real_domain)}$", Regexp::IGNORECASE) &&
+          uri.host =~ Regexp.new("#{'^' if @exact_domain_match}#{Regexp.escape(real_domain)}$", Regexp::IGNORECASE) &&
           uri.path =~ Regexp.new("^#{Regexp.escape(path)}"))
       end
 
