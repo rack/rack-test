@@ -10,6 +10,11 @@ jobs:
         os: [ ubuntu-20.04 ]
         ruby: [ 2.0.0, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, '3.0', 3.1, jruby-9.3 ]
         gemfile: [ Gemfile, Gemfile.rack-1.x ]
+        exclude:
+          - ruby: 2.0.0
+            gemfile: Gemfile
+          - ruby: 2.1
+            gemfile: Gemfile
     runs-on: ${{ matrix.os }}
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/${{ matrix.gemfile }}
