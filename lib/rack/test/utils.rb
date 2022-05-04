@@ -124,7 +124,7 @@ EOF
       module_function :build_primitive_part
 
       def build_file_part(parameter_name, uploaded_file)
-        uploaded_file.set_encoding(Encoding::BINARY) if uploaded_file.respond_to?(:set_encoding)
+        uploaded_file.set_encoding(Encoding::BINARY)
         buffer = String.new
         buffer << (<<-EOF)
 --#{MULTIPART_BOUNDARY}\r
