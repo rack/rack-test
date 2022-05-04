@@ -23,7 +23,7 @@ request helpers feature.
             %w[History.md MIT-LICENSE.txt README.md]
   s.required_ruby_version = '>= 2.0'
   s.add_dependency 'rack', '>= 1.0'
-  s.add_development_dependency 'rake', '~> 12.0'
+  s.add_development_dependency 'rake'
   s.add_development_dependency 'minitest', ">= 5.0"
   s.add_development_dependency 'minitest-global_expectations'
 end
