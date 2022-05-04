@@ -111,15 +111,12 @@ module Rack
       module_function :get_parts
 
       def build_primitive_part(parameter_name, value)
-        value = [value] unless value.is_a? Array
-        value.map do |v|
-          <<-EOF
+        <<-EOF
 --#{MULTIPART_BOUNDARY}\r
 Content-Disposition: form-data; name="#{parameter_name}"\r
 \r
-#{v}\r
+#{value}\r
 EOF
-        end.join
       end
       module_function :build_primitive_part
 
