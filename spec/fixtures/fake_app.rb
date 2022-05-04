@@ -1,3 +1,6 @@
+require 'time'
+require 'rack/lint'
+
 module Rack
   module Test
     class FakeApp
@@ -75,48 +78,71 @@ module Rack
         end
 
         if path == '/cookies/set-secure' && method == 'GET'
-          return [200, { 'Set-Cookie' => "secure-cookie=#{params['value'] || raise}; secure" }, ['Set']]
+          return [200, { 'set-cookie' => "secure-cookie=#{params['value'] || raise}; secure" }, ['Set']]
         end
 
         if (path == '/cookies/set-simple' && method == 'GET') || (path == '/cookies/default-path' && method == 'POST')
-          return [200, { 'Set-Cookie' => "simple=#{params['value'] || raise};" }, ['Set']]
+          return [200, { 'set-cookie' => "simple=#{params['value'] || raise};" }, ['Set']]
         end
 
         if path == '/cookies/delete' && method == 'GET'
-          return [200, { 'Set-Cookie' => "value=; expires=#{Time.at(0)}" }, []]
+          return [200, { 'set-cookie' => "value=; expires=#{Time.at(0).httpdate}" }, []]
         end
 
         if path == '/cookies/count' && method == 'GET'
           new_value = new_cookie_count(req)
-          return [200, { 'Set-Cookie' => "count=#{new_value};" }, [new_value]]
+          return [200, { 'set-cookie' => "count=#{new_value};" }, [new_value]]
         end
 
         if path == '/cookies/set' && method == 'GET'
-          return [200, { 'Set-Cookie' => "value=#{params['value'] || raise}; path=/cookies; expires=#{Time.now+10}" }, ['Set']]
+          return [200, { 'set-cookie' => "value=#{params['value'] || raise}; path=/cookies; expires=#{(Time.now+10).httpdate}" }, ['Set']]
         end
 
         if path == '/cookies/domain' && method == 'GET'
           new_value = new_cookie_count(req)
-          return [200, { 'Set-Cookie' => "count=#{new_value}; domain=localhost.com" }, [new_value]]
+          return [200, { 'set-cookie' => "count=#{new_value}; domain=localhost.com" }, [new_value]]
         end
 
         if path == '/cookies/subdomain' && method == 'GET'
           new_value = new_cookie_count(req)
-          return [200, { 'Set-Cookie' => "count=#{new_value}; domain=.example.org" }, [new_value]]
+          return [200, { 'set-cookie' => "count=#{new_value}; domain=.example.org" }, [new_value]]
         end
 
         if path == '/cookies/set-uppercase' && method == 'GET'
-          return [200, { 'Set-Cookie' => "VALUE=#{params['value'] || raise}; path=/cookies; expires=#{Time.now+10}" }, ['Set']]
+          return [200, { 'set-cookie' => "VALUE=#{params['value'] || raise}; path=/cookies; expires=#{(Time.now+10).httpdate}" }, ['Set']]
         end
 
         if path == '/cookies/set-multiple' && method == 'GET'
-          return [200, { 'Set-Cookie' => "key1=value1\nkey2=value2"}, ['Set']]
+          value = Rack.release >= '2.3' ? ["key1=value1", "key2=value2"] : "key1=value1\nkey2=value2"
+          
+          return [200, { 'set-cookie' => value }, ['Set']]
         end
 
         [404, {}, []]
       end
     end
 
-    FAKE_APP = Rack::Lint.new(FakeApp.new.freeze)
+    class EnvInput
+      def initialize(app)
+        @app = app
+      end
+
+      def call(env)
+        # Rack 3 removes the requirement for rewindable input.
+        # Rack::Lint wraps the input and disallows direct access to rewind.
+        # This breaks a lot of the specs that access last_request and
+        # try to read the input. Work around this by reassigning the input
+        # in env after the request, and rewinding it.
+        input = env['rack.input']
+        @app.call(env)
+      ensure
+        if input
+          input.rewind
+          env['rack.input'] = input
+        end
+      end
+    end
+
+    FAKE_APP = EnvInput.new(Rack::Lint.new(FakeApp.new.freeze))
   end
 end

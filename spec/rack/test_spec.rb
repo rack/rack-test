@@ -751,6 +751,7 @@ describe 'Rack::Test::Session#delete' do
     delete '/', foo: 'bar'
     last_request.GET.must_equal({})
     last_request.POST.must_equal 'foo' => 'bar'
+    last_request.body.rewind
     last_request.body.read.must_equal 'foo=bar'
   end
 

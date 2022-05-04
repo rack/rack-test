@@ -1,9 +1,24 @@
 require 'uri'
-require 'rack'
+
+# :nocov:
+begin
+  require "rack/version"
+rescue LoadError
+  require "rack"
+else
+  if Rack.release >= '2.3'
+    require "rack/request"
+    require "rack/mock"
+    require "rack/utils"
+  else
+    require "rack"
+  end
+end
+# :nocov:
+
 
 require_relative 'mock_session'
 require_relative 'test/cookie_jar'
-require_relative 'test/mock_digest_request'
 require_relative 'test/utils'
 require_relative 'test/methods'
 require_relative 'test/uploaded_file'
@@ -298,6 +313,8 @@ module Rack
       end
 
       def digest_auth_header
+        require_relative 'test/mock_digest_request'
+
         challenge = last_response['WWW-Authenticate'].split(' ', 2).last
         params = Rack::Auth::Digest::Params.parse(challenge)
 

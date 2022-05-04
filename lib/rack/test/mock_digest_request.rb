@@ -1,3 +1,5 @@
+require 'rack/auth/digest' unless defined?(Rack::Auth::Digest)
+
 module Rack
   module Test
     class MockDigestRequest # :nodoc:
