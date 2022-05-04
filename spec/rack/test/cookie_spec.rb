@@ -18,12 +18,15 @@ describe "Rack::Test::Session" do
     last_request.cookies.must_equal({})
   end
 
-  it 'cookie path defaults to the uri of the document that was requested' do
-    skip 'See issue rack-test github issue #50'
+  it 'cookie path defaults to the directory of the document that was requested' do
     post '/cookies/default-path', 'value' => 'cookie'
     get '/cookies/default-path'
     last_request.cookies.must_equal 'simple' => 'cookie'
-    get '/cookies/show'
+    get '/cookies/default-path/sub'
+    last_request.cookies.must_equal 'simple' => 'cookie'
+    get '/'
+    last_request.cookies.must_equal({})
+    get '/COOKIES/show'
     last_request.cookies.must_equal({})
   end
 
