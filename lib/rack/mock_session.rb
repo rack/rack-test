@@ -30,10 +30,7 @@ module Rack
 
       @last_response = MockResponse.new(status, headers, body, env['rack.errors'].flush)
 
-      # close() gets called automatically in newer Rack versions.
-      if !defined?(Rack::RELEASE) || Gem::Version.new(Rack::RELEASE) < Gem::Version.new('2.2.2')
-        body.close if body.respond_to?(:close)
-      end
+      close_body(body)
 
       cookie_jar.merge(last_response.headers['Set-Cookie'], uri)
 
@@ -62,6 +59,20 @@ module Rack
 
     def cookie_jar
       @cookie_jar ||= Rack::Test::CookieJar.new([], @default_host)
+    end
+
+    private
+
+    # :nocov:
+    if !defined?(Rack::RELEASE) || Gem::Version.new(Rack::RELEASE) < Gem::Version.new('2.2.2')
+      def close_body(body)
+        body.close if body.respond_to?(:close)
+      end
+    # :nocov:
+    else
+      # close() gets called automatically in newer Rack versions.
+      def close_body(body)
+      end
     end
   end
 end
