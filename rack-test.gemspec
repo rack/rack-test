@@ -26,5 +26,4 @@ request helpers feature.
   s.add_development_dependency 'rake', '~> 12.0'
   s.add_development_dependency 'minitest', ">= 5.0"
   s.add_development_dependency 'minitest-global_expectations'
-  s.add_development_dependency 'simplecov', '~> 0.16'
 end
