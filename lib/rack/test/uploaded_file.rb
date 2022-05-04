@@ -1,5 +1,4 @@
 require 'fileutils'
-require 'pathname'
 require 'tempfile'
 
 module Rack
