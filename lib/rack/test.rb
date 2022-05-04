@@ -250,7 +250,7 @@ module Rack
             else
               # NB: We do not need to set CONTENT_LENGTH here;
               # Rack::ContentLength will determine it automatically.
-              env[:input] = params_to_string(params)
+              env[:input] = build_nested_query(params)
             end
           else
             env[:input] = params
@@ -335,14 +335,6 @@ module Rack
         end
 
         converted_headers
-      end
-
-      def params_to_string(params)
-        case params
-        when Hash then build_nested_query(params)
-        when nil  then ''
-        else params
-        end
       end
     end
 
