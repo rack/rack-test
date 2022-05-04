@@ -104,7 +104,6 @@ describe "Rack::Test::Session" do
   end
 
   it 'respects cookie domains when no domain is explicitly set' do
-    skip 'FIXME: www.example.org should not get the first cookie'
     request('http://example.org/cookies/count').body.must_equal '1'
     request('http://www.example.org/cookies/count').body.must_equal '1'
     request('http://example.org/cookies/count').body.must_equal '2'
