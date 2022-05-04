@@ -32,6 +32,17 @@ describe Rack::Test::Cookie do
     cookie.to_hash.must_equal cookie.to_h
   end
 
+  it '#empty? should only be true for empty values' do
+    cookie.empty?.must_equal false
+    Rack::Test::Cookie.new('value=').empty?.must_equal true
+  end
+
+  it '#valid? should consider the given URI scheme for secure cookies' do
+    cookie('; secure').valid?(URI.parse('https://www.example.org/')).must_equal true
+    cookie('; secure').valid?(URI.parse('httpx://www.example.org/')).must_equal false
+    cookie('; secure').valid?(URI.parse('/')).must_equal false
+  end
+
   it '#http_only? for a non HTTP only cookie returns false' do
     cookie.http_only?.must_equal false
   end

@@ -32,6 +32,16 @@ describe Rack::Test::UploadedFile do
     uploaded_file.path.must_match regex
   end
 
+  it 'respects binary argument' do
+    Rack::Test::UploadedFile.new(file_path, 'text/plain', true).tempfile.must_be :binmode?
+    Rack::Test::UploadedFile.new(file_path, 'text/plain', false).tempfile.wont_be :binmode?
+    Rack::Test::UploadedFile.new(file_path, 'text/plain').tempfile.wont_be :binmode?
+  end
+
+  it 'raises for invalid files' do
+    proc{Rack::Test::UploadedFile.new('does_not_exist')}.must_raise RuntimeError
+  end
+
   it 'finalizes on garbage collection' do
     finalized = false
     c = Class.new(Rack::Test::UploadedFile) do
