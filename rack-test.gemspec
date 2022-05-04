@@ -27,6 +27,4 @@ request helpers feature.
   s.add_development_dependency 'minitest', ">= 5.0"
   s.add_development_dependency 'minitest-global_expectations'
   s.add_development_dependency 'simplecov', '~> 0.16'
-  # For Thorfile. Run "bundle exec thor help" to see the help.
-  s.add_development_dependency 'thor', '~>  0.19'
 end
