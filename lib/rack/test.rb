@@ -192,6 +192,10 @@ module Rack
       # Example:
       #   digest_authorize "bryan", "secret"
       def digest_authorize(username, password)
+        warn 'digest authentication support will be removed in rack-test 1.3', uplevel: 1
+        _digest_authorize(username, password)
+      end
+      def _digest_authorize(username, password) # :nodoc:
         @digest_username = username
         @digest_password = password
       end
@@ -324,7 +328,7 @@ module Rack
                       'uri'       => last_request.fullpath,
                       'method'    => last_request.env['REQUEST_METHOD'])
 
-        params['response'] = MockDigestRequest.new(params).response(@digest_password)
+        params['response'] = MockDigestRequest_.new(params).response(@digest_password)
 
         "Digest #{params}"
       end

@@ -390,29 +390,30 @@ describe 'Rack::Test::Session#digest_authorize' do
 
   define_method(:app){digest_app}
 
-  before do
+  def request
     digest_authorize('test-name', 'test-password')
-    request('/')
+    super('/')
+    last_request
   end
 
-  it 'retries digest requests' do
-    last_request.env['rack-test.digest_auth_retry'].must_equal true
+  deprecated 'retries digest requests' do
+    request.env['rack-test.digest_auth_retry'].must_equal true
   end
 
-  it 'sends a digest auth header' do
-    last_request.env['HTTP_AUTHORIZATION'].must_include 'Digest realm'
+  deprecated 'sends a digest auth header' do
+    request.env['HTTP_AUTHORIZATION'].must_include 'Digest realm'
   end
 
-  it 'includes the response based on the username,password and nonce' do
-    last_request.env['HTTP_AUTHORIZATION'].must_include 'response="d773034bdc162b31c50c62764016bd31"'
+  deprecated 'includes the response based on the username,password and nonce' do
+    request.env['HTTP_AUTHORIZATION'].must_include 'response="d773034bdc162b31c50c62764016bd31"'
   end
 
-  it 'includes the challenge headers' do
-    last_request.env['HTTP_AUTHORIZATION'].must_include challenge_data
+  deprecated 'includes the challenge headers' do
+    request.env['HTTP_AUTHORIZATION'].must_include challenge_data
   end
 
-  it 'includes the username' do
-    last_request.env['HTTP_AUTHORIZATION'].must_include 'username="test-name"'
+  deprecated 'includes the username' do
+    request.env['HTTP_AUTHORIZATION'].must_include 'username="test-name"'
   end
 end
 

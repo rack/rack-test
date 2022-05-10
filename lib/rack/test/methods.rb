@@ -55,6 +55,11 @@ module Rack
         @_current_session_names ||= [:default]
       end
 
+      def digest_authorize(username, password)
+        warn 'digest authentication support will be removed in rack-test 1.3', uplevel: 1
+        current_session._digest_authorize(username, password)
+      end
+
       METHODS = %i[
         request
         get
@@ -72,7 +77,6 @@ module Rack
         clear_cookies
         authorize
         basic_authorize
-        digest_authorize
         last_response
         last_request
       ].freeze
