@@ -4,7 +4,7 @@ require 'rack/auth/digest' unless defined?(Rack::Auth::Digest)
 
 module Rack
   module Test
-    class MockDigestRequest # :nodoc:
+    class MockDigestRequest_ # :nodoc:
       def initialize(params)
         @params = params
       end
@@ -25,5 +25,7 @@ module Rack
         Rack::Auth::Digest::MD5.new(nil).send :digest, self, password
       end
     end
+    MockDigestRequest = MockDigestRequest_
+    deprecate_constant :MockDigestRequest if respond_to?(:deprecate_constant, true)
   end
 end

@@ -23,4 +23,15 @@ class Minitest::Spec
   def app
     Rack::Test::FAKE_APP
   end
+
+  def self.deprecated(*args, &block)
+    it(*args) do
+      begin
+        verbose, $VERBOSE = $VERBOSE, nil
+        instance_exec(&block)
+      ensure
+        $VERBOSE = verbose
+      end
+    end
+  end
 end
