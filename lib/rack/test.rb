@@ -120,7 +120,7 @@ module Rack
       # In accordance with the Rack spec, headers will be included in the Rack
       # environment hash in HTTP_USER_AGENT form.  Example:
       #
-      #   header "User-Agent", "Firefox"
+      #   header "user-agent", "Firefox"
       def header(name, value)
         name = name.upcase
         name.tr!('-', '_')

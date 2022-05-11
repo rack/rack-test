@@ -30,12 +30,12 @@ class HomepageTest < Test::Unit::TestCase
   include Rack::Test::Methods
 
   def app
-    lambda { |env| [200, {'Content-Type' => 'text/plain'}, ['All responses are OK']] }
+    lambda { |env| [200, {'content-type' => 'text/plain'}, ['All responses are OK']] }
   end
 
   def test_response_is_ok
     # Optionally set headers used for all requests in this spec:
-    #header 'Accept-Charset', 'utf-8'
+    #header 'accept-charset', 'utf-8'
 
     # First argument is treated as the path
     get '/'

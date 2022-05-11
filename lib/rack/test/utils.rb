@@ -115,7 +115,7 @@ module Rack
       def build_primitive_part(parameter_name, value)
         <<-EOF
 --#{MULTIPART_BOUNDARY}\r
-Content-Disposition: form-data; name="#{parameter_name}"\r
+content-disposition: form-data; name="#{parameter_name}"\r
 \r
 #{value}\r
 EOF
@@ -127,9 +127,9 @@ EOF
         buffer = String.new
         buffer << (<<-EOF)
 --#{MULTIPART_BOUNDARY}\r
-Content-Disposition: form-data; name="#{parameter_name}"; filename="#{escape_path(uploaded_file.original_filename)}"\r
-Content-Type: #{uploaded_file.content_type}\r
-Content-Length: #{uploaded_file.size}\r
+content-disposition: form-data; name="#{parameter_name}"; filename="#{escape_path(uploaded_file.original_filename)}"\r
+content-type: #{uploaded_file.content_type}\r
+content-length: #{uploaded_file.size}\r
 \r
 EOF
         uploaded_file.append_to(buffer)

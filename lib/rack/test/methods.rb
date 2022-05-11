@@ -55,7 +55,7 @@ module Rack
         @_current_session_names ||= [:default]
       end
 
-      def digest_authorize(username, password)
+      def digest_authorize(username, password) # :nodoc:
         warn 'digest authentication support will be removed in rack-test 1.3', uplevel: 1
         current_session._digest_authorize(username, password)
       end
