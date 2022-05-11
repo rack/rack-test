@@ -86,10 +86,10 @@ module Rack
         @rack_mock_session = mock_session
       end
 
-      %w[get post put patch delete options head].each do |meth|
+      %w[get post put patch delete options head].each do |method_name|
         class_eval(<<-END, __FILE__, __LINE__+1)
-          def #{meth}(uri, params = {}, env = {}, &block)
-            custom_request('#{meth.upcase}', uri, params, env, &block)
+          def #{method_name}(uri, params = {}, env = {}, &block)
+            custom_request('#{method_name.upcase}', uri, params, env, &block)
           end
         END
       end
