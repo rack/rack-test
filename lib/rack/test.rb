@@ -215,8 +215,13 @@ module Rack
         'rack.test' => true,
         'REMOTE_ADDR' => '127.0.0.1',
         'SERVER_PROTOCOL' => 'HTTP/1.0',
-        'HTTP_VERSION' => 'HTTP/1.0'
-      }.freeze
+      }
+      # :nocov:
+      unless Rack.release >= '2.3'
+        DEFAULT_ENV['HTTP_VERSION'] = DEFAULT_ENV['SERVER_PROTOCOL']
+      end
+      # :nocov:
+      DEFAULT_ENV.freeze
       private_constant :DEFAULT_ENV
 
       # Update environment to use based on given URI.
