@@ -16,6 +16,7 @@ else
 end
 # :nocov:
 
+require 'forwardable'
 
 require_relative 'mock_session'
 require_relative 'test/cookie_jar'
@@ -26,14 +27,20 @@ require_relative 'test/version'
 
 module Rack
   module Test
+    # The default host to use for requests, when a full URI is not
+    # provided.
     DEFAULT_HOST = 'example.org'.freeze
+
+    # The default multipart boundary to use for multipart request bodies
     MULTIPART_BOUNDARY = '----------XnJLe9ZIbbGUYtzPQJ16u1'.freeze
 
     # The common base class for exceptions raised by Rack::Test
     class Error < StandardError; end
 
-    # This class represents a series of requests issued to a Rack app, sharing
-    # a single cookie jar
+    # Rack::Test::Session handles a series of requests issued to a Rack app.  It
+    # wraps a Rack::MockSession and offers a higher-level API for submitting requests.
+    # It allows for setting headers and a default rack environment that is used for
+    # future requests.
     #
     # Rack::Test::Session's methods are most often called through Rack::Test::Methods,
     # which will automatically build a session when it's first used.
@@ -48,86 +55,48 @@ module Rack
       # Note: Generally, you won't need to initialize a Rack::Test::Session directly.
       # Instead, you should include Rack::Test::Methods into your testing context.
       # (See README.rdoc for an example)
+      #
+      # The following methods are defined via metaprogramming: get, post, put, patch,
+      # delete, options, and head. Each method submits a request with the given request
+      # method, with the given URI and optional parameters and rack environment.
+      # Examples:
+      #
+      #   # URI only:
+      #   get("/")                   # GET /
+      #   get("/?foo=bar")           # GET /?foo=bar
+      #
+      #   # URI and parameters
+      #   get("/foo", 'bar'=>'baz')  # GET /foo?bar=baz
+      #   post("/foo", 'bar'=>'baz') # POST /foo (bar=baz in request body)
+      #
+      #   # URI, parameters, and rack environment
+      #   get("/bar", {}, 'CONTENT_TYPE'=>'foo')
+      #   get("/bar", {'foo'=>'baz'}, 'HTTP_ACCEPT'=>'*')
+      #
+      # The above methods as well as #request and #custom_request store the Rack::Request
+      # submitted in #last_request. The methods store a Rack::MockResponse based on the
+      # response in #last_response. #last_response is also returned by the methods.
+      # If a block is given, #last_response is also yielded to the block.
       def initialize(mock_session)
-        @headers = {}
+        mock_session = MockSession.new(mock_session) unless mock_session.is_a?(MockSession)
+
         @env = {}
         @digest_username = nil
         @digest_password = nil
-
-        @rack_mock_session = if mock_session.is_a?(MockSession)
-          mock_session
-        else
-          MockSession.new(mock_session)
-        end
-
-        @default_host = @rack_mock_session.default_host
+        @rack_mock_session = mock_session
       end
 
-      # Issue a GET request for the given URI with the given params and Rack
-      # environment. Stores the issues request object in #last_request and
-      # the app's response in #last_response. Yield #last_response to a block
-      # if given.
-      #
-      # Example:
-      #   get "/"
-      def get(uri, params = {}, env = {}, &block)
-        custom_request('GET', uri, params, env, &block)
-      end
-
-      # Issue a POST request for the given URI. See #get
-      #
-      # Example:
-      #   post "/signup", "name" => "Bryan"
-      def post(uri, params = {}, env = {}, &block)
-        custom_request('POST', uri, params, env, &block)
-      end
-
-      # Issue a PUT request for the given URI. See #get
-      #
-      # Example:
-      #   put "/"
-      def put(uri, params = {}, env = {}, &block)
-        custom_request('PUT', uri, params, env, &block)
-      end
-
-      # Issue a PATCH request for the given URI. See #get
-      #
-      # Example:
-      #   patch "/"
-      def patch(uri, params = {}, env = {}, &block)
-        custom_request('PATCH', uri, params, env, &block)
-      end
-
-      # Issue a DELETE request for the given URI. See #get
-      #
-      # Example:
-      #   delete "/"
-      def delete(uri, params = {}, env = {}, &block)
-        custom_request('DELETE', uri, params, env, &block)
-      end
-
-      # Issue an OPTIONS request for the given URI. See #get
-      #
-      # Example:
-      #   options "/"
-      def options(uri, params = {}, env = {}, &block)
-        custom_request('OPTIONS', uri, params, env, &block)
-      end
-
-      # Issue a HEAD request for the given URI. See #get
-      #
-      # Example:
-      #   head "/"
-      def head(uri, params = {}, env = {}, &block)
-        custom_request('HEAD', uri, params, env, &block)
+      %w[get post put patch delete options head].each do |meth|
+        class_eval(<<-END, __FILE__, __LINE__+1)
+          def #{meth}(uri, params = {}, env = {}, &block)
+            custom_request('#{meth.upcase}', uri, params, env, &block)
+          end
+        END
       end
 
       # Issue a request to the Rack app for the given URI and optional Rack
-      # environment. Stores the issues request object in #last_request and
-      # the app's response in #last_response. Yield #last_response to a block
-      # if given.
+      # environment.  Example:
       #
-      # Example:
       #   request "/"
       def request(uri, env = {}, &block)
         uri = parse_uri(uri, env)
@@ -135,9 +104,9 @@ module Rack
         process_request(uri, env, &block)
       end
 
-      # Issue a request using the given verb for the given URI. See #get
+      # Issue a request using the given HTTP verb for the given URI, with optional
+      # params and rack environment.  Example:
       #
-      # Example:
       #   custom_request "LINK", "/"
       def custom_request(verb, uri, params = {}, env = {}, &block)
         uri = parse_uri(uri, env)
@@ -149,22 +118,20 @@ module Rack
       # session. Use a value of nil to remove a previously configured header.
       #
       # In accordance with the Rack spec, headers will be included in the Rack
-      # environment hash in HTTP_USER_AGENT form.
+      # environment hash in HTTP_USER_AGENT form.  Example:
       #
-      # Example:
       #   header "User-Agent", "Firefox"
       def header(name, value)
-        if value.nil?
-          @headers.delete(name)
-        else
-          @headers[name] = value
-        end
+        name = name.upcase
+        name.tr!('-', '_')
+        name = "HTTP_#{name}" unless name == 'CONTENT_TYPE' || name == 'CONTENT_LENGTH'
+        env(name, value)
       end
 
-      # Set an env var to be included on all subsequent requests through the
-      # session. Use a value of nil to remove a previously configured env.
+      # Set an entry in the rack environment to be included on all subsequent
+      # requests through the session. Use a value of nil to remove a previously
+      # value.  Example:
       #
-      # Example:
       #   env "rack.session", {:csrf => 'token'}
       def env(name, value)
         if value.nil?
@@ -188,6 +155,7 @@ module Rack
 
       # Set the username and password for HTTP Digest authorization, to be
       # included in subsequent requests in the HTTP_AUTHORIZATION header.
+      # This method is deprecated and will be removed in rack-test 1.3.
       #
       # Example:
       #   digest_authorize "bryan", "secret"
@@ -208,20 +176,24 @@ module Rack
         unless last_response.redirect?
           raise Error, 'Last response was not a redirect. Cannot follow_redirect!'
         end
-        request_method, params =
-          if last_response.status == 307
-            [last_request.request_method.downcase.to_sym, last_request.params]
-          else
-            [:get, {}]
-          end
+
+        if last_response.status == 307
+          request_method = last_request.request_method
+          params = last_request.params
+        else
+          request_method = 'GET'
+          params = {}
+        end
 
         # Compute the next location by appending the location header with the
         # last request, as per https://tools.ietf.org/html/rfc7231#section-7.1.2
         # Adding two absolute locations returns the right-hand location
         next_location = URI.parse(last_request.url) + URI.parse(last_response['Location'])
 
-        send(
-          request_method, next_location.to_s, params,
+        custom_request(
+          request_method,
+          next_location.to_s,
+          params,
           'HTTP_REFERER' => last_request.url,
           'rack.session' => last_request.session,
           'rack.session.options' => last_request.session_options
@@ -230,24 +202,30 @@ module Rack
 
       private
 
+      # Normalize URI based on given URI/path and environment.
       def parse_uri(path, env)
-        URI.parse(path).tap do |uri|
-          uri.path = "/#{uri.path}" unless uri.path[0] == '/'
-          uri.host ||= @default_host
-          uri.scheme ||= 'https' if env['HTTPS'] == 'on'
-        end
+        uri = URI.parse(path)
+        uri.path = "/#{uri.path}" unless uri.path.start_with?('/')
+        uri.host ||= @rack_mock_session.default_host
+        uri.scheme ||= 'https' if env['HTTPS'] == 'on'
+        uri
       end
 
+      DEFAULT_ENV = {
+        'rack.test' => true,
+        'REMOTE_ADDR' => '127.0.0.1',
+        'SERVER_PROTOCOL' => 'HTTP/1.0',
+        'HTTP_VERSION' => 'HTTP/1.0'
+      }.freeze
+      private_constant :DEFAULT_ENV
+
+      # Update environment to use based on given URI.
       def env_for(uri, env)
-        env = default_env.merge!(env)
+        env = DEFAULT_ENV.merge(@env).merge!(env)
 
         env['HTTP_HOST'] ||= [uri.host, (uri.port if uri.port != uri.default_port)].compact.join(':')
-
         env['HTTPS'] = 'on' if URI::HTTPS === uri
         env['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest' if env[:xhr]
-
-        # TODO: Remove this after Rack 1.1 has been released.
-        # Stringifying and upcasing methods has be commit upstream
         env['REQUEST_METHOD'] ||= env[:method] ? env[:method].to_s.upcase : 'GET'
 
         params = env.delete(:params)
@@ -268,8 +246,6 @@ module Rack
               env['CONTENT_LENGTH'] ||= data.length.to_s
               env['CONTENT_TYPE'] = "#{multipart_content_type(env)}; boundary=#{MULTIPART_BOUNDARY}"
             else
-              # NB: We do not need to set CONTENT_LENGTH here;
-              # Rack::ContentLength will determine it automatically.
               env[:input] = build_nested_query(params)
             end
           else
@@ -280,18 +256,22 @@ module Rack
         if query_params = env.delete(:query_params)
           append_query_params(query_array, query_params)
         end
-        uri.query = query_array.compact.reject { |v| v == '' }.join('&')
+        query_array.compact!
+        query_array.reject!(&:empty?)
+        uri.query = query_array.join('&')
 
         set_cookie(env.delete(:cookie), uri) if env.key?(:cookie)
 
         Rack::MockRequest.env_for(uri.to_s, env)
       end
 
+      # Append a string version of the query params to the array of query params.
       def append_query_params(query_array, query_params)
         query_params = parse_nested_query(query_params) if query_params.is_a?(String)
         query_array << build_nested_query(query_params)
       end
 
+      # Return the multipart content type to use based on the environment.
       def multipart_content_type(env)
         requested_content_type = env['CONTENT_TYPE']
         if requested_content_type.start_with?('multipart/')
@@ -301,6 +281,8 @@ module Rack
         end
       end
 
+      # Submit the request with the given URI and rack environment to
+      # the mock session.  Returns and potentially yields the last response.
       def process_request(uri, env)
         @rack_mock_session.request(uri, env)
 
@@ -342,24 +324,9 @@ module Rack
       def digest_auth_configured?
         @digest_username
       end
-
-      def default_env
-        { 'rack.test' => true, 'REMOTE_ADDR' => '127.0.0.1', 'SERVER_PROTOCOL' => 'HTTP/1.0', 'HTTP_VERSION' => 'HTTP/1.0' }.merge!(@env).merge!(headers_for_env)
-      end
-
-      def headers_for_env
-        converted_headers = {}
-
-        @headers.each do |name, value|
-          env_key = name.upcase.tr('-', '_')
-          env_key = 'HTTP_' + env_key unless env_key == 'CONTENT_TYPE'
-          converted_headers[env_key] = value
-        end
-
-        converted_headers
-      end
     end
 
+    # Whether the version of rack in use handles encodings.
     def self.encoding_aware_strings?
       Rack.release >= '1.6'
     end
