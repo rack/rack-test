@@ -32,7 +32,7 @@ module Rack
 
       close_body(body)
 
-      cookie_jar.merge(last_response.headers['Set-Cookie'], uri)
+      cookie_jar.merge(last_response.headers['set-cookie'], uri)
 
       @after_request.each(&:call)
 

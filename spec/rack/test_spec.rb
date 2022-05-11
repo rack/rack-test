@@ -198,7 +198,7 @@ describe 'Rack::Test::Session#request' do
     body = closeable_body.new
 
     app = lambda do |_env|
-      [200, { 'Content-Type' => 'text/html', 'Content-Length' => '13' }, body]
+      [200, { 'content-type' => 'text/html', 'content-length' => '13' }, body]
     end
 
     session = Rack::Test::Session.new(Rack::MockSession.new(app))
@@ -210,7 +210,7 @@ describe 'Rack::Test::Session#request' do
   it "closes response's body after iteration when body responds_to?(:close)" do
     body = nil
     app = lambda do |_env|
-      [200, { 'Content-Type' => 'text/html', 'Content-Length' => '13' }, body = closeable_body.new]
+      [200, { 'content-type' => 'text/html', 'content-length' => '13' }, body = closeable_body.new]
     end
 
     session = Rack::Test::Session.new(Rack::MockSession.new(app))
@@ -274,8 +274,8 @@ describe 'Rack::Test::Session#header' do
     last_request.env['HTTP_USER_AGENT'].must_equal 'Firefox'
   end
 
-  it 'sets a Content-Type to be sent with requests' do
-    header 'Content-Type', 'application/json'
+  it 'sets a content-type to be sent with requests' do
+    header 'content-type', 'application/json'
     request '/'
 
     last_request.env['CONTENT_TYPE'].must_equal 'application/json'
@@ -379,7 +379,7 @@ end
 
 describe 'Rack::Test::Session#digest_authorize' do
   challenge_data = 'realm="test-realm", qop="auth", nonce="nonsensenonce", opaque="morenonsense"'.freeze
-  basic_headers    = { 'Content-Type' => 'text/html', 'Content-Length' => '13' }.freeze
+  basic_headers    = { 'content-type' => 'text/html', 'content-length' => '13' }.freeze
   digest_challenge = "Digest #{challenge_data}".freeze
   auth_challenge_headers = { 'WWW-Authenticate' => digest_challenge }.freeze
   cookie_headers = { 'Set-Cookie' => 'digest_auth_session=OZEnmjeekUSW%3D%3D; path=/; HttpOnly' }.freeze
@@ -626,11 +626,6 @@ describe 'Rack::Test::Session#get' do
   #   A user agent SHOULD NOT send a Content-Length header field when
   #   the request message does not contain a payload body and the
   #   method semantics do not anticipate such a body.
-  #
-  # _However_, something causes CONTENT_LENGTH to always be present.
-  # Even when we don't set it ourselves. It could be
-  # Rack::ContentLength that is playing tricks with us:
-  # https://github.com/rack/rack/blob/master/lib/rack/content_length.rb
   it 'sets CONTENT_LENGTH to zero when params are not provided' do
     get '/'
     last_request.env['CONTENT_LENGTH'].must_equal '0'
@@ -698,8 +693,6 @@ describe 'Rack::Test::Session#post' do
     last_request.env['CONTENT_TYPE'].must_equal 'application/x-www-form-urlencoded'
   end
 
-  # NB: This is never set in _our code_, but is added automatically
-  # (presumably by Rack::ContentLength)
   it 'sets the CONTENT_LENGTH' do
     post '/', foo: 'bar'
     last_request.env['CONTENT_LENGTH'].must_equal '7'

@@ -96,9 +96,9 @@ describe 'Rack::Test::Session uploading one file' do
     last_request.POST['photo'][:type].must_equal 'image/jpeg'
   end
 
-  it 'sends files with a Content-Length in the header' do
+  it 'sends files with a content-length in the header' do
     post '/', 'photo' => uploaded_file
-    last_request.POST['photo'][:head].must_include 'Content-Length: 4'
+    last_request.POST['photo'][:head].must_include 'content-length: 4'
   end
 
   it 'sends files as Tempfiles' do
@@ -150,9 +150,9 @@ describe 'uploading two files' do
     last_request.POST['photos'].collect { |photo| photo[:type] }.must_equal ['text/plain', 'image/jpeg']
   end
 
-  it 'sends files with a Content-Length in the header' do
+  it 'sends files with a content-length in the header' do
     post '/', 'photos' => [uploaded_file, second_uploaded_file]
-    last_request.POST['photos'].all? { |photo| photo[:head].must_include 'Content-Length: 4' }
+    last_request.POST['photos'].all? { |photo| photo[:head].must_include 'content-length: 4' }
   end
 
   it 'sends both files as Tempfiles' do
