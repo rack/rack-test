@@ -26,6 +26,8 @@ module Rack
       end
     end
     MockDigestRequest = MockDigestRequest_
+    # :nocov:
     deprecate_constant :MockDigestRequest if respond_to?(:deprecate_constant, true)
+    # :nocov:
   end
 end
