@@ -11,74 +11,66 @@ to build on.
 
 ## Features
 
+* Allows for submitting requests and testing responses
 * Maintains a cookie jar across requests
-* Easily follow redirects when desired
-* Set request headers to be used by all subsequent requests
-
-## Supported platforms
-
-* Ruby 2.0-3.1
-* JRuby 9.1.+
-
-If you are using and older version of Ruby, use rack-test 0.6.3.
-
-## Known incompatibilites
-
-* `rack-test >= 0.71` _does not_ work with older Capybara versions (`< 2.17`). See [#214](https://github.com/rack/rack-test/issues/214) for more details.
+* Supports request headers used for subsequent requests
+* Follow redirects when requested
 
 ## Examples
 
-(The examples use `Test::Unit` but it's equally possible to use `rack-test` with other testing frameworks like `rspec`.)
+These examples use `test/unit` but it's equally possible to use `rack-test` with
+other testing frameworks such as `minitest` or `rspec`.
 
 ```ruby
 require "test/unit"
 require "rack/test"
+require "json"
 
 class HomepageTest < Test::Unit::TestCase
   include Rack::Test::Methods
 
   def app
-    app = lambda { |env| [200, {'Content-Type' => 'text/plain'}, ['All responses are OK']] }
-    builder = Rack::Builder.new
-    builder.run app
+    lambda { |env| [200, {'Content-Type' => 'text/plain'}, ['All responses are OK']] }
   end
 
   def test_response_is_ok
+    # Optionally set headers used for all requests in this spec:
+    #header 'Accept-Charset', 'utf-8'
+
+    # First argument is treated as the path
     get '/'
 
     assert last_response.ok?
     assert_equal last_response.body, 'All responses are OK'
-  end
-
-  def set_request_headers
-    header 'Accept-Charset', 'utf-8'
-    get '/'
-
-    assert last_response.ok?
-    assert_equal last_response.body, 'All responses are OK'
-  end
-
-  def test_response_is_ok_for_other_paths
-    get '/other_paths'
-
-    assert last_response.ok?
-    assert_equal last_response.body, 'All responses are OK'
-  end
-
-  def post_with_json
-    # No assertion in this, we just demonstrate how you can post a JSON-encoded string.
-    # By default, Rack::Test will use HTTP form encoding if you pass in a Hash as the
-    # parameters, so make sure that `json` below is already a JSON-serialized string.
-    post(uri, json, { 'CONTENT_TYPE' => 'application/json' })
   end
 
   def delete_with_url_params_and_body
+    # First argument can have a query string
+    #
+    # Second argument is used as the parameters for the request, which will be
+    # included in the request body for non-GET requests.
     delete '/?foo=bar', JSON.generate('baz' => 'zot')
+  end
+
+  def post_with_json
+    # Third argument is the rack environment to use for the request.  The following
+    # entries in the submitted rack environment are treated specially (in addition
+    # to options supported by `Rack::MockRequest#env_for`:
+    #
+    # :cookie : Set a cookie for the current session before submitting the request.
+    #
+    # :query_params : Set parameters for the query string (as opposed to the body).
+    #                 Value should be a hash of parameters.
+    #
+    # :xhr : Set HTTP_X_REQUESTED_WITH env key to XMLHttpRequest.
+    post(uri, JSON.generate('baz' => 'zot'), 'CONTENT_TYPE' => 'application/json')
   end
 end
 ```
 
-If you want to test one app in isolation, you just return that app as shown above. But if you want to test the entire app stack, including middlewares, cascades etc. you need to parse the app defined in config.ru.
+`rack-test` will test the app returned by the `app` method.  If you are loading middleware
+in a `config.ru` file, and want to test that, you should load the Rack app created from
+the `config.ru` file:
 
 ```ruby
 OUTER_APP = Rack::Builder.parse_file("config.ru").first
@@ -97,7 +89,6 @@ class TestApp < Test::Unit::TestCase
 end
 ```
 
-
 ## Install
 
 To install the latest release as a gem:
@@ -106,17 +97,20 @@ To install the latest release as a gem:
 gem install rack-test
 ```
 
-Or via Bundler:
+Or add to your `Gemfile`:
 
 ```
 gem 'rack-test'
 ```
 
-Or to install unreleased version via Bundler:
+## Contribution
 
-```
-gem 'rack-test', github: 'rack-test', branch: 'master'
-```
+Contributions are welcome. Please make sure to:
+
+* Use a regular forking workflow
+* Write tests for the new or changed behaviour
+* Provide an explanation/motivation in your commit message / PR message
+* Ensure `History.md` is updated
 
 ## Authors
 
@@ -127,14 +121,10 @@ gem 'rack-test', github: 'rack-test', branch: 'master'
 
 `rack-test` is released under the [MIT License](MIT-LICENSE.txt).
 
-## Contribution
+## Supported platforms
 
-Contributions are welcome. Please make sure to:
-
-* Use a regular forking workflow
-* Write tests for the new or changed behaviour
-* Provide an explanation/motivation in your commit message / PR message
-* Ensure History.md is updated
+* Ruby 2.0+
+* JRuby 9.1+
 
 ## Releasing
 
