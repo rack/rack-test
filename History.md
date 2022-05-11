@@ -1,3 +1,56 @@
+## main
+
+* Breaking changes:
+  * Digest authentication support is now deprecated, as it relies on
+    digest authentication support in rack, which has been deprecated
+    (Jeremy Evans #294)
+  * Rack::Test::Utils.build_primitive_part no longer handles array
+    values (Jeremy Evans #292)
+
+* Minor enhancements:
+  * rack-test now works with the rack main branch (what will be rack 3)
+    (Jeremy Evans #280 #292)
+  * rack-test only loads the parts of rack it uses when running on the
+    rack main branch (what will be rack 3) (Jeremy Evans #292)
+  * Development dependencies have been significantly reduced, and are
+    now a subset of the development dependencies of rack itself
+    (Jeremy Evans #292)
+  * Avoid creating multiple large copies of uploaded file data in
+    memory (Jeremy Evans #286)
+  * Specify HTTP/1.0 when submitting requests, to avoid responses with
+    Transfer-Encoding: chunked (Jeremy Evans #288)
+  * Support `:query_params` in rack environment for parameters that
+    are appended to the query string instead of used in the request
+    body (Jeremy Evans #150 #287)
+  * Reduce required ruby version to 2.0, since tests run fine on
+    Ruby 2.0 (Jeremy Evans #292)
+
+* Bug fixes:
+  * The `CONTENT_TYPE` of multipart requests is now respected, if it
+    starts with `multipart/` (Tom Knig #238)
+  * Work correctly with responses that respond to `to_a` but not
+    `to_ary` (Sergio Faria #276)
+  * Raise an ArgumentErorr instead of a TypeError when providing a
+    StringIO without an original filename when creating an
+    UploadedFile (Nuno Correia #279)
+  * Allow combining both an UploadedFile and a plain string when
+    building a multipart upload (Mitsuhiro Shibuya #278)
+  * Fix the generation of filenames with spaces to use path
+    escaping instead of regular escaping, since path unescaping is
+    used to decode it (Muir Manders, Jeremy Evans #275 #284)
+  * Rewind tempfile used for multipart uploads before it is
+    submitted to the application
+    (Jeremy Evans, Alexander Dervish #261 #268 #286)
+  * Fix Rack::Test.encoding_aware_strings to be true only on rack
+    1.6+ (Jeremy Evans #292)
+  * Make Rack::Test::CookieJar#valid? return true/false
+    (Jeremy Evans #292)
+  * Cookies without a domain attribute no longer are submitted to
+    requests for subdomains of that domain, for RFC 6265
+    compliance (Jeremy Evans #292)
+  * Increase required rack version to 1.3, since tests fail on
+    rack 1.2 and below (Jeremy Evans #293)
+
 ## 1.1.0 / 2018-07-21
 
 * Breaking changes:
@@ -8,7 +61,7 @@
   * follow_direct: Include rack.session.options (Mark Edmondson #233)
   * [CI] Add simplecov (fatkodima #227)
 
-Bug fixes:
+* Bug fixes:
   * Follow relative locations correctly. (Samuel Williams #230)
 
 ## 1.0.0 / 2018-03-27
