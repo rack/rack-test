@@ -396,6 +396,12 @@ describe 'Rack::Test::Session#digest_authorize' do
     last_request
   end
 
+  deprecated 'is defined directly on the session' do
+    current_session.digest_authorize('test-name', 'test-password')
+    get('/')
+    last_request.env['rack-test.digest_auth_retry'].must_equal true
+  end
+
   deprecated 'retries digest requests' do
     request.env['rack-test.digest_auth_retry'].must_equal true
   end
