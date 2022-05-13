@@ -208,6 +208,20 @@ describe 'Rack::Test::Utils.build_multipart' do
     Rack::Test::Utils.build_multipart('people' => [{ 'submit-name' => 'Larry', 'files' => 'contents' }]).must_be_nil
   end
 
+  it 'allows for forcing multipart uploads even without a file' do
+    files = Rack::Test::UploadedFile.new(multipart_file('foo.txt'))
+    data  = Rack::Test::Utils.build_multipart({'foo' => [{ 'id' => '2', 'data' => %w[3 4] }]}, true, true)
+
+    options = {
+      'CONTENT_TYPE' => "multipart/form-data; boundary=#{Rack::Test::MULTIPART_BOUNDARY}",
+      'CONTENT_LENGTH' => data.length.to_s,
+      :input => StringIO.new(data)
+    }
+    env = Rack::MockRequest.env_for('/', options)
+    params = Rack::Multipart.parse_multipart(env)
+    params['foo'][0].must_equal 'id' => '2', 'data' => %w[3 4]
+  end
+
   it 'raises ArgumentErrors if params is not a Hash' do
     proc do
       Rack::Test::Utils.build_multipart('foo=bar')

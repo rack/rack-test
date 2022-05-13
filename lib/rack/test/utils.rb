@@ -3,7 +3,10 @@ module Rack
     module Utils # :nodoc:
       include Rack::Utils
       extend Rack::Utils
+      extend self
 
+      # Build a query string for the given value and prefix. The value
+      # can be an array or hash of parameters.
       def build_nested_query(value, prefix = nil)
         case value
         when Array
@@ -25,12 +28,12 @@ module Rack
           "#{prefix}=#{escape(value)}"
         end
       end
-      module_function :build_nested_query
 
-      def build_multipart(params, first = true, multipart = false)
-        if first
-          raise ArgumentError, 'value must be a Hash' unless params.is_a?(Hash)
+      # Build a multipart body for the given params.
+      def build_multipart(params, _first = true, multipart = false)
+        raise ArgumentError, 'value must be a Hash' unless params.is_a?(Hash)
 
+        unless multipart
           query = lambda { |value|
             case value
             when Array
@@ -45,6 +48,13 @@ module Rack
           return nil unless multipart
         end
 
+        build_parts(_build_multipart(params, true))
+      end
+
+      private
+
+      # Return a flattened hash of parameter values based on the given params.
+      def _build_multipart(params, first=false)
         flattened_params = {}
 
         params.each do |key, value|
@@ -55,17 +65,16 @@ module Rack
             value.map do |v|
               if v.is_a?(Hash)
                 nested_params = {}
-                build_multipart(v, false).each do |subkey, subvalue|
+                _build_multipart(v).each do |subkey, subvalue|
                   nested_params[subkey] = subvalue
                 end
-                flattened_params["#{k}[]"] ||= []
-                flattened_params["#{k}[]"] << nested_params
+                (flattened_params["#{k}[]"] ||= []) << nested_params
               else
                 flattened_params["#{k}[]"] = value
               end
             end
           when Hash
-            build_multipart(value, false).each do |subkey, subvalue|
+            _build_multipart(value).each do |subkey, subvalue|
               flattened_params[k + subkey] = subvalue
             end
           else
@@ -73,21 +82,15 @@ module Rack
           end
         end
 
-        if first
-          build_parts(flattened_params)
-        else
-          flattened_params
-        end
+        flattened_params
       end
-      module_function :build_multipart
 
-      private
-
+      # Build the multipart content for uploading.
       def build_parts(parameters)
         get_parts(parameters).join + "--#{MULTIPART_BOUNDARY}--\r"
       end
-      module_function :build_parts
 
+      # Return the multipart fragment of the given parameters.
       def get_parts(parameters)
         parameters.map do |name, value|
           if name =~ /\[\]\Z/ && value.is_a?(Array) && value.all? { |v| v.is_a?(Hash) }
@@ -110,8 +113,8 @@ module Rack
           end
         end
       end
-      module_function :get_parts
 
+      # Return the multipart fragment for a parameter that isn't a file upload.
       def build_primitive_part(parameter_name, value)
         <<-EOF
 --#{MULTIPART_BOUNDARY}\r
@@ -120,8 +123,8 @@ content-disposition: form-data; name="#{parameter_name}"\r
 #{value}\r
 EOF
       end
-      module_function :build_primitive_part
 
+      # Return the multipart fragment for a parameter that is a file upload.
       def build_file_part(parameter_name, uploaded_file)
         uploaded_file.set_encoding(Encoding::BINARY)
         buffer = String.new
@@ -135,7 +138,6 @@ EOF
         uploaded_file.append_to(buffer)
         buffer << "\r\n"
       end
-      module_function :build_file_part
     end
   end
 end
