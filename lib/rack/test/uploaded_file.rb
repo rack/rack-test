@@ -1,5 +1,6 @@
 require 'fileutils'
 require 'tempfile'
+require 'stringio'
 
 module Rack
   module Test
@@ -20,12 +21,11 @@ module Rack
 
       # Creates a new UploadedFile instance.
       #
-      # @param content [IO, Pathname, String, StringIO] a path to a file, or an {IO} or {StringIO} object representing the
-      #   file.
-      # @param content_type [String]
-      # @param binary [Boolean] an optional flag that indicates whether the file should be open in binary mode or not.
-      # @param original_filename [String] an optional parameter that provides the original filename if `content` is a StringIO
-      #   object. Not used for other kind of `content` objects.
+      # Arguments:
+      # content :: is a path to a file, or an {IO} or {StringIO} object representing the content.
+      # content_type :: MIME type of the file
+      # binary :: Whether the file should be set to binmode (content treated as binary).
+      # original_filename :: The filename to use for the file if +content+ is a StringIO.
       def initialize(content, content_type = 'text/plain', binary = false, original_filename: nil)
         case content
         when StringIO
@@ -38,13 +38,14 @@ module Rack
         @tempfile.binmode if binary
       end
 
+      # The path to the tempfile. Will not work if the receiver's content is from a StringIO.
       def path
         tempfile.path
       end
-
       alias local_path path
 
-      def method_missing(method_name, *args, &block) #:nodoc:
+      # Delegate all methods not handled to the tempfile.
+      def method_missing(method_name, *args, &block)
         tempfile.public_send(method_name, *args, &block)
       end
 
@@ -67,10 +68,13 @@ module Rack
         tempfile.respond_to?(method_name, include_private) || super
       end
 
+      # A proc that can be used as a finalizer to close and unlink the tempfile.
       def self.finalize(file)
         proc { actually_finalize file }
       end
 
+      # Close and unlink the given file, used as a finalizer for the tempfile,
+      # if the tempfile is backed by a file in the filesystem.
       def self.actually_finalize(file)
         file.close
         file.unlink
@@ -78,11 +82,13 @@ module Rack
 
       private
 
+      # Use the StringIO as the tempfile.
       def initialize_from_stringio(stringio, original_filename)
         @tempfile = stringio
         @original_filename = original_filename || raise(ArgumentError, 'Missing `original_filename` for StringIO object')
       end
 
+      # Create a tempfile and copy the content from the given path into the tempfile.
       def initialize_from_file_path(path)
         raise "#{path} file does not exist" unless ::File.exist?(path)
 
