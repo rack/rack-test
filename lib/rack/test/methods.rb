@@ -5,7 +5,10 @@ module Rack
     # This module serves as the primary integration point for using Rack::Test
     # in a testing environment. It depends on an app method being defined in the
     # same context, and provides the Rack::Test API methods (see Rack::Test::Session
-    # for their documentation).
+    # for their documentation). It defines the following methods that are delegated
+    # to the current session: :request, :get, :post, :put, :patch, :delete, :options,
+    # :head, :custom_request, :follow_redirect!, :header, :env, :set_cookie,
+    # :clear_cookies, :authorize, :basic_authorize, :last_response, and :last_request.
     #
     # Example:
     #
@@ -13,12 +16,14 @@ module Rack
     #     include Rack::Test::Methods
     #
     #     def app
-    #       MyApp.new
+    #       MyApp
     #     end
     #   end
     module Methods
       extend Forwardable
 
+      # Return the existing session with the given name, or a new
+      # rack session.  Always use a new session if name is nil.
       def rack_test_session(name = :default) # :nodoc:
         return build_rack_test_session(name) unless name
 
@@ -26,8 +31,8 @@ module Rack
         @_rack_test_sessions[name] ||= build_rack_test_session(name)
       end
 
-      # Backwards compatibility
-      alias rack_mock_session rack_test_session
+      # For backwards compatibility with older rack-test versions.
+      alias rack_mock_session rack_test_session # :nodoc:
 
       # Create a new Rack::Test::Session for #app.
       def build_rack_test_session(_name) # :nodoc:
@@ -39,11 +44,15 @@ module Rack
         end
       end
 
-      def current_session # :nodoc:
-        @_rack_test_current_session ||= rack_test_session(:default)
+      # Return the currently actively session.  This is the session to
+      # which the delegated methods are sent.
+      def current_session
+        @_rack_test_current_session ||= rack_test_session
       end
 
-      def with_session(name) # :nodoc:
+      # Creaet a new session, and make it the current session for the
+      # given block.
+      def with_session(name)
         session = @_rack_test_current_session
         yield(@_rack_test_current_session = rack_test_session(name))
       ensure
@@ -55,28 +64,26 @@ module Rack
         current_session._digest_authorize(username, password)
       end
 
-      METHODS = %i[
-        request
-        get
-        post
-        put
-        patch
-        delete
-        options
-        head
-        custom_request
-        follow_redirect!
-        header
-        env
-        set_cookie
-        clear_cookies
-        authorize
-        basic_authorize
-        last_response
-        last_request
-      ].freeze
-
-      def_delegators :current_session, *METHODS
+      def_delegators(:current_session,
+        :request,
+        :get,
+        :post,
+        :put,
+        :patch,
+        :delete,
+        :options,
+        :head,
+        :custom_request,
+        :follow_redirect!,
+        :header,
+        :env,
+        :set_cookie,
+        :clear_cookies,
+        :authorize,
+        :basic_authorize,
+        :last_response,
+        :last_request,
+      )
     end
   end
 end
