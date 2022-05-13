@@ -1,6 +1,14 @@
 require_relative '../spec_helper'
 
 describe 'Rack::Test::Session' do
+  it 'has alias of Rack::MockSession for backwards compatibility' do
+    Rack::MockSession.must_be_same_as Rack::Test::Session
+  end
+
+  deprecated 'allows requiring rack/mock_session' do
+    require 'rack/mock_session'
+  end
+
   it 'supports being initialized with a Rack::MockSession app' do
     Rack::Test::Session.new(Rack::MockSession.new(app)).request('/').must_be :ok?
   end

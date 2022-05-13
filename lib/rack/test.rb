@@ -18,7 +18,6 @@ end
 
 require 'forwardable'
 
-require_relative 'mock_session'
 require_relative 'test/cookie_jar'
 require_relative 'test/utils'
 require_relative 'test/methods'
@@ -37,10 +36,9 @@ module Rack
     # The common base class for exceptions raised by Rack::Test
     class Error < StandardError; end
 
-    # Rack::Test::Session handles a series of requests issued to a Rack app.  It
-    # wraps a Rack::MockSession and offers a higher-level API for submitting requests.
-    # It allows for setting headers and a default rack environment that is used for
-    # future requests.
+    # Rack::Test::Session handles a series of requests issued to a Rack app.
+    # It keeps track of the cookies for the session, and allows for setting headers
+    # and a default rack environment that is used for future requests.
     #
     # Rack::Test::Session's methods are most often called through Rack::Test::Methods,
     # which will automatically build a session when it's first used.
@@ -48,9 +46,22 @@ module Rack
       extend Forwardable
       include Rack::Test::Utils
 
-      def_delegators :@rack_mock_session, :clear_cookies, :set_cookie, :last_response, :last_request
+      def self.new(app, default_host = DEFAULT_HOST) # :nodoc:
+        if app.is_a?(self)
+          # Backwards compatibility for initializing with Rack::MockSession
+          app
+        else
+          super
+        end
+      end
 
-      # Creates a Rack::Test::Session for a given Rack app or Rack::MockSession.
+      # The Rack::Test::CookieJar for the cookies for the current session.
+      attr_accessor :cookie_jar
+
+      # The default host used for the session for when using paths for URIs.
+      attr_reader :default_host
+
+      # Creates a Rack::Test::Session for a given Rack app or Rack::Test::BasicSession.
       #
       # Note: Generally, you won't need to initialize a Rack::Test::Session directly.
       # Instead, you should include Rack::Test::Methods into your testing context.
@@ -77,13 +88,16 @@ module Rack
       # submitted in #last_request. The methods store a Rack::MockResponse based on the
       # response in #last_response. #last_response is also returned by the methods.
       # If a block is given, #last_response is also yielded to the block.
-      def initialize(mock_session)
-        mock_session = MockSession.new(mock_session) unless mock_session.is_a?(MockSession)
-
+      def initialize(app, default_host = DEFAULT_HOST)
         @env = {}
         @digest_username = nil
         @digest_password = nil
-        @rack_mock_session = mock_session
+        @app = app
+        @after_request = []
+        @default_host = default_host
+        @last_request = nil
+        @last_response = nil
+        clear_cookies
       end
 
       %w[get post put patch delete options head].each do |method_name|
@@ -92,6 +106,35 @@ module Rack
             custom_request('#{method_name.upcase}', uri, params, env, &block)
           end
         END
+      end
+
+      # Run a block after the each request completes.
+      def after_request(&block)
+        @after_request << block
+      end
+
+      # Replace the current cookie jar with an empty cookie jar.
+      def clear_cookies
+        @cookie_jar = CookieJar.new([], @default_host)
+      end
+
+      # Set a cookie in the current cookie jar.
+      def set_cookie(cookie, uri = nil)
+        cookie_jar.merge(cookie, uri)
+      end
+
+      # Return the last request issued in the session. Raises an error if no
+      # requests have been sent yet.
+      def last_request
+        raise Error, 'No request yet. Request a page first.' unless @last_request
+        @last_request
+      end
+
+      # Return the last response received in the session. Raises an error if
+      # no requests have been sent yet.
+      def last_response
+        raise Error, 'No response yet. Request a page first.' unless @last_response
+        @last_response
       end
 
       # Issue a request to the Rack app for the given URI and optional Rack
@@ -202,11 +245,23 @@ module Rack
 
       private
 
+      # :nocov:
+      if !defined?(Rack::RELEASE) || Gem::Version.new(Rack::RELEASE) < Gem::Version.new('2.2.2')
+        def close_body(body)
+          body.close if body.respond_to?(:close)
+        end
+      # :nocov:
+      else
+        # close() gets called automatically in newer Rack versions.
+        def close_body(body)
+        end
+      end
+
       # Normalize URI based on given URI/path and environment.
       def parse_uri(path, env)
         uri = URI.parse(path)
         uri.path = "/#{uri.path}" unless uri.path.start_with?('/')
-        uri.host ||= @rack_mock_session.default_host
+        uri.host ||= @default_host
         uri.scheme ||= 'https' if env['HTTPS'] == 'on'
         uri
       end
@@ -289,7 +344,15 @@ module Rack
       # Submit the request with the given URI and rack environment to
       # the mock session.  Returns and potentially yields the last response.
       def process_request(uri, env)
-        @rack_mock_session.request(uri, env)
+        env['HTTP_COOKIE'] ||= cookie_jar.for(uri)
+        @last_request = Rack::Request.new(env)
+        status, headers, body = @app.call(env).to_a
+
+        @last_response = MockResponse.new(status, headers, body, env['rack.errors'].flush)
+        close_body(body)
+        cookie_jar.merge(last_response.headers['set-cookie'], uri)
+        @after_request.each(&:call)
+        @last_response.finish
 
         if retry_with_digest_auth?(env)
           auth_env = env.merge('HTTP_AUTHORIZATION' => digest_auth_header,
@@ -336,4 +399,7 @@ module Rack
       Rack.release >= '1.6'
     end
   end
+
+  # For backwards compatibility with 1.1.0 and below
+  MockSession = Test::Session
 end

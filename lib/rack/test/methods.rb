@@ -19,17 +19,6 @@ module Rack
     module Methods
       extend Forwardable
 
-      def rack_mock_session(name = :default) # :nodoc:
-        return build_rack_mock_session unless name
-
-        @_rack_mock_sessions ||= {}
-        @_rack_mock_sessions[name] ||= build_rack_mock_session
-      end
-
-      def build_rack_mock_session # :nodoc:
-        Rack::MockSession.new(app)
-      end
-
       def rack_test_session(name = :default) # :nodoc:
         return build_rack_test_session(name) unless name
 
@@ -37,22 +26,28 @@ module Rack
         @_rack_test_sessions[name] ||= build_rack_test_session(name)
       end
 
-      def build_rack_test_session(name) # :nodoc:
-        Rack::Test::Session.new(rack_mock_session(name))
+      # Backwards compatibility
+      alias rack_mock_session rack_test_session
+
+      # Create a new Rack::Test::Session for #app.
+      def build_rack_test_session(_name) # :nodoc:
+        if respond_to?(:build_rack_mock_session, true)
+          # Backwards compatibility for capybara
+          build_rack_mock_session
+        else
+          Session.new(app)
+        end
       end
 
       def current_session # :nodoc:
-        rack_test_session(_current_session_names.last)
+        @_rack_test_current_session ||= rack_test_session(:default)
       end
 
       def with_session(name) # :nodoc:
-        _current_session_names.push(name)
-        yield rack_test_session(name)
-        _current_session_names.pop
-      end
-
-      def _current_session_names # :nodoc:
-        @_current_session_names ||= [:default]
+        session = @_rack_test_current_session
+        yield(@_rack_test_current_session = rack_test_session(name))
+      ensure
+        @_rack_test_current_session = session
       end
 
       def digest_authorize(username, password) # :nodoc:
