@@ -20,4 +20,10 @@ describe 'Rack::Test::Methods' do
     rack_test_session(true).must_be_same_as rack_test_session(true)
     rack_test_session(:true).must_be_same_as rack_test_session(:true)
   end
+
+  it '#build_rack_mock_session will be used if present' do
+    session = Rack::Test::Session.new(app)
+    define_singleton_method(:build_rack_mock_session){session}
+    current_session.must_be_same_as session
+  end
 end
