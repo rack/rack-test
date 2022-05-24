@@ -114,7 +114,7 @@ Contributions are welcome. Please make sure to:
 
 ## Authors
 
-- Contributions from Bryan Helmkamp, Simon Rozet, Pat Nakajima and others
+- Contributions from Bryan Helmkamp, Jeremy Evans, Simon Rozet, and others
 - Much of the original code was extracted from Merb 1.0's request helper
 
 ## License
