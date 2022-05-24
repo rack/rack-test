@@ -60,7 +60,7 @@ module Rack
       end
 
       def digest_authorize(username, password) # :nodoc:
-        warn 'digest authentication support will be removed in rack-test 1.3', uplevel: 1
+        warn 'digest authentication support will be removed in rack-test 2.1', uplevel: 1
         current_session._digest_authorize(username, password)
       end
 
