@@ -1,14 +1,13 @@
 # -*- encoding: utf-8 -*-
 
-$LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
-require 'rack/test/version'
+require_relative 'lib/rack/test/version'
 
 Gem::Specification.new do |s|
   s.name = 'rack-test'
   s.version = Rack::Test::VERSION
   s.platform = Gem::Platform::RUBY
-  s.author = 'Bryan Helmkamp'
-  s.email = 'bryan@brynary.com'
+  s.author = ['Jeremy Evans', 'Bryan Helmkamp']
+  s.email = ['code@jeremyevans.net', 'bryan@brynary.com']
   s.license = 'MIT'
   s.homepage = 'https://github.com/rack/rack-test'
   s.summary = 'Simple testing API built on Rack'
