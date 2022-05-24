@@ -198,12 +198,12 @@ module Rack
 
       # Set the username and password for HTTP Digest authorization, to be
       # included in subsequent requests in the HTTP_AUTHORIZATION header.
-      # This method is deprecated and will be removed in rack-test 1.3.
+      # This method is deprecated and will be removed in rack-test 2.1
       #
       # Example:
       #   digest_authorize "bryan", "secret"
       def digest_authorize(username, password)
-        warn 'digest authentication support will be removed in rack-test 1.3', uplevel: 1
+        warn 'digest authentication support will be removed in rack-test 2.1', uplevel: 1
         _digest_authorize(username, password)
       end
       def _digest_authorize(username, password) # :nodoc:
