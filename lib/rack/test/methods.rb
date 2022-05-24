@@ -50,8 +50,8 @@ module Rack
         @_rack_test_current_session ||= rack_test_session
       end
 
-      # Creaet a new session, and make it the current session for the
-      # given block.
+      # Create a new session (or reuse an existing session with the given name),
+      # and make it the current session for the given block.
       def with_session(name)
         session = @_rack_test_current_session
         yield(@_rack_test_current_session = rack_test_session(name))
