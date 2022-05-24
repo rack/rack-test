@@ -4,8 +4,25 @@
   * Digest authentication support is now deprecated, as it relies on
     digest authentication support in rack, which has been deprecated
     (Jeremy Evans #294)
-  * Rack::Test::Utils.build_primitive_part no longer handles array
+  * `Rack::Test::Utils.build_primitive_part` no longer handles array
     values (Jeremy Evans #292)
+  * `Rack::Test::Utils` module methods other than `build_nested_query`
+    and `build_multipart` are now methods (Jeremy Evans #297)
+  * `Rack::MockSession` has been combined into `Rack::Test::Session`,
+    and remains as an alias to `Rack::Test::Session`, but to keep some
+    backwards compatibility, `Rack::Test::Session.new` will accept a
+    `Rack::Test::Session` instance and return it (Jeremy Evans #297)
+  * Previously protected methods in `Rack::Test::Cookie{,Jar}` are now
+    private methods (Jeremy Evans #297)
+  * `Rack::Test::Methods` no longer defines `build_rack_mock_session`,
+    but for backwards compatibility, `build_rack_test_session` will call
+    `build_rack_mock_session` if it is defined (Jeremy Evans #297)
+  * `Rack::Test::Methods::METHODS` is no longer defined
+    (Jeremy Evans #297)
+  * `Rack::Test::Methods#_current_session_names` has been removed
+    (Jeremy Evans #297)
+  * Headers used/accessed by rack-test are now lower case, for rack 3
+    compliance (Jeremy Evans #295)
 
 * Minor enhancements:
   * rack-test now works with the rack main branch (what will be rack 3)
