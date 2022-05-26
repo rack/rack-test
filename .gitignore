@@ -5,5 +5,6 @@ coverage
 VERSION
 *.rbc
 *.swp
+/rack-test-*.gem
 /.bundle
 /.idea
