@@ -125,7 +125,6 @@ EOF
 
       # Return the multipart fragment for a parameter that is a file upload.
       def build_file_part(parameter_name, uploaded_file)
-        uploaded_file.set_encoding(Encoding::BINARY)
         buffer = String.new
         buffer << (<<-EOF)
 --#{MULTIPART_BOUNDARY}\r
@@ -134,7 +133,11 @@ content-type: #{uploaded_file.content_type}\r
 content-length: #{uploaded_file.size}\r
 \r
 EOF
-        uploaded_file.append_to(buffer)
+        # Handle old versions of Capybara::RackTest::Form::NilUploadedFile
+        if uploaded_file.respond_to?(:set_encoding)
+          uploaded_file.set_encoding(Encoding::BINARY)
+          uploaded_file.append_to(buffer)
+        end
         buffer << "\r\n"
       end
     end
