@@ -209,7 +209,6 @@ describe 'Rack::Test::Utils.build_multipart' do
   end
 
   it 'allows for forcing multipart uploads even without a file' do
-    files = Rack::Test::UploadedFile.new(multipart_file('foo.txt'))
     data  = Rack::Test::Utils.build_multipart({'foo' => [{ 'id' => '2', 'data' => %w[3 4] }]}, true, true)
 
     options = {
