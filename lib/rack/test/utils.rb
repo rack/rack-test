@@ -2,7 +2,6 @@ module Rack
   module Test
     module Utils # :nodoc:
       include Rack::Utils
-      extend Rack::Utils
       extend self
 
       # Build a query string for the given value and prefix. The value
