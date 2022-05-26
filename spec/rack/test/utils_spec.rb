@@ -78,6 +78,39 @@ describe 'Rack::Test::Utils.build_multipart' do
     params['files'][:tempfile].read.must_equal files.read
   end
 
+  it 'handles uploaded files not responding to set_encoding as empty' do
+    # Capybara::RackTest::Form::NilUploadedFile
+    c = Class.new(Rack::Test::UploadedFile) do
+      def initialize
+        @empty_file = Tempfile.new('nil_uploaded_file')
+        @empty_file.close
+      end
+
+      def original_filename; ''; end
+      def content_type; 'application/octet-stream'; end
+      def path; @empty_file.path; end
+      def size; 0; end
+      def read; ''; end
+      def respond_to?(m, *a)
+        return false if m == :set_encoding
+        super(m, *a)
+      end
+    end
+
+    data  = Rack::Test::Utils.build_multipart('submit-name' => 'Larry', 'files' => c.new)
+    options = {
+      'CONTENT_TYPE' => "multipart/form-data; boundary=#{Rack::Test::MULTIPART_BOUNDARY}",
+      'CONTENT_LENGTH' => data.length.to_s,
+      :input => StringIO.new(data)
+    }
+    env = Rack::MockRequest.env_for('/', options)
+    params = Rack::Multipart.parse_multipart(env)
+    params['submit-name'].must_equal 'Larry'
+    params['files'].must_be_nil
+    data.must_include 'content-disposition: form-data; name="files"; filename=""'
+    data.must_include 'content-length: 0'
+  end
+
   it 'builds multipart bodies from array of files' do
     files = [Rack::Test::UploadedFile.new(multipart_file('foo.txt')), Rack::Test::UploadedFile.new(multipart_file('bar.txt'))]
     data = Rack::Test::Utils.build_multipart('submit-name' => 'Larry', 'files' => files)
