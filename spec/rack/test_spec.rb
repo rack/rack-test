@@ -102,6 +102,27 @@ describe 'Rack::Test::Session#request' do
     last_request.POST['foo'].must_equal 'bar'
   end
 
+  it 'does not use multipart input for :params for POST by default' do
+    request '/', method: :post, params: { 'foo' => 'bar' }
+    last_request.POST['foo'].must_equal 'bar'
+    last_request.env['rack.input'].rewind
+    last_request.env['rack.input'].read.must_equal 'foo=bar'
+  end
+
+  it 'supports :multipart when using :params for POST to force multipart input' do
+    request '/', method: :post, params: { 'foo' => 'bar' }, multipart: true
+    last_request.POST['foo'].must_equal 'bar'
+    last_request.env['rack.input'].rewind
+    last_request.env['rack.input'].read.must_include 'content-disposition: form-data; name="foo"'
+  end
+
+  it 'supports multipart CONTENT_TYPE when using :params for POST to force multipart input' do
+    request '/', method: :post, params: { 'foo' => 'bar' }, 'CONTENT_TYPE'=>'multipart/form-data'
+    last_request.POST['foo'].must_equal 'bar'
+    last_request.env['rack.input'].rewind
+    last_request.env['rack.input'].read.must_include 'content-disposition: form-data; name="foo"'
+  end
+
   it 'supports sending :query_params for POST' do
     request '/', method: :post, query_params: { 'foo' => 'bar' }
     last_request.GET['foo'].must_equal 'bar'
