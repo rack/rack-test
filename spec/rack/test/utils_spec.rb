@@ -1,3 +1,5 @@
+# frozen-string-literal: true
+
 require_relative '../../spec_helper'
 
 describe "Rack::Test::Utils#build_nested_query" do

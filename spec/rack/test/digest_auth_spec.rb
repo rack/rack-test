@@ -1,3 +1,5 @@
+# frozen-string-literal: true
+
 require_relative '../../spec_helper'
 require_relative '../../../lib/rack/test/mock_digest_request'
 
