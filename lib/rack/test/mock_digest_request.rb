@@ -1,3 +1,5 @@
+# frozen-string-literal: true
+
 # :nocov:
 require 'rack/auth/digest' unless defined?(Rack::Auth::Digest)
 # :nocov:

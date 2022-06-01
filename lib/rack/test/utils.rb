@@ -1,3 +1,5 @@
+# frozen-string-literal: true
+
 module Rack
   module Test
     module Utils # :nodoc:

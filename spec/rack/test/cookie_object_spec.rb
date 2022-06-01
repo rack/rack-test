@@ -1,3 +1,5 @@
+# frozen-string-literal: true
+
 require_relative '../../spec_helper'
 require 'cgi'
 

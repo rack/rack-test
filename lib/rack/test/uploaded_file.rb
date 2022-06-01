@@ -1,3 +1,5 @@
+# frozen-string-literal: true
+
 require 'fileutils'
 require 'tempfile'
 require 'stringio'
