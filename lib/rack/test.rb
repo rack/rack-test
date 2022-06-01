@@ -35,6 +35,12 @@ module Rack
     # The default multipart boundary to use for multipart request bodies
     MULTIPART_BOUNDARY = '----------XnJLe9ZIbbGUYtzPQJ16u1'.freeze
 
+    # The starting boundary in multipart requests
+    START_BOUNDARY = "--#{MULTIPART_BOUNDARY}\r\n".freeze
+
+    # The ending boundary in multipart requests
+    END_BOUNDARY = "--#{MULTIPART_BOUNDARY}--\r\n".freeze
+
     # The common base class for exceptions raised by Rack::Test
     class Error < StandardError; end
 
