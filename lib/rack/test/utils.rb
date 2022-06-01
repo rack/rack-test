@@ -49,13 +49,20 @@ module Rack
           return nil unless multipart
         end
 
-        build_parts(_build_multipart(params, true))
+        params = normalize_multipart_params(params, true)
+
+        buffer = String.new
+        build_parts(buffer, params)
+        # :nocov:
+        buffer.force_encoding(Encoding::BINARY) if Rack::Test.encoding_aware_strings?
+        # :nocov:
+        buffer
       end
 
       private
 
       # Return a flattened hash of parameter values based on the given params.
-      def _build_multipart(params, first=false)
+      def normalize_multipart_params(params, first=false)
         flattened_params = {}
 
         params.each do |key, value|
@@ -66,7 +73,7 @@ module Rack
             value.map do |v|
               if v.is_a?(Hash)
                 nested_params = {}
-                _build_multipart(v).each do |subkey, subvalue|
+                normalize_multipart_params(v).each do |subkey, subvalue|
                   nested_params[subkey] = subvalue
                 end
                 (flattened_params["#{k}[]"] ||= []) << nested_params
@@ -75,7 +82,7 @@ module Rack
               end
             end
           when Hash
-            _build_multipart(value).each do |subkey, subvalue|
+            normalize_multipart_params(value).each do |subkey, subvalue|
               flattened_params[k + subkey] = subvalue
             end
           else
@@ -87,59 +94,63 @@ module Rack
       end
 
       # Build the multipart content for uploading.
-      def build_parts(parameters)
-        get_parts(parameters).join + "--#{MULTIPART_BOUNDARY}--\r"
+      def build_parts(buffer, parameters)
+        _build_parts(buffer, parameters)
+        buffer << END_BOUNDARY
       end
 
-      # Return the multipart fragment of the given parameters.
-      def get_parts(parameters)
+      # Append each multipart parameter value to the buffer.
+      def _build_parts(buffer, parameters)
         parameters.map do |name, value|
           if name =~ /\[\]\Z/ && value.is_a?(Array) && value.all? { |v| v.is_a?(Hash) }
-            value.map do |hash|
+            value.each do |hash|
               new_value = {}
               hash.each { |k, v| new_value[name + k] = v }
-              get_parts(new_value).join
-            end.join
+              _build_parts(buffer, new_value)
+            end
           else
             [value].flatten.map do |v|
               if v.respond_to?(:original_filename)
-                build_file_part(name, v)
+                build_file_part(buffer, name, v)
               else
-                primitive_part = build_primitive_part(name, v)
-                # :nocov:
-                Rack::Test.encoding_aware_strings? ? primitive_part.force_encoding('BINARY') : primitive_part
-                # :nocov:
+                build_primitive_part(buffer, name, v)
               end
-            end.join
+            end
           end
         end
       end
 
-      # Return the multipart fragment for a parameter that isn't a file upload.
-      def build_primitive_part(parameter_name, value)
-        <<-EOF
---#{MULTIPART_BOUNDARY}\r
-content-disposition: form-data; name="#{parameter_name}"\r
-\r
-#{value}\r
-EOF
+      # Append the multipart fragment for a parameter that isn't a file upload to the buffer.
+      def build_primitive_part(buffer, parameter_name, value)
+        buffer <<
+          START_BOUNDARY <<
+          "content-disposition: form-data; name=\"" <<
+          parameter_name.to_s <<
+          "\"\r\n\r\n" <<
+          value.to_s <<
+          "\r\n"
       end
 
-      # Return the multipart fragment for a parameter that is a file upload.
-      def build_file_part(parameter_name, uploaded_file)
-        buffer = String.new
-        buffer << (<<-EOF)
---#{MULTIPART_BOUNDARY}\r
-content-disposition: form-data; name="#{parameter_name}"; filename="#{escape_path(uploaded_file.original_filename)}"\r
-content-type: #{uploaded_file.content_type}\r
-content-length: #{uploaded_file.size}\r
-\r
-EOF
+      # Append the multipart fragment for a parameter that is a file upload to the buffer.
+      def build_file_part(buffer, parameter_name, uploaded_file)
+        buffer <<
+          START_BOUNDARY <<
+          "content-disposition: form-data; name=\"" <<
+          parameter_name.to_s <<
+          "\"; filename=\"" <<
+          escape_path(uploaded_file.original_filename) <<
+          "\"\r\ncontent-type: " <<
+          uploaded_file.content_type.to_s <<
+          "\r\ncontent-length: " <<
+          uploaded_file.size.to_s <<
+          "\r\n\r\n"
+
         # Handle old versions of Capybara::RackTest::Form::NilUploadedFile
         if uploaded_file.respond_to?(:set_encoding)
           uploaded_file.set_encoding(Encoding::BINARY)
           uploaded_file.append_to(buffer)
         end
+
         buffer << "\r\n"
       end
     end
