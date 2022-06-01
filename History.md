@@ -23,6 +23,9 @@
     (Jeremy Evans #297)
   * Headers used/accessed by rack-test are now lower case, for rack 3
     compliance (Jeremy Evans #295)
+  * Frozen literal strings are now used internally, which may break
+    code that mutates static strings returned by rack-test, if any
+    (Jeremy Evans #304)
 
 * Minor enhancements:
   * rack-test now works with the rack main branch (what will be rack 3)
@@ -41,6 +44,14 @@
     body (Jeremy Evans #150 #287)
   * Reduce required ruby version to 2.0, since tests run fine on
     Ruby 2.0 (Jeremy Evans #292)
+  * Support :multipart env key for request methods to force multipart
+    input (Jeremy Evans #303)
+  * Force multipart input for request methods if content type starts
+    with multipart (Jeremy Evans #303)
+  * Improve performance of Utils.build_multipart by using an
+    append-only design (Jeremy Evans #304)
+  * Improve performance of Utils.build_nested_query for array values
+    (Jeremy Evans #304)
 
 * Bug fixes:
   * The `CONTENT_TYPE` of multipart requests is now respected, if it
