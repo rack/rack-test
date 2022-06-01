@@ -14,8 +14,8 @@ module Rack
           if value.empty?
             "#{prefix}[]="
           else
+            prefix += "[]" unless unescape(prefix).end_with?('[]')
             value.map do |v|
-              prefix = "#{prefix}[]" unless unescape(prefix) =~ /\[\]$/
               build_nested_query(v, prefix.to_s)
             end.join('&')
           end
