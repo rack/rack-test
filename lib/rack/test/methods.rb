@@ -55,7 +55,7 @@ module Rack
       # Create a new session (or reuse an existing session with the given name),
       # and make it the current session for the given block.
       def with_session(name)
-        session = @_rack_test_current_session
+        session = _rack_test_current_session
         yield(@_rack_test_current_session = rack_test_session(name))
       ensure
         @_rack_test_current_session = session
@@ -86,6 +86,10 @@ module Rack
         :last_response,
         :last_request,
       )
+
+      # Private accessor to avoid uninitialized instance variable warning in Ruby 2.*
+      attr_accessor :_rack_test_current_session
+      private :_rack_test_current_session
     end
   end
 end
