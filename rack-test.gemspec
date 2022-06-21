@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-
 require_relative 'lib/rack/test/version'
 
 Gem::Specification.new do |s|
@@ -14,9 +12,14 @@ Gem::Specification.new do |s|
   s.description = <<-EOS.strip
 Rack::Test is a small, simple testing API for Rack apps. It can be used on its
 own or as a reusable starting point for Web frameworks and testing libraries
-to build on. Most of its initial functionality is an extraction of Merb 1.0's
-request helpers feature.
+to build on.
   EOS
+  s.metadata = {
+    'source_code_uri'   => 'https://github.com/rack/rack-test',
+    'bug_tracker_uri'   => 'https://github.com/rack/rack-test/issues',
+    'mailing_list_uri'  => 'https://github.com/rack/rack-test/discussions',
+    'changelog_uri'     => 'https://github.com/rack/rack-test/blob/main/History.md',
+  }
   s.require_paths = ['lib']
   s.files = `git ls-files -- lib/*`.split("\n") +
             %w[History.md MIT-LICENSE.txt README.md]
