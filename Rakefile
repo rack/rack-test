@@ -18,8 +18,3 @@ task :docs do
   require_relative 'lib/rack/test/version'
   sh "rdoc --title 'Rack::Test #{Rack::Test::VERSION} API Documentation'"
 end
-
-desc 'Removes trailing whitespace'
-task :whitespace do
-  sh %(find . -name '*.rb' -exec sed -i 's/ *$//g' {} \\;)
-end
