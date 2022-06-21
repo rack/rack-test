@@ -1,4 +1,4 @@
-## main
+## 2.0.0 / 2022-06-24
 
 * Breaking changes:
   * Digest authentication support is now deprecated, as it relies on
