@@ -7,7 +7,7 @@
   * `Rack::Test::Utils.build_primitive_part` no longer handles array
     values (Jeremy Evans #292)
   * `Rack::Test::Utils` module methods other than `build_nested_query`
-    and `build_multipart` are now methods (Jeremy Evans #297)
+    and `build_multipart` are now private methods (Jeremy Evans #297)
   * `Rack::MockSession` has been combined into `Rack::Test::Session`,
     and remains as an alias to `Rack::Test::Session`, but to keep some
     backwards compatibility, `Rack::Test::Session.new` will accept a
@@ -58,7 +58,7 @@
     starts with `multipart/` (Tom Knig #238)
   * Work correctly with responses that respond to `to_a` but not
     `to_ary` (Sergio Faria #276)
-  * Raise an ArgumentErorr instead of a TypeError when providing a
+  * Raise an ArgumentError instead of a TypeError when providing a
     StringIO without an original filename when creating an
     UploadedFile (Nuno Correia #279)
   * Allow combining both an UploadedFile and a plain string when
