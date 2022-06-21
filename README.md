@@ -128,12 +128,12 @@ Contributions are welcome. Please make sure to:
 
 ## Releasing
 
-* Ensure `History.md` is up-to-date
 * Bump VERSION in lib/rack/test/version.rb
+* Ensure `History.md` is up-to-date, including correct version and date
 * `git commit . -m 'Release $VERSION'`
 * `git push`
 * `git tag -a -m 'Tag the $VERSION release' $VERSION`
 * `git push --tags`
 * `gem build rack-test.gemspec`
 * `gem push rack-test-$VERSION.gem`
-* Update the [GitHub releases page](https://github.com/rack/rack-test/releases)
+* Add a discussion post for the release
