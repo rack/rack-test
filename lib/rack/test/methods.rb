@@ -61,11 +61,6 @@ module Rack
         @_rack_test_current_session = session
       end
 
-      def digest_authorize(username, password) # :nodoc:
-        warn 'digest authentication support will be removed in rack-test 2.1', uplevel: 1
-        current_session._digest_authorize(username, password)
-      end
-
       def_delegators(:current_session,
         :request,
         :get,

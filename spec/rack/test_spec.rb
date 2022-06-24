@@ -408,52 +408,6 @@ describe 'Rack::Test::Session#basic_authorize' do
   end
 end
 
-describe 'Rack::Test::Session#digest_authorize' do
-  challenge_data = 'realm="test-realm", qop="auth", nonce="nonsensenonce", opaque="morenonsense"'.freeze
-  basic_headers    = { 'content-type' => 'text/html', 'content-length' => '13' }.freeze
-  digest_challenge = "Digest #{challenge_data}".freeze
-  auth_challenge_headers = { 'WWW-Authenticate' => digest_challenge }.freeze
-  cookie_headers = { 'Set-Cookie' => 'digest_auth_session=OZEnmjeekUSW%3D%3D; path=/; HttpOnly' }.freeze
-
-  digest_app = lambda do |_env|
-    [401, basic_headers.merge(auth_challenge_headers).merge(cookie_headers), '']
-  end
-
-  define_method(:app){digest_app}
-
-  def request
-    digest_authorize('test-name', 'test-password')
-    super('/')
-    last_request
-  end
-
-  deprecated 'is defined directly on the session' do
-    current_session.digest_authorize('test-name', 'test-password')
-    get('/')
-    last_request.env['rack-test.digest_auth_retry'].must_equal true
-  end
-
-  deprecated 'retries digest requests' do
-    request.env['rack-test.digest_auth_retry'].must_equal true
-  end
-
-  deprecated 'sends a digest auth header' do
-    request.env['HTTP_AUTHORIZATION'].must_include 'Digest realm'
-  end
-
-  deprecated 'includes the response based on the username,password and nonce' do
-    request.env['HTTP_AUTHORIZATION'].must_include 'response="d773034bdc162b31c50c62764016bd31"'
-  end
-
-  deprecated 'includes the challenge headers' do
-    request.env['HTTP_AUTHORIZATION'].must_include challenge_data
-  end
-
-  deprecated 'includes the username' do
-    request.env['HTTP_AUTHORIZATION'].must_include 'username="test-name"'
-  end
-end
-
 describe 'Rack::Test::Session#follow_redirect!' do
   it 'follows redirects' do
     get '/redirect'

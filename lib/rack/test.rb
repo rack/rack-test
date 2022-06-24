@@ -98,8 +98,6 @@ module Rack
       # If a block is given, #last_response is also yielded to the block.
       def initialize(app, default_host = DEFAULT_HOST)
         @env = {}
-        @digest_username = nil
-        @digest_password = nil
         @app = app
         @after_request = []
         @default_host = default_host
@@ -203,21 +201,6 @@ module Rack
       end
 
       alias authorize basic_authorize
-
-      # Set the username and password for HTTP Digest authorization, to be
-      # included in subsequent requests in the HTTP_AUTHORIZATION header.
-      # This method is deprecated and will be removed in rack-test 2.1
-      #
-      # Example:
-      #   digest_authorize "bryan", "secret"
-      def digest_authorize(username, password)
-        warn 'digest authentication support will be removed in rack-test 2.1', uplevel: 1
-        _digest_authorize(username, password)
-      end
-      def _digest_authorize(username, password) # :nodoc:
-        @digest_username = username
-        @digest_password = password
-      end
 
       # Rack::Test will not follow any redirects automatically. This method
       # will follow the redirect returned (including setting the Referer header
@@ -363,43 +346,9 @@ module Rack
         @after_request.each(&:call)
         @last_response.finish
 
-        if retry_with_digest_auth?(env)
-          auth_env = env.merge('HTTP_AUTHORIZATION' => digest_auth_header,
-                               'rack-test.digest_auth_retry' => true)
-          auth_env.delete('rack.request')
-          process_request(uri, auth_env)
-        else
-          yield last_response if block_given?
+        yield @last_response if block_given?
 
-          last_response
-        end
-      end
-
-      def digest_auth_header
-        require_relative 'test/mock_digest_request'
-
-        challenge = last_response['WWW-Authenticate'].split(' ', 2).last
-        params = Rack::Auth::Digest::Params.parse(challenge)
-
-        params.merge!('username' => @digest_username,
-                      'nc'        => '00000001',
-                      'cnonce'    => 'nonsensenonce',
-                      'uri'       => last_request.fullpath,
-                      'method'    => last_request.env['REQUEST_METHOD'])
-
-        params['response'] = MockDigestRequest_.new(params).response(@digest_password)
-
-        "Digest #{params}"
-      end
-
-      def retry_with_digest_auth?(env)
-        last_response.status == 401 &&
-          digest_auth_configured? &&
-          !env['rack-test.digest_auth_retry']
-      end
-
-      def digest_auth_configured?
-        @digest_username
+        @last_response
       end
     end
 
