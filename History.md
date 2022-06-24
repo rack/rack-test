@@ -3,6 +3,8 @@
 * Breaking changes:
   * Digest authentication support, deprecated in 2.0.0, has been
     removed (Jeremy Evans #307)
+  * requiring rack/mock_session, deprecated in 2.0.0, has been removed
+    (Jeremy Evans #307)
 
 ## 2.0.0 / 2022-06-24
 
