@@ -129,6 +129,8 @@ module Rack
           "\"\r\n\r\n" <<
           value.to_s <<
           "\r\n"
+        buffer.force_encoding(Encoding::BINARY)
+        buffer
       end
 
       # Append the multipart fragment for a parameter that is a file upload to the buffer.
@@ -144,6 +146,7 @@ module Rack
           "\r\ncontent-length: " <<
           uploaded_file.size.to_s <<
           "\r\n\r\n"
+        buffer.force_encoding(Encoding::BINARY)
 
         # Handle old versions of Capybara::RackTest::Form::NilUploadedFile
         if uploaded_file.respond_to?(:set_encoding)

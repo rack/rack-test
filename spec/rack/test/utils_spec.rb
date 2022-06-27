@@ -168,6 +168,23 @@ describe 'Rack::Test::Utils.build_multipart' do
     params['foo'].must_equal %w[1 2]
   end
 
+  it 'builds nested multipart bodies with UTF-8 data' do
+    files = Rack::Test::UploadedFile.new(multipart_file('mb.txt'))
+    data  = Rack::Test::Utils.build_multipart('people' => [{ 'submit-name' => "\u1234", 'files' => files }], 'foo' => %w[1 2])
+
+    options = {
+      'CONTENT_TYPE' => "multipart/form-data; boundary=#{Rack::Test::MULTIPART_BOUNDARY}",
+      'CONTENT_LENGTH' => data.length.to_s,
+      :input => StringIO.new(data)
+    }
+    env = Rack::MockRequest.env_for('/', options)
+    params = Rack::Multipart.parse_multipart(env)
+    params['people'][0]['submit-name'].must_equal  "\u1234"
+    params['people'][0]['files'][:filename].must_equal 'mb.txt'
+    params['people'][0]['files'][:tempfile].read.must_equal "\u2345".b
+    params['foo'].must_equal %w[1 2]
+  end
+
   it 'builds nested multipart bodies with an array of hashes' do
     files = Rack::Test::UploadedFile.new(multipart_file('foo.txt'))
     data  = Rack::Test::Utils.build_multipart('files' => files, 'foo' => [{ 'id' => '1', 'name' => 'Dave' }, { 'id' => '2', 'name' => 'Steve' }])
