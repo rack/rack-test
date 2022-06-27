@@ -179,7 +179,7 @@ describe 'Rack::Test::Utils.build_multipart' do
     }
     env = Rack::MockRequest.env_for('/', options)
     params = Rack::Multipart.parse_multipart(env)
-    params['people'][0]['submit-name'].must_equal  "\u1234"
+    params['people'][0]['submit-name'].b.must_equal  "\u1234".b
     params['people'][0]['files'][:filename].must_equal 'mb.txt'
     params['people'][0]['files'][:tempfile].read.must_equal "\u2345".b
     params['foo'].must_equal %w[1 2]
