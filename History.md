@@ -1,3 +1,9 @@
+## 2.0.1 / 2022-06-27
+
+* Bug fixes:
+  * Fix incompatible character encodings error when building uploaded
+    file bodies (Jeremy Evans #308 #309)
+
 ## 2.0.0 / 2022-06-24
 
 * Breaking changes:
