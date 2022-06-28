@@ -53,9 +53,6 @@ module Rack
 
         buffer = String.new
         build_parts(buffer, params)
-        # :nocov:
-        buffer.force_encoding(Encoding::BINARY) if Rack::Test.encoding_aware_strings?
-        # :nocov:
         buffer
       end
 
@@ -125,11 +122,10 @@ module Rack
         buffer <<
           START_BOUNDARY <<
           "content-disposition: form-data; name=\"" <<
-          parameter_name.to_s <<
+          parameter_name.to_s.b <<
           "\"\r\n\r\n" <<
-          value.to_s <<
+          value.to_s.b <<
           "\r\n"
-        buffer.force_encoding(Encoding::BINARY)
         buffer
       end
 
@@ -138,15 +134,14 @@ module Rack
         buffer <<
           START_BOUNDARY <<
           "content-disposition: form-data; name=\"" <<
-          parameter_name.to_s <<
+          parameter_name.to_s.b <<
           "\"; filename=\"" <<
-          escape_path(uploaded_file.original_filename) <<
+          escape_path(uploaded_file.original_filename).b <<
           "\"\r\ncontent-type: " <<
-          uploaded_file.content_type.to_s <<
+          uploaded_file.content_type.to_s.b <<
           "\r\ncontent-length: " <<
-          uploaded_file.size.to_s <<
+          uploaded_file.size.to_s.b <<
           "\r\n\r\n"
-        buffer.force_encoding(Encoding::BINARY)
 
         # Handle old versions of Capybara::RackTest::Form::NilUploadedFile
         if uploaded_file.respond_to?(:set_encoding)
