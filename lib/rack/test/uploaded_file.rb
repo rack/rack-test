@@ -27,16 +27,18 @@ module Rack
       # content :: is a path to a file, or an {IO} or {StringIO} object representing the content.
       # content_type :: MIME type of the file
       # binary :: Whether the file should be set to binmode (content treated as binary).
-      # original_filename :: The filename to use for the file if +content+ is a StringIO.
+      # original_filename :: The filename to use for the file. Required if content is StringIO, optional override if not
       def initialize(content, content_type = 'text/plain', binary = false, original_filename: nil)
+        @content_type = content_type
+        @original_filename = original_filename
+
         case content
         when StringIO
-          initialize_from_stringio(content, original_filename)
+          initialize_from_stringio(content)
         else
           initialize_from_file_path(content)
         end
 
-        @content_type = content_type
         @tempfile.binmode if binary
       end
 
@@ -85,16 +87,18 @@ module Rack
       private
 
       # Use the StringIO as the tempfile.
-      def initialize_from_stringio(stringio, original_filename)
+      def initialize_from_stringio(stringio)
+        raise(ArgumentError, 'Missing `original_filename` for StringIO object') unless @original_filename
+
         @tempfile = stringio
-        @original_filename = original_filename || raise(ArgumentError, 'Missing `original_filename` for StringIO object')
       end
 
-      # Create a tempfile and copy the content from the given path into the tempfile.
+      # Create a tempfile and copy the content from the given path into the tempfile, optionally renaming if
+      # original_filename has been set.
       def initialize_from_file_path(path)
         raise "#{path} file does not exist" unless ::File.exist?(path)
 
-        @original_filename = ::File.basename(path)
+        @original_filename ||= ::File.basename(path)
         extension = ::File.extname(@original_filename)
 
         @tempfile = Tempfile.new([::File.basename(@original_filename, extension), extension])
