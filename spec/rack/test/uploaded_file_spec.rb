@@ -34,6 +34,13 @@ describe Rack::Test::UploadedFile do
     uploaded_file.path.must_match regex
   end
 
+  it 'allows to override the Tempfiles original_filename' do
+    uploaded_file = Rack::Test::UploadedFile.new(file_path, original_filename: 'bar.txt')
+    regex = /bar#{Time.now.year}.*\.txt\Z/
+
+    uploaded_file.path.must_match regex
+  end
+
   it 'respects binary argument' do
     Rack::Test::UploadedFile.new(file_path, 'text/plain', true).tempfile.must_be :binmode?
     Rack::Test::UploadedFile.new(file_path, 'text/plain', false).tempfile.wont_be :binmode?
