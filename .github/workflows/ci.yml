@@ -1,4 +1,4 @@
-name: Development
+name: CI
 
 on: [push, pull_request]
 
