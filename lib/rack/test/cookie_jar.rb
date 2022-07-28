@@ -138,6 +138,12 @@ module Rack
         @cookies = cookies.sort!
       end
 
+      # Ensure the copy uses a distinct cookies array.
+      def initialize_copy(other)
+        super
+        @cookies = @cookies.dup
+      end
+
       # Return the value for first cookie with the given name, or nil
       # if no such cookie exists.
       def [](name)

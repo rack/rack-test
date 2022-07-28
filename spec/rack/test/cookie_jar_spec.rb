@@ -6,6 +6,17 @@ describe Rack::Test::CookieJar do
   cookie_value = 'foo;abc'.freeze
   cookie_name = 'a_cookie_name'.freeze
 
+  it 'copies should not share a cookie jar' do
+    jar = Rack::Test::CookieJar.new
+    jar_dup = jar.dup
+    jar_clone = jar.clone
+
+    jar['a'] = 'b'
+    jar.to_hash.must_equal 'a' => 'b'
+    jar_dup.to_hash.must_be_empty
+    jar_clone.to_hash.must_be_empty
+  end
+
   it '#[] and []= should get and set cookie values' do
     jar = Rack::Test::CookieJar.new
     jar[cookie_name].must_be_nil

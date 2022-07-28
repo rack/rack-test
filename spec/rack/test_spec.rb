@@ -796,3 +796,24 @@ describe 'Rack::Test::Session#custom_request' do
     last_request.must_be :xhr?
   end
 end
+
+describe 'Rack::Test::Session#restore_state' do
+  it 'restores last request and response after block' do
+    get('/')
+    request = last_request
+    response = last_response
+    current_session.cookie_jar['simple'].must_be_nil
+
+    current_session.restore_state do
+      get('/cookies/set-simple?value=foo')
+      current_session.cookie_jar['simple'].must_equal 'foo'
+
+      last_request.wont_be_same_as request
+      last_response.wont_be_same_as response
+    end
+
+    last_request.must_be_same_as request
+    last_response.must_be_same_as response
+    current_session.cookie_jar['simple'].must_be_nil
+  end
+end
