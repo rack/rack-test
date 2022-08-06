@@ -30,7 +30,14 @@ module Rack
   module Test
     # The default host to use for requests, when a full URI is not
     # provided.
-    DEFAULT_HOST = 'example.org'.freeze
+    def self.default_host
+      @@default_host ||= 'example.org'.freeze
+    end
+
+    # Sets the default host used when a full URI is not provided.
+    def self.default_host=(host)
+      @@default_host = host.freeze
+    end
 
     # The default multipart boundary to use for multipart request bodies
     MULTIPART_BOUNDARY = '----------XnJLe9ZIbbGUYtzPQJ16u1'.freeze
@@ -54,7 +61,7 @@ module Rack
       extend Forwardable
       include Rack::Test::Utils
 
-      def self.new(app, default_host = DEFAULT_HOST) # :nodoc:
+      def self.new(app, default_host = Rack::Test.default_host) # :nodoc:
         if app.is_a?(self)
           # Backwards compatibility for initializing with Rack::MockSession
           app
@@ -96,7 +103,7 @@ module Rack
       # submitted in #last_request. The methods store a Rack::MockResponse based on the
       # response in #last_response. #last_response is also returned by the methods.
       # If a block is given, #last_response is also yielded to the block.
-      def initialize(app, default_host = DEFAULT_HOST)
+      def initialize(app, default_host = Rack::Test.default_host)
         @env = {}
         @app = app
         @after_request = []

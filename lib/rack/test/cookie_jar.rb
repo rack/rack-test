@@ -20,7 +20,7 @@ module Rack
       # name=value format is name and value are provided.
       attr_reader :raw
 
-      def initialize(raw, uri = nil, default_host = DEFAULT_HOST)
+      def initialize(raw, uri = nil, default_host = Rack::Test.default_host)
         @default_host = default_host
         uri ||= default_uri
 
@@ -133,7 +133,7 @@ module Rack
     class CookieJar # :nodoc:
       DELIMITER = '; '.freeze
 
-      def initialize(cookies = [], default_host = DEFAULT_HOST)
+      def initialize(cookies = [], default_host = Rack::Test.default_host)
         @default_host = default_host
         @cookies = cookies.sort!
       end

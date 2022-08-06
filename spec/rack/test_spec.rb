@@ -73,6 +73,13 @@ describe 'Rack::Test::Session#request' do
     last_request.env['SERVER_NAME'].must_equal 'example.org'
   end
 
+  it 'default_host can be changed' do
+    Rack::Test.default_host = 'rack.github.io'
+    request '/'
+    last_request.env['SERVER_NAME'].must_equal 'rack.github.io'
+    Rack::Test.default_host = 'example.org'
+  end
+
   it 'yields the response to a given block' do
     request '/' do |response|
       response.must_be :ok?
