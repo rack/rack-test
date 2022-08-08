@@ -241,6 +241,7 @@ module Rack
         request = @last_request
         response = @last_response
         cookie_jar = @cookie_jar.dup
+        after_request = @after_request.dup
 
         begin
           yield
@@ -248,6 +249,7 @@ module Rack
           @last_request = request
           @last_response = response
           @cookie_jar = cookie_jar
+          @after_request = after_request
         end
       end
 
