@@ -42,7 +42,11 @@ module Rack
           # Backwards compatibility for capybara
           build_rack_mock_session
         else
-          Session.new(app)
+          if respond_to?(:default_host)
+            Session.new(app, default_host)
+          else
+            Session.new(app)
+          end
         end
       end
 
