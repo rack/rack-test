@@ -234,6 +234,25 @@ module Rack
         )
       end
 
+      # Yield to the block, and restore the last request, last response, and
+      # cookie jar to the state they were prior to block execution upon
+      # exiting the block.
+      def restore_state
+        request = @last_request
+        response = @last_response
+        cookie_jar = @cookie_jar.dup
+        after_request = @after_request.dup
+
+        begin
+          yield
+        ensure
+          @last_request = request
+          @last_response = response
+          @cookie_jar = cookie_jar
+          @after_request = after_request
+        end
+      end
+
       private
 
       # :nocov:

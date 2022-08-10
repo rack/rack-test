@@ -6,6 +6,14 @@
   * requiring rack/mock_session, deprecated in 2.0.0, has been removed
     (Jeremy Evans #307)
 
+* Minor enhancements:
+  * The `original_filename` for `Rack::Test::UploadedFile` can now be
+    set even if the content of the file comes from a file path
+    (Stuart Chinery #314)
+  * Add `Rack::Test::Session#restore_state`, for executing a block
+    and restoring current state (last request, last response, and
+    cookies) after the block. (Jeremy Evans #316)
+
 ## 2.0.2 / 2022-06-28
 
 * Bug fixes:
