@@ -28,4 +28,25 @@ describe 'Rack::Test::Methods' do
     define_singleton_method(:build_rack_mock_session){session}
     current_session.must_be_same_as session
   end
+
+  it '#build_rack_test_session will use defined app' do
+    envs = []
+    app = proc{|env| envs << env; [200, {}, []]}
+    define_singleton_method(:app){app}
+
+    get '/'
+    envs.first['PATH_INFO'].must_equal '/'
+    envs.first['HTTP_HOST'].must_equal 'example.org'
+  end
+
+  it '#build_rack_test_session will use defined default_host' do
+    envs = []
+    app = proc{|env| envs << env; [200, {}, []]}
+    define_singleton_method(:app){app}
+    define_singleton_method(:default_host){'foo.example.com'}
+
+    get '/'
+    envs.first['PATH_INFO'].must_equal '/'
+    envs.first['HTTP_HOST'].must_equal 'foo.example.com'
+  end
 end

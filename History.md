@@ -13,6 +13,9 @@
   * Add `Rack::Test::Session#restore_state`, for executing a block
     and restoring current state (last request, last response, and
     cookies) after the block. (Jeremy Evans #316)
+  * Make `Rack::Test::Methods` support `default_host` method similar to
+    `app`, which will set the default host used for requests to the app.
+    (Jeremy Evans #317 #318)
 
 ## 2.0.2 / 2022-06-28
 
