@@ -1,4 +1,5 @@
-require_relative 'lib/rack/test/version'
+$:.unshift(File.expand_path("lib", File.dirname(__FILE__)))
+require 'rack/test/version'
 
 Gem::Specification.new do |s|
   s.name = 'rack-test'

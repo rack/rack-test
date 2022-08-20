@@ -14,7 +14,7 @@ ENV['MT_NO_PLUGINS'] = '1' # Work around stupid autoloading of plugins
 gem 'minitest'
 require 'minitest/global_expectations/autorun'
 
-require_relative '../lib/rack/test'
+require 'rack/test'
 require_relative 'fixtures/fake_app'
 
 class Minitest::Spec
