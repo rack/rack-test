@@ -1,5 +1,3 @@
-$:.unshift(File.expand_path("../lib", File.dirname(__FILE__)))
-
 if ENV.delete('COVERAGE')
   require 'simplecov'
   SimpleCov.start do
