@@ -60,6 +60,10 @@ module Rack
           end
         end
 
+        if path == '/redirect-with-cookie' && method == 'GET'
+          return [302, { 'set-cookie' => "value=1; path=/cookies;", 'location' => '/cookies/show' }, []]
+        end
+
         if path == '/redirected'
           additional_info = if method == 'GET'
             ", session #{session.inspect} with options #{env['rack.session.options'].inspect}"

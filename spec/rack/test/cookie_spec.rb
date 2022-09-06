@@ -258,4 +258,10 @@ describe "Rack::Test::Session" do
     request '/cookies/show', cookie: 'value=1'
     last_request.cookies.must_equal 'value' => '1'
   end
+
+  it 'sets and subsequently sends cookies when redirecting to the path of the cookie' do
+    get '/redirect-with-cookie'
+    follow_redirect!
+    last_request.cookies.must_equal 'value' => '1'
+  end
 end
