@@ -86,19 +86,20 @@ module Rack
         expires && expires < Time.now
       end
 
-      # Whether the cookie is valid to set from the given URI.
-      def valid_set?(uri)
-        valid?(uri)
-      end
+      # Whether the cookie is valid for the given URI.
+      def valid?(uri)
+        uri ||= default_uri
 
-      # Whether the cookie is valid to send to the given URI.
-      def valid_send?(uri)
-        valid?(uri) && !!(uri.path =~ Regexp.new("^#{Regexp.escape(path)}"))
+        uri.host = @default_host if uri.host.nil?
+
+        real_domain = domain =~ /^\./ ? domain[1..-1] : domain
+        !!((!secure? || (secure? && uri.scheme == 'https')) &&
+          uri.host =~ Regexp.new("#{'^' if @exact_domain_match}#{Regexp.escape(real_domain)}$", Regexp::IGNORECASE))
       end
 
       # Cookies that do not match the URI will not be sent in requests to the URI.
       def matches?(uri)
-        !expired? && valid_send?(uri)
+        !expired? && valid?(uri) && valid_path?(uri.path)
       end
 
       # Order cookies by name, path, and domain.
@@ -118,15 +119,9 @@ module Rack
 
       private
 
-      # Whether the cookie is valid for the given URI.
-      def valid?(uri)
-        uri ||= default_uri
-
-        uri.host = @default_host if uri.host.nil?
-
-        real_domain = domain =~ /^\./ ? domain[1..-1] : domain
-        !!((!secure? || (secure? && uri.scheme == 'https')) &&
-          uri.host =~ Regexp.new("#{'^' if @exact_domain_match}#{Regexp.escape(real_domain)}$", Regexp::IGNORECASE))
+      # Whether the path of URI matches the Cookie path
+      def valid_path?(uri_path)
+        !!(uri_path =~ Regexp.new("^#{Regexp.escape(path)}"))
       end
 
       # The default URI to use for the cookie, including just the host.
@@ -199,7 +194,7 @@ module Rack
 
         raw_cookies.each do |raw_cookie|
           cookie = Cookie.new(raw_cookie, uri, @default_host)
-          self << cookie if cookie.valid_set?(uri)
+          self << cookie if cookie.valid?(uri)
         end
       end
 
