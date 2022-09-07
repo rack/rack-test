@@ -7,7 +7,7 @@ describe Rack::Test::Cookie do
   value = 'the cookie value'.freeze
   domain = 'www.example.org'.freeze
   path = '/foo'.freeze
-  expires = 'Mon, 10 Aug 2015 14:40:57 0100'.freeze
+  expires = (Time.now + (24 * 60 * 60)).httpdate
   cookie_string = [
       'cookie_name=' + CGI.escape(value),
       'domain=' + domain,
@@ -39,20 +39,20 @@ describe Rack::Test::Cookie do
     Rack::Test::Cookie.new('value=').empty?.must_equal true
   end
 
-  it '#valid_set? should consider the given URI scheme for secure cookies' do
-    cookie('; secure').valid_set?(URI.parse('https://www.example.org/')).must_equal true
-    cookie('; secure').valid_set?(URI.parse('httpx://www.example.org/')).must_equal false
-    cookie('; secure').valid_set?(URI.parse('/')).must_equal false
+  it '#valid? should consider the given URI scheme for secure cookies' do
+    cookie('; secure').valid?(URI.parse('https://www.example.org/')).must_equal true
+    cookie('; secure').valid?(URI.parse('httpx://www.example.org/')).must_equal false
+    cookie('; secure').valid?(URI.parse('/')).must_equal false
   end
 
-  it '#valid_set? is indifferent to matching paths' do
-    cookie.valid_set?(URI.parse('https://www.example.org/foo')).must_equal true
-    cookie.valid_set?(URI.parse('https://www.example.org/bar')).must_equal true
+  it '#valid? is indifferent to matching paths' do
+    cookie.valid?(URI.parse('https://www.example.org/foo')).must_equal true
+    cookie.valid?(URI.parse('https://www.example.org/bar')).must_equal true
   end
 
-  it '#valid_send? demands matching paths' do
-    cookie.valid_send?(URI.parse('https://www.example.org/foo')).must_equal true
-    cookie.valid_send?(URI.parse('https://www.example.org/bar')).must_equal false
+  it '#matches? demands matching paths' do
+    cookie.matches?(URI.parse('https://www.example.org/foo')).must_equal true
+    cookie.matches?(URI.parse('https://www.example.org/bar')).must_equal false
   end
 
   it '#http_only? for a non HTTP only cookie returns false' do
