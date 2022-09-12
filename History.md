@@ -16,6 +16,9 @@
   * Make `Rack::Test::Methods` support `default_host` method similar to
     `app`, which will set the default host used for requests to the app.
     (Jeremy Evans #317 #318)
+  * Allow responses to set cookies paths not matching the current
+    request URI. Such cookies will only be send for paths matching
+    the cookie path. (Chris Waters #322)
 
 ## 2.0.2 / 2022-06-28
 

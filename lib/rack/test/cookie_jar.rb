@@ -99,7 +99,7 @@ module Rack
 
       # Cookies that do not match the URI will not be sent in requests to the URI.
       def matches?(uri)
-        !expired? && valid?(uri) && valid_path?(uri.path)
+        !expired? && valid?(uri) && uri.path.start_with?(path)
       end
 
       # Order cookies by name, path, and domain.
@@ -118,11 +118,6 @@ module Rack
       alias to_hash to_h
 
       private
-
-      # Whether the path of URI matches the Cookie path
-      def valid_path?(uri_path)
-        !!(uri_path =~ Regexp.new("^#{Regexp.escape(path)}"))
-      end
 
       # The default URI to use for the cookie, including just the host.
       def default_uri
