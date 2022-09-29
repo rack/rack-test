@@ -69,8 +69,10 @@ describe Rack::Test::UploadedFile do
         System.gc
       end
     else
-      c.new(file_path)
-      GC.start
+      50.times do |_i|
+        c.new(file_path)
+        GC.start
+      end
     end
 
     # Due to CRuby's conservative garbage collection, you can never guarantee
