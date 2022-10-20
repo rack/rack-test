@@ -41,7 +41,7 @@ class HomepageTest < Test::Unit::TestCase
     get '/'
 
     assert last_response.ok?
-    assert_equal last_response.body, 'All responses are OK'
+    assert_equal 'All responses are OK', last_response.body
   end
 
   def delete_with_url_params_and_body
