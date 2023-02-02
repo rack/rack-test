@@ -30,8 +30,9 @@ module Rack
         @name, @value = parse_query(@raw, ';').to_a.first
         @options = parse_query(options, ';')
 
-        if @options['domain']
+        if domain = @options['domain']
           @exact_domain_match = false
+          domain[0] = '' if domain[0] == '.'
         else
           # If the domain attribute is not present in the cookie,
           # the domain must match exactly.

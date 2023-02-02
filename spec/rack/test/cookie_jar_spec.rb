@@ -17,6 +17,12 @@ describe Rack::Test::CookieJar do
     jar_clone.to_hash.must_be_empty
   end
 
+  it 'ignores leading dot in domain' do
+    jar = Rack::Test::CookieJar.new
+    jar << Rack::Test::Cookie.new('a=c; domain=.lithostech.com', URI('https://lithostech.com'))
+    jar.get_cookie('a').domain.must_equal 'lithostech.com'
+  end
+
   it '#[] and []= should get and set cookie values' do
     jar = Rack::Test::CookieJar.new
     jar[cookie_name].must_be_nil
