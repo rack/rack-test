@@ -19,6 +19,8 @@
   * Allow responses to set cookies paths not matching the current
     request URI. Such cookies will only be send for paths matching
     the cookie path. (Chris Waters #322)
+  * Ignore leading dot for cookie domains, per RFC 6265 (Stephen Crosby
+    #329)
 
 ## 2.0.2 / 2022-06-28
 
