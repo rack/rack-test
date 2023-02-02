@@ -32,6 +32,7 @@ module Rack
 
         if @options['domain']
           @exact_domain_match = false
+          @options['domain'].sub!(/^\./, '')
         else
           # If the domain attribute is not present in the cookie,
           # the domain must match exactly.

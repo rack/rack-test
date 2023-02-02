@@ -61,4 +61,12 @@ describe Rack::Test::CookieJar do
     jar.merge('c=d; domain=example.org; secure', URI.parse('/'))
     jar.to_hash.must_equal 'a' => 'b'
   end
+
+  it '#merge merges cookie strings where domains differ by leading dot' do
+    jar = Rack::Test::CookieJar.new
+    jar << Rack::Test::Cookie.new('a=b; domain=lithostech.com', URI('https://lithostech.com'))
+    jar << Rack::Test::Cookie.new('a=c; domain=.lithostech.com', URI('https://lithostech.com'))
+
+    jar.to_hash.must_equal 'a' => 'c'
+  end
 end
