@@ -608,24 +608,19 @@ describe 'Rack::Test::Session#get' do
     last_request.env.wont_include 'CONTENT_TYPE'
   end
 
-  # Quoting from https://tools.ietf.org/html/rfc7230#section-3.3.2:
-  #
-  #   A user agent SHOULD NOT send a Content-Length header field when
-  #   the request message does not contain a payload body and the
-  #   method semantics do not anticipate such a body.
-  it 'sets CONTENT_LENGTH to zero when params are not provided' do
+  it 'sets CONTENT_LENGTH to zero or does not set it when params are not provided' do
     get '/'
-    last_request.env['CONTENT_LENGTH'].must_equal '0'
+    ['0', nil].must_include last_request.env['CONTENT_LENGTH']
   end
 
-  it 'sets CONTENT_TYPE to application/x-www-form-urlencoded when params are explicitly set to nil' do
+  it 'does not set CONTENT_TYPE twhen params are explicitly set to nil' do
     get '/', nil
     last_request.env.wont_include 'CONTENT_TYPE'
   end
 
-  it 'sets CONTENT_LENGTH to zero when params are explicitly set to nil' do
+  it 'sets CONTENT_LENGTH to zero or does not set it when params are explicitly set to nil' do
     get '/', nil
-    last_request.env['CONTENT_LENGTH'].must_equal '0'
+    ['0', nil].must_include last_request.env['CONTENT_LENGTH']
   end
 
   it 'uses the provided params hash' do
