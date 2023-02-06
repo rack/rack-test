@@ -121,6 +121,13 @@ describe 'Rack::Test::Session#request' do
     last_request.env['rack.input'].read.must_include 'content-disposition: form-data; name="foo"'
   end
 
+  it 'supports multipart CONTENT_TYPE when using empty :params for POST to be empty body' do
+    request '/', method: :post, params: {}, 'CONTENT_TYPE'=>'multipart/form-data'
+    last_request.POST.must_be_empty
+    last_request.env['rack.input'].rewind
+    last_request.env['rack.input'].read.must_be_empty
+  end
+
   it 'supports sending :query_params for POST' do
     request '/', method: :post, query_params: { 'foo' => 'bar' }
     last_request.GET['foo'].must_equal 'bar'

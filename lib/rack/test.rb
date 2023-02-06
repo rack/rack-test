@@ -312,7 +312,7 @@ module Rack
           multipart = env.has_key?(:multipart) ? env.delete(:multipart) : env['CONTENT_TYPE'].start_with?('multipart/')
 
           if params.is_a?(Hash)
-            if data = build_multipart(params, false, multipart)
+            if !params.empty? && data = build_multipart(params, false, multipart)
               env[:input] = data
               env['CONTENT_LENGTH'] ||= data.length.to_s
               env['CONTENT_TYPE'] = "#{multipart_content_type(env)}; boundary=#{MULTIPART_BOUNDARY}"
