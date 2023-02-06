@@ -21,6 +21,8 @@
     the cookie path. (Chris Waters #322)
   * Ignore leading dot for cookie domains, per RFC 6265 (Stephen Crosby
     #329)
+  * Avoid creating empty multipart body if params is empty in
+    `Rack::Test::Session#env_for` (Ryunosuke Sato #331)
 
 ## 2.0.2 / 2022-06-28
 
