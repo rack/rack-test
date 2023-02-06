@@ -33,6 +33,7 @@ module Rack
       # Build a multipart body for the given params.
       def build_multipart(params, _first = true, multipart = false)
         raise ArgumentError, 'value must be a Hash' unless params.is_a?(Hash)
+        return nil if params.empty?
 
         unless multipart
           query = lambda { |value|

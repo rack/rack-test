@@ -294,6 +294,10 @@ describe 'Rack::Test::Utils.build_multipart' do
     end.must_raise(ArgumentError, 'value must be a Hash')
   end
 
+  it 'returns nil if params is empty' do
+    Rack::Test::Utils.build_multipart({}).must_be_nil
+  end
+
   def multipart_file(name)
     File.join(File.dirname(__FILE__), '..', '..', 'fixtures', name.to_s)
   end
