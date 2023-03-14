@@ -1,4 +1,4 @@
-## main
+## 2.1.0 / 2023-03-14
 
 * Breaking changes:
   * Digest authentication support, deprecated in 2.0.0, has been
@@ -12,13 +12,13 @@
     (Stuart Chinery #314)
   * Add `Rack::Test::Session#restore_state`, for executing a block
     and restoring current state (last request, last response, and
-    cookies) after the block. (Jeremy Evans #316)
+    cookies) after the block (Jeremy Evans #316)
   * Make `Rack::Test::Methods` support `default_host` method similar to
-    `app`, which will set the default host used for requests to the app.
+    `app`, which will set the default host used for requests to the app
     (Jeremy Evans #317 #318)
-  * Allow responses to set cookies paths not matching the current
-    request URI. Such cookies will only be send for paths matching
-    the cookie path. (Chris Waters #322)
+  * Allow responses to set cookie paths not matching the current
+    request URI. Such cookies will only be sent for paths matching
+    the cookie path (Chris Waters #322)
   * Ignore leading dot for cookie domains, per RFC 6265 (Stephen Crosby
     #329)
   * Avoid creating empty multipart body if params is empty in
