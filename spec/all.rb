@@ -1,1 +1,1 @@
-Dir['spec/**/*_spec.rb'].each{|f| require_relative f.sub('spec/', '')}
+Dir.glob('spec/**/*_spec.rb') {|f| require_relative f.sub('spec/', '')}
