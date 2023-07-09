@@ -1,3 +1,11 @@
+## main
+
+* Minor enhancements:
+  * `Rack::Test::UploadedFile` no longer uses a finalizer for named
+    paths to close and unlink the created Tempfile.  Tempfile itself
+    uses a finalizer to close and unlink itself, so there is no
+    reason for `Rack::Test::UploadedFile` to do so (Jeremy Evans #338)
+
 ## 2.1.0 / 2023-03-14
 
 * Breaking changes:

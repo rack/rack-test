@@ -72,18 +72,6 @@ module Rack
         tempfile.respond_to?(method_name, include_private) || super
       end
 
-      # A proc that can be used as a finalizer to close and unlink the tempfile.
-      def self.finalize(file)
-        proc { actually_finalize file }
-      end
-
-      # Close and unlink the given file, used as a finalizer for the tempfile,
-      # if the tempfile is backed by a file in the filesystem.
-      def self.actually_finalize(file)
-        file.close
-        file.unlink
-      end
-
       private
 
       # Use the StringIO as the tempfile.
@@ -103,8 +91,6 @@ module Rack
 
         @tempfile = Tempfile.new([::File.basename(@original_filename, extension), extension])
         @tempfile.set_encoding(Encoding::BINARY)
-
-        ObjectSpace.define_finalizer(self, self.class.finalize(@tempfile))
 
         FileUtils.copy_file(path, @tempfile.path)
       end

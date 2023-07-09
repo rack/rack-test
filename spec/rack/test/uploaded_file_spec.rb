@@ -51,35 +51,31 @@ describe Rack::Test::UploadedFile do
     proc{Rack::Test::UploadedFile.new('does_not_exist')}.must_raise RuntimeError
   end
 
-  it 'finalizes on garbage collection' do
-    finalized = false
-    c = Class.new(Rack::Test::UploadedFile) do
-      define_singleton_method(:actually_finalize) do |file|
-        finalized = true
-        super(file)
-      end
+  def local_paths(n)
+    local_paths = n.times.map do
+      Rack::Test::UploadedFile.new(file_path)
     end
+    local_paths.map(&:local_path).all?{|f| File.exist?(f)}.must_equal true
+    local_paths.map!(&:local_path)
+    local_paths.uniq.size.must_equal n
+    local_paths
+  end
+
+  it 'removes local paths on garbage collection' do
 
     if RUBY_PLATFORM == 'java'
       require 'java'
       java_import 'java.lang.System'
 
-      50.times do |_i|
-        c.new(file_path)
-        System.gc
-      end
+      paths = local_paths(500)
+      System.gc
     else
-      50.times do |_i|
-        c.new(file_path)
-        GC.start
-      end
+      paths = local_paths(50)
+      GC.start
     end
 
-    # Due to CRuby's conservative garbage collection, you can never guarantee
-    # an object will be garbage collected, so this is a source of potential
-    # nondeterministic failure
-    finalized.must_equal true
-  end if RUBY_VERSION >= '2.7' || RUBY_ENGINE != 'ruby'
+    paths.all?{|f| File.exist?(f)}.must_equal false
+  end
 
   it '#initialize with an IO object sets the specified filename' do
     original_filename = 'content.txt'
