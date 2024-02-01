@@ -12,7 +12,7 @@ module Rack
 
       # The name of the cookie, will be a string
       attr_reader :name
-      
+
       # The value of the cookie, will be a string or nil if there is no value.
       attr_reader :value
 
@@ -183,12 +183,10 @@ module Rack
       def merge(raw_cookies, uri = nil)
         return unless raw_cookies
 
-        if raw_cookies.is_a? String
-          raw_cookies = raw_cookies.split("\n")
-          raw_cookies.reject!(&:empty?)
-        end
+        raw_cookies = raw_cookies.split("\n") if raw_cookies.is_a? String
 
         raw_cookies.each do |raw_cookie|
+          next if raw_cookie.empty?
           cookie = Cookie.new(raw_cookie, uri, @default_host)
           self << cookie if cookie.valid?(uri)
         end

@@ -67,4 +67,17 @@ describe Rack::Test::CookieJar do
     jar.merge('c=d; domain=example.org; secure', URI.parse('/'))
     jar.to_hash.must_equal 'a' => 'b'
   end
+
+  it '#merge ignores empty cookies in cookie strings' do
+    jar = Rack::Test::CookieJar.new
+    jar.merge('', URI.parse('/'))
+    jar.merge("\nc=d")
+    jar.to_hash.must_equal 'c' => 'd'
+  end
+
+  it '#merge ignores empty cookies in cookie arrays' do
+    jar = Rack::Test::CookieJar.new
+    jar.merge(['', 'c=d'], URI.parse('/'))
+    jar.to_hash.must_equal 'c' => 'd'
+  end
 end
