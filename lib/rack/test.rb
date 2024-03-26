@@ -256,7 +256,7 @@ module Rack
       private
 
       # :nocov:
-      if !defined?(Rack::RELEASE) || Gem::Version.new(Rack::RELEASE) < Gem::Version.new('3.0')
+      if !defined?(Rack::RELEASE) || Gem::Version.new(Rack::RELEASE) < Gem::Version.new('2.2.2')
         def close_body(body)
           body.close if body.respond_to?(:close)
         end

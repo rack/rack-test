@@ -9,5 +9,5 @@ if RUBY_VERSION >= '3.1'
   end
   gem 'rack', github: 'rack/rack'
 else
-  gem 'rack', '~> 2.0'
+  gem 'rack', '~> 2.2'
 end
