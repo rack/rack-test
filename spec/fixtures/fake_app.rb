@@ -6,9 +6,6 @@ module Rack
     class FakeApp
       def call(env)
         _, h, b = res = handle(env)
-        length = 0
-        b.each{|s| length += s.bytesize}
-        h['content-length'] = length.to_s
         h['content-type'] = 'text/html;charset=utf-8'
         res
       end

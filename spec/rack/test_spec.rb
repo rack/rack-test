@@ -503,6 +503,11 @@ describe 'Rack::Test::Session#last_response' do
     last_response['content-type'].must_equal 'text/html;charset=utf-8'
   end
 
+  it 'should not add a content-length header' do
+    request '/'
+    last_response['content-length'].must_be_nil
+  end
+
   it 'raises an error if no requests have been issued' do
     proc do
       last_response
