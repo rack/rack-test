@@ -451,14 +451,14 @@ describe 'Rack::Test::Session#follow_redirect!' do
     get '/redirect', {}, 'rack.session' => { 'foo' => 'bar' }
     follow_redirect!
 
-    last_response.body.must_include 'session {"foo"=>"bar"}'
+    last_response.body.must_match(/session \{"foo" ?=> ?"bar"\}/)
   end
 
   it 'includes session options when following the redirect' do
     get '/redirect', {}, 'rack.session.options' => { 'foo' => 'bar' }
     follow_redirect!
 
-    last_response.body.must_include 'session {} with options {"foo"=>"bar"}'
+    last_response.body.must_match(/session \{\} with options \{"foo" ?=> ?"bar"\}/)
   end
 
   it 'raises an error if the last_response is not set' do
