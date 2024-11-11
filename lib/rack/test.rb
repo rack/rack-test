@@ -9,6 +9,7 @@ rescue LoadError
   require "rack"
 else
   if Rack.release >= '2.3'
+    require "rack/builder"
     require "rack/request"
     require "rack/mock"
     require "rack/utils"
