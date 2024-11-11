@@ -89,6 +89,12 @@ class TestApp < Test::Unit::TestCase
 end
 ```
 
+When rack version 3.1.8 OUTER_APP should be declared without the `.first`:
+```ruby
+OUTER_APP = Rack::Builder.parse_file("config.ru")
+```
+https://www.rubydoc.info/gems/rack/Rack%2FBuilder.parse_file
+
 ## Install
 
 To install the latest release as a gem:
