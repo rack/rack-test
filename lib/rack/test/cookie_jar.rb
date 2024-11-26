@@ -28,7 +28,7 @@ module Rack
         @raw, options = raw.split(/[;,] */n, 2)
 
         @name, @value = parse_query(@raw, ';').to_a.first
-        @options = parse_query(options, ';')
+        @options = parse_query(options, ';').map { |k, v| [k.downcase, v] }.to_h
 
         if domain = @options['domain']
           @exact_domain_match = false
@@ -69,7 +69,7 @@ module Rack
       # Whether the cookie has the httponly flag, indicating it is not available via
       # a javascript API.
       def http_only?
-        @options.key?('HttpOnly') || @options.key?('httponly')
+        @options.key?('httponly')
       end
 
       # The explicit or implicit path for the cookie.
@@ -110,11 +110,13 @@ module Rack
 
       # A hash of cookie options, including the cookie value, but excluding the cookie name.
       def to_h
-        @options.merge(
+        hash = @options.merge(
           'value'    => @value,
           'HttpOnly' => http_only?,
           'secure'   => secure?
         )
+        hash.delete('httponly')
+        hash
       end
       alias to_hash to_h
 

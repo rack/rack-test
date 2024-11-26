@@ -49,12 +49,28 @@ describe "Rack::Test::Session" do
     cookie_string = [
       '/',
       'csrf_id=ABC123',
-      'path=/',
-      'expires=Wed, 01 Jan 2020 08:00:00 GMT',
+      'path=/cookie',
       'HttpOnly'
     ].join(Rack::Test::CookieJar::DELIMITER)
     cookie = Rack::Test::Cookie.new(cookie_string)
-    cookie.path.must_equal '/'
+    cookie.path.must_equal '/cookie'
+  end
+
+  it 'attribute names are case-insensitive' do
+    cookie_string = [
+      '/',
+      'csrf_id=ABC123',
+      'Path=/cookie',
+      'Expires=Wed, 01 Jan 2020 08:00:00 GMT',
+      'HttpOnly',
+      'Secure',
+    ].join(Rack::Test::CookieJar::DELIMITER)
+    cookie = Rack::Test::Cookie.new(cookie_string)
+
+    cookie.path.must_equal '/cookie'
+    cookie.secure?.must_equal true
+    cookie.http_only?.must_equal true
+    cookie.expires.must_equal Time.parse('Wed, 01 Jan 2020 08:00:00 GMT')
   end
 
   it 'escapes cookie values' do
