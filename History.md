@@ -1,5 +1,9 @@
 ## main
 
+* Bug fixes:
+  * `Rack::Test::Cookie` now parses cookie parameters using a
+    case-insensitive approach (Guillaume Malette #349)
+
 * Minor enhancements:
   * `Rack::Test::UploadedFile` no longer uses a finalizer for named
     paths to close and unlink the created Tempfile.  Tempfile itself
