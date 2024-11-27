@@ -28,7 +28,7 @@ module Rack
         @raw, options = raw.split(/[;,] */n, 2)
 
         @name, @value = parse_query(@raw, ';').to_a.first
-        @options = parse_query(options, ';').map { |k, v| [k.downcase, v] }.to_h
+        @options = Hash[parse_query(options, ';').map { |k, v| [k.downcase, v] }]
 
         if domain = @options['domain']
           @exact_domain_match = false
