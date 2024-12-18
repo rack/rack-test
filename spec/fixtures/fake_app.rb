@@ -143,6 +143,7 @@ module Rack
         if input
           input.rewind
           env['rack.input'] = input
+          env.delete('rack.request.form_hash')
         end
       end
     end
