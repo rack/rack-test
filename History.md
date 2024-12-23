@@ -5,6 +5,8 @@
     case-insensitive approach (Guillaume Malette #349)
 
 * Minor enhancements:
+  * Arrays of cookies containing a blank cookie are now handled
+    correctly when processing responses.  (Martin Emde #343)
   * `Rack::Test::UploadedFile` no longer uses a finalizer for named
     paths to close and unlink the created Tempfile.  Tempfile itself
     uses a finalizer to close and unlink itself, so there is no
