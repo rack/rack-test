@@ -93,9 +93,8 @@ module Rack
 
         uri.host = @default_host if uri.host.nil?
 
-        real_domain = domain =~ /^\./ ? domain[1..-1] : domain
         !!((!secure? || (secure? && uri.scheme == 'https')) &&
-          uri.host =~ Regexp.new("#{'^' if @exact_domain_match}#{Regexp.escape(real_domain)}$", Regexp::IGNORECASE))
+          uri.host =~ Regexp.new("#{'^' if @exact_domain_match}#{Regexp.escape(domain)}$", Regexp::IGNORECASE))
       end
 
       # Cookies that do not match the URI will not be sent in requests to the URI.
