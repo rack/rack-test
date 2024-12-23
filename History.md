@@ -1,4 +1,4 @@
-## main
+## 2.2.0 / 2024-12-23
 
 * Bug fixes:
   * `Rack::Test::Cookie` now parses cookie parameters using a
