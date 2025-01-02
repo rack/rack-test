@@ -363,7 +363,6 @@ module Rack
         close_body(body)
         cookie_jar.merge(last_response.headers['set-cookie'], uri)
         @after_request.each(&:call)
-        @last_response.finish
 
         yield @last_response if block_given?
 
