@@ -89,15 +89,18 @@ class TestApp < Test::Unit::TestCase
 end
 ```
 
-You can use `Rack::Lint` for further validation that your code follows Rack conventions and best practices.
-Just wrap that app!
+If your application does not automatically use the `Rack::Lint` middleware in test mode,
+and you want to test that requests to and responses from your application are compliant
+with the Rack specification, you should manually use the `Rack::Lint` middleware:
 
 ```ruby
 class TestApp < Test::Unit::TestCase
   include Rack::Test::Methods
 
+  APP = Rack::Lint.new(YOUR_APP)
+
   def app
-    Rack::Lint.new(YourApp.new)
+    APP
   end
 end
 ```
