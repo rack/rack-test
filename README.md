@@ -89,6 +89,19 @@ class TestApp < Test::Unit::TestCase
 end
 ```
 
+You can use `Rack::Lint` for further validation that your code follows Rack conventions and best practices.
+Just wrap that app!
+
+```ruby
+class TestApp < Test::Unit::TestCase
+  include Rack::Test::Methods
+
+  def app
+    Rack::Lint.new(YourApp.new)
+  end
+end
+```
+
 ## Install
 
 To install the latest release as a gem:
