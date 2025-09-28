@@ -6,9 +6,16 @@ module Rack
       include Rack::Utils
       extend self
 
+      class << self
+        attr_accessor :override_build_nested_query
+      end
+      self.override_build_nested_query = false
+
       # Build a query string for the given value and prefix. The value
       # can be an array or hash of parameters.
       def build_nested_query(value, prefix = nil)
+        return super if Rack::Test::Utils.override_build_nested_query
+
         case value
         when Array
           if value.empty?

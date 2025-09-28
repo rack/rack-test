@@ -58,6 +58,21 @@ describe "Rack::Test::Utils#build_nested_query" do
     input = { collection: [] }
     build_nested_query(input).must_equal 'collection[]='
   end
+
+  it 'percent encodes brackets with override_build_nested_query' do
+    original = Rack::Test::Utils.override_build_nested_query
+    Rack::Test::Utils.override_build_nested_query = true
+    begin
+      query = if Gem::Version.new(Rack.release) < Gem::Version.new("3.1")
+                'a[b]=c'
+              else
+                'a%5Bb%5D=c'
+              end
+      build_nested_query({"a" => { "b" => "c" }}).must_equal query
+    ensure
+      Rack::Test::Utils.override_build_nested_query = original
+    end
+  end
 end
 
 describe 'Rack::Test::Utils.build_multipart' do
