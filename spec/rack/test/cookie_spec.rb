@@ -234,7 +234,7 @@ describe "Rack::Test::Session" do
     last_request.cookies.must_equal 'value' => '10', 'foo' => 'bar'
   end
 
-  it 'skips emtpy string cookies' do
+  it 'skips empty string cookies' do
     set_cookie "value=10\n\nfoo=bar"
     get '/cookies/show'
     last_request.cookies.must_equal 'value' => '10', 'foo' => 'bar'

@@ -45,7 +45,7 @@ module Rack
         @options['path'] ||= uri.path.sub(/\/[^\/]*\Z/, '')
       end
 
-      # Wether the given cookie can replace the current cookie in the cookie jar.
+      # Whether the given cookie can replace the current cookie in the cookie jar.
       def replaces?(other)
         [name.downcase, domain, path] == [other.name.downcase, other.domain, other.path]
       end
