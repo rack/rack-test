@@ -1,3 +1,9 @@
+## 2.2.1 / 2025-10-1
+
+* Bug fixes:
+  * `Rack::Test::CookieJar#delete` and `Rack::Test::CookieJar#get_cookie`
+    now accept a cookie name as Symbol.
+
 ## 2.2.0 / 2024-12-23
 
 * Bug fixes:
