@@ -35,7 +35,7 @@ describe Rack::Test::CookieJar do
     jar = Rack::Test::CookieJar.new
     jar[cookie_name.to_sym].must_be_nil
     jar[cookie_name.to_sym] = cookie_value
-    jar[cookie_name.to_sym].must_equal cookie_value
+    jar[cookie_name].must_equal cookie_value
     jar[(cookie_name+'a').to_sym].must_be_nil
   end
 
