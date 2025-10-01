@@ -164,16 +164,18 @@ module Rack
       # Return the first cookie with the given name, or nil if
       # no such cookie exists.
       def get_cookie(name)
+        name = name.to_s
         @cookies.each do |cookie|
-          return cookie if cookie.name == name.to_s
+          return cookie if cookie.name == name
         end
         nil
       end
 
       # Delete all cookies with the given name from the cookie jar.
       def delete(name)
+        name = name.to_s
         @cookies.reject! do |cookie|
-          cookie.name == name.to_s
+          cookie.name == name
         end
         nil
       end
