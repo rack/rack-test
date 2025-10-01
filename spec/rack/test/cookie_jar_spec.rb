@@ -31,6 +31,14 @@ describe Rack::Test::CookieJar do
     jar[cookie_name+'a'].must_be_nil
   end
 
+  it '#[] and []= should get and set cookie values when passed a symbol' do
+    jar = Rack::Test::CookieJar.new
+    jar[cookie_name.to_sym].must_be_nil
+    jar[cookie_name.to_sym] = cookie_value
+    jar[cookie_name.to_sym].must_equal cookie_value
+    jar[(cookie_name+'a').to_sym].must_be_nil
+  end
+
   it '#get_cookie with a populated jar returns full cookie objects' do
     jar = Rack::Test::CookieJar.new
     jar.get_cookie(cookie_name).must_be_nil
