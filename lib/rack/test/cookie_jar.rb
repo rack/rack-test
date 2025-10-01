@@ -173,7 +173,7 @@ module Rack
       # Delete all cookies with the given name from the cookie jar.
       def delete(name)
         @cookies.reject! do |cookie|
-          cookie.name == name
+          cookie.name == name.to_s
         end
         nil
       end
