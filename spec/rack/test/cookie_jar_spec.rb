@@ -39,6 +39,14 @@ describe Rack::Test::CookieJar do
     jar.get_cookie(cookie_name+'a').must_be_nil
   end
 
+  it '#get_cookie with a populated jar returns full cookie objects when passed a symbol' do
+    jar = Rack::Test::CookieJar.new
+    jar.get_cookie(cookie_name.to_sym).must_be_nil
+    jar[cookie_name] = cookie_value
+    jar.get_cookie(cookie_name.to_sym).must_be_kind_of Rack::Test::Cookie
+    jar.get_cookie(cookie_name+'a').must_be_nil
+  end
+
   it '#for returns the cookie header string delimited by semicolon and a space' do
     jar = Rack::Test::CookieJar.new
     jar['a'] = 'b'

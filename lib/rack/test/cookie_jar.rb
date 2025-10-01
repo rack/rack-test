@@ -165,7 +165,7 @@ module Rack
       # no such cookie exists.
       def get_cookie(name)
         @cookies.each do |cookie|
-          return cookie if cookie.name == name
+          return cookie if cookie.name == name.to_s
         end
         nil
       end
