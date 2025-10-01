@@ -80,4 +80,18 @@ describe Rack::Test::CookieJar do
     jar.merge(['', 'c=d'], URI.parse('/'))
     jar.to_hash.must_equal 'c' => 'd'
   end
+
+  it '#delete deletes the cookie from the jar when passed a string' do
+    jar = Rack::Test::CookieJar.new
+    jar[cookie_name] = cookie_value
+    jar.delete(cookie_name)
+    jar.to_hash.must_be_empty
+  end
+
+  it '#delete deletes the cookie from the jar when passed a symbol' do
+    jar = Rack::Test::CookieJar.new
+    jar[cookie_name] = cookie_value
+    jar.delete(cookie_name.to_sym)
+    jar.to_hash.must_be_empty
+  end
 end
