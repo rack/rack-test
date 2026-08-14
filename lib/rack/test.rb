@@ -307,7 +307,7 @@ module Rack
             append_query_params(query_array, params)
           end
         elsif !env.key?(:input)
-          env['CONTENT_TYPE'] ||= 'application/x-www-form-urlencoded'
+          env['CONTENT_TYPE'] ||= default_input_content_type
           params ||= {}
           multipart = env.has_key?(:multipart) ? env.delete(:multipart) : env['CONTENT_TYPE'].start_with?('multipart/')
 
@@ -317,7 +317,7 @@ module Rack
               env['CONTENT_LENGTH'] ||= data.length.to_s
               env['CONTENT_TYPE'] = "#{multipart_content_type(env)}; boundary=#{MULTIPART_BOUNDARY}"
             else
-              env[:input] = build_nested_query(params)
+              env[:input] = convert_input_hash_to_string(params)
             end
           else
             env[:input] = params
@@ -368,6 +368,16 @@ module Rack
         yield @last_response if block_given?
 
         @last_response
+      end
+
+      # Return the default content type to use when none is given.
+      def default_input_content_type
+        'application/x-www-form-urlencoded'
+      end
+
+      # Convert the given params hash into a request body string.
+      def convert_input_hash_to_string(value, prefix = nil)
+        build_nested_query(value, prefix)
       end
     end
 

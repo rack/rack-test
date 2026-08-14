@@ -298,6 +298,28 @@ describe 'Rack::Test::Session#request' do
     last_request.env['HTTP_X_REQUESTED_WITH'].must_equal 'XMLHttpRequest'
     last_request.must_be :xhr?
   end
+
+  json_connection = Module.new do
+    require 'json'
+
+    def default_input_content_type
+      'application/json'
+    end
+
+    def convert_input_hash_to_string(value)
+      JSON.generate(value)
+    end
+  end
+
+  it 'allows overriding default_input_content_type and convert_input_hash_to_string' do
+    session = Rack::Test::Session.new(Rack::MockSession.new(app))
+    session.extend(json_connection)
+
+    session.request '/', method: :post, params: { foo: 'bar' }
+    session.last_request.env['CONTENT_TYPE'].must_equal 'application/json'
+    session.last_request.env['rack.input'].read.must_equal '{"foo":"bar"}'
+    session.last_response.must_be :ok?
+  end
 end
 
 describe 'Rack::Test::Session#header' do
