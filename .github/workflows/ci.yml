@@ -29,6 +29,7 @@ jobs:
           - { os: ubuntu-26.04, ruby: jruby-10.0 }
           - { os: ubuntu-26.04, ruby: jruby-10.1 }
     runs-on: ${{ matrix.os }}
+    name: ${{ matrix.ruby }}
     steps:
     - uses: actions/checkout@v6
 
