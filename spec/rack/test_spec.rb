@@ -564,6 +564,47 @@ describe 'Rack::Test::Session#follow_redirect!' do
     ]
   end if Rack.release >= '3'
 
+  it 'does not replay content headers missing from the original request for HTTP 307' do
+    input_class = Class.new(StringIO){undef size}
+    requests = []
+    redirecting_app = lambda do |env|
+      requests << [
+        env['REQUEST_METHOD'],
+        env.key?('CONTENT_TYPE'),
+        env.key?('CONTENT_LENGTH'),
+        env['PATH_INFO'],
+        env['rack.input'].read
+      ]
+      requests.length == 1 ? [307, {'location' => '/next'}, []] : [200, {}, []]
+    end
+    session = Rack::Test::Session.new(redirecting_app)
+
+    session.request('/initial', method: 'POST', input: input_class.new('body'))
+    session.follow_redirect!
+
+    requests.must_equal [
+      ['POST', false, false, '/initial', 'body'],
+      ['POST', false, false, '/next', 'body']
+    ]
+  end if Rack.release >= '3.1'
+
+  it 'handles requests without input for HTTP 307' do
+    requests = []
+    redirecting_app = lambda do |env|
+      requests << [env['REQUEST_METHOD'], env['PATH_INFO'], env.key?('rack.input')]
+      requests.length == 1 ? [307, {'location' => '/next'}, []] : [200, {}, []]
+    end
+    session = Rack::Test::Session.new(redirecting_app)
+
+    session.request('/initial', method: 'POST', input: nil)
+    session.follow_redirect!
+
+    requests.must_equal [
+      ['POST', '/initial', false],
+      ['POST', '/next', true]
+    ]
+  end if Rack.release >= '3.1'
+
   it 'keeps the original method and params for HTTP 307' do
     post '/redirect?status=307', foo: 'bar'
     follow_redirect!

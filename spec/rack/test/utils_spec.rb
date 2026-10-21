@@ -170,6 +170,22 @@ describe 'Rack::Test::Utils.build_multipart' do
     uploaded_param[:tempfile].must_be_kind_of File
   end
 
+  it 'skips empty arrays when building multipart bodies' do
+    files = Rack::Test::UploadedFile.new(multipart_file('foo.txt'))
+    data = Rack::Test::Utils.build_multipart('files' => files, 'empty' => [], 'nested' => {'empty' => []})
+    data.wont_include 'name="empty'
+    data.wont_include 'name="nested'
+
+    options = {
+      'CONTENT_TYPE' => "multipart/form-data; boundary=#{Rack::Test::MULTIPART_BOUNDARY}",
+      'CONTENT_LENGTH' => data.length.to_s,
+      :input => StringIO.new(data)
+    }
+    params = Rack::Multipart.parse_multipart(Rack::MockRequest.env_for('/', options))
+    params.keys.must_equal ['files']
+    params['files'][:filename].must_equal 'foo.txt'
+  end
+
   it 'builds multipart bodies from mixed array of a file and a primitive' do
     files = [Rack::Test::UploadedFile.new(multipart_file('foo.txt')), 'baz']
     data = Rack::Test::Utils.build_multipart('files' => files)
