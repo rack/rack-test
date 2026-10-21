@@ -1,4 +1,4 @@
-## main
+## 2.3.0 / 2026-10-21
 
 * Bug fixes:
   * Do not mutate arguments given to `Rack::Utils.build_multipart`
